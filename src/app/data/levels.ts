@@ -1,6 +1,6 @@
 // src/data/levelData.ts
 
-export type TileType = "normal" | "fire" | "cursed" | "warped";
+export type TileType = "normal" | "fire" | "cursed" | "warped" | "removed";
 
 export type LevelData = {
   id: number;
@@ -13,6 +13,7 @@ export type LevelData = {
   shouldCursedSpawn?: boolean;
   shouldFireSpawn?: boolean;
   goal?: number;
+  moves?: number;
 };
 
 
@@ -22,18 +23,19 @@ export function baseLevels(): LevelData[] {
       id: 1,
       name: "Level 1",
       objective: "Form 8 words of 4+ letters",
+      moves: 20,
       locked: false,
       board: [
-        ["normal", "normal", "cursed", "cursed", "cursed", "cursed", "normal", "normal"],
-        ["normal", "normal", "normal", "normal", "normal", "cursed", "normal", "normal"],
-        ["cursed", "cursed", "cursed", "cursed", "cursed", "cursed", "normal", "cursed"],
-        ["cursed", "normal", "cursed", "cursed", "cursed", "cursed", "normal", "cursed"],
-        ["cursed", "normal", "cursed", "cursed", "cursed", "cursed", "normal", "cursed"],
-        ["cursed", "normal", "cursed", "cursed", "cursed", "cursed", "cursed", "cursed"],
-        ["normal", "normal", "cursed", "normal", "warped", "normal", "normal", "normal"],
-        ["normal", "normal", "cursed", "cursed", "cursed", "cursed", "normal", "normal"],
+      ["removed", "normal", "normal", "normal", "normal", "removed", "removed", "removed"],
+  ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+  ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+  ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+  ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+  ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+  ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+  ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "removed"]
       ],
-      shouldWarpedSpawn: false,
+      shouldWarpedSpawn: true,
       shouldCursedSpawn: false,
       shouldFireSpawn: false,
     },
@@ -80,6 +82,7 @@ export function baseLevels(): LevelData[] {
       name: "Level 4",
       objective: "Finish in 90 seconds",
       locked: true,
+      moves: 40,
       board: [
         ["warped", "normal", "normal", "normal", "cursed", "normal", "normal", "normal"],
         ["normal", "normal", "fire", "normal", "normal", "normal", "normal", "warped"],

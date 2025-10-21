@@ -1,23 +1,75 @@
 "use client";
-import { useParams } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
 import { baseLevels } from "../data/levels";
 import { LetterBoard } from "../components/GameBoard";
 
 export default function PlayPage() {
-  const params = useParams();
-  const levelId = params?.id ? parseInt(params.id as string) : 1; // Default to level 1
+  // Keep baseLevels() stable using useRef so it doesn’t regenerate
+  const initialLevels = useRef(baseLevels());
+  const [levels, setLevels] = useState(initialLevels.current);
+  const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
 
-  const levels = baseLevels();
-  const level = levels.find((l) => l.id === levelId) || levels[0];
 
-  const layout = level.layout || level.board; // fallback to board if layout missing
+
+  useEffect(() => {
+    const saved = localStorage.getItem("savedLevels");
+    const storedLevels = saved ? JSON.parse(saved) : initialLevels.current;
+
+    const selectedId = Number(localStorage.getItem("selectedLevel")) || 1;
+    const foundIndex = storedLevels.findIndex((lvl: any) => lvl.id === selectedId);
+
+    setLevels(storedLevels);
+    setCurrentLevelIndex(foundIndex !== -1 ? foundIndex : 0);
+  }, []);
+
+  const level = levels[currentLevelIndex];
+  const layout = level.layout || level.board;
+
+  const handleNextLevel = () => {
+    const nextIndex = currentLevelIndex + 1;
+    if (nextIndex >= levels.length) return;
+
+    const unlocked = JSON.parse(localStorage.getItem("unlockedLevels") || "[1]");
+    const nextId = levels[nextIndex].id;
+    const updated = Array.from(new Set([...unlocked, nextId]));
+    localStorage.setItem("unlockedLevels", JSON.stringify(updated));
+
+    setCurrentLevelIndex(nextIndex);
+    localStorage.setItem("selectedLevel", nextId.toString());
+  };
+
+  const handleRestartProgress = () => {
+    localStorage.clear();
+    setLevels(initialLevels.current);
+    setCurrentLevelIndex(0);
+    alert("Progress restarted!");
+  };
+
+  console.log("Rendering PlayPage for level:", level.id, "-", level.name);
+
 
   return (
     <main className="min-h-screen bg-neutral-950 text-white flex flex-col items-center justify-center p-6">
       <LetterBoard
-        layout={layout as ("normal" | "cursed" | "warped" | "fire")[][]}
+        key={level.id}
+        layout={layout as ("normal" | "cursed" | "warped" | "fire" | "removed")[][]}
         objective={level.objective}
+        moves={level.moves ?? 15}
+        levelName={level.name}
+        onNextLevel={handleNextLevel}
       />
+
+      <div className="mt-4 flex flex-col items-center gap-3 text-sm text-gray-400">
+        <div>
+          Level {level.id} of {levels.length} — <strong>{level.name}</strong>
+        </div>
+        <button
+          onClick={handleRestartProgress}
+          className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded text-white text-sm"
+        >
+          Restart Progress
+        </button>
+      </div>
     </main>
   );
 }

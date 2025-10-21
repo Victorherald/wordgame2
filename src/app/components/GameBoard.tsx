@@ -6,6 +6,8 @@ import { WordDisplay } from '../components/WordDisp';
 import { wordList } from '../dictionary/wordlist';
 import { LevelData } from '../data/levels';
 import { Info } from 'lucide-react';
+import { MovesDisplay } from './MoveCount';
+import { useRouter } from 'next/navigation';
 
 type Rarity = 'bronze' | 'silver' | 'gold' | 'none';
 type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'whiteDiamond';
@@ -21,14 +23,18 @@ type Tile = {
   isWarped?: boolean;
   warpTurns?: number;
   isChanging?: boolean;
+  isRemoved?: boolean;
 };
 
 type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal" | "cursed" | "warped" | "fire")[][];
+  layout?: ("normal" | "cursed" | "warped" | "fire" | "removed")[][];
   objective?: string;
+  moves: number;
+    onNextLevel?: () => void;
+   levelName: string;
 };
 
 
@@ -44,7 +50,7 @@ const specialTileSettings = {
   allowRandomSpecialTiles: true
 };
 
-export function LetterBoard({ level, layout }: LetterBoardProps) {
+export function LetterBoard({ level,  levelName, layout, moves = 15, onNextLevel}: LetterBoardProps) {
   const [grid, setGrid] = useState<Tile[][]>([]);
   const [selected, setSelected] = useState<Position[]>([]);
   const [newTiles, setNewTiles] = useState<Position[]>([]);
@@ -52,10 +58,66 @@ export function LetterBoard({ level, layout }: LetterBoardProps) {
   const [isWordValid, setIsWordValid] = useState(false);
   const [showObjectivePopup, setShowObjectivePopup] = useState(true);
   const [objMet, setObjMet] = useState(0);
+ const [movesLeft, setMovesLeft] = useState(moves);
+const [isGameOver, setIsGameOver] = useState(false);
+const [gameResult, setGameResult] = useState<'win' | 'fail' | null>(null);
+
+// Progress helpers (keep near the top; safe-guard for SSR)
+function loadProgress(): { unlockedLevel: number } {
+  if (typeof window === 'undefined') return { unlockedLevel: 1 };
+  const raw = localStorage.getItem('wordgame_progress');
+  return raw ? JSON.parse(raw) : { unlockedLevel: 1 };
+}
+
+function saveProgress(data: { unlockedLevel: number }) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('wordgame_progress', JSON.stringify(data));
+  } catch {
+    // ignore storage errors
+  }
+}
+
+
+
+  const router = useRouter();
+  const levelId = level?.id ?? 1;
+
+
+ useEffect(() => {
+    setMovesLeft(moves); // reset moves when level changes
+  }, [moves]);
 
  // Objective setup
   const objective = level?.objective || 'Form 5 words of 4+ letters';
   const goal = level?.goal || 5;
+
+ useEffect(() => {
+  if (movesLeft <= 0 && !isGameOver) {
+    setIsGameOver(true);
+    setGameResult('fail');
+    return;
+  }
+
+  if (objMet >= goal && !isGameOver) {
+    setIsGameOver(true);
+    setGameResult('win');
+    setScore((prev) => prev + movesLeft * 10);
+
+    // Unlock next level only on wjn
+    const progress = loadProgress();
+    const unlocked = progress.unlockedLevel ?? 1;
+    const nextToUnlock = (levelId ?? 1) + 1;
+
+    if (nextToUnlock > unlocked) {
+      saveProgress({ unlockedLevel: nextToUnlock });
+    }
+
+    //  Trigger next level callback ONCE — only when win happens
+    if (onNextLevel) onNextLevel();
+  }
+}, [movesLeft, objMet, goal, isGameOver]);
+
 
 // Automatically hide the popup after 5 seconds
   useEffect(() => {
@@ -66,7 +128,7 @@ export function LetterBoard({ level, layout }: LetterBoardProps) {
   }, []);
 
 
-   // 🔹 Prefer layout from prop → fallback to level.board
+   //  Prefer layout from prop → fallback to level.board
   const presetTileMap = layout ?? level?.board ?? [];
 
   const letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","QU","R","S","T","U","V","W","X","Y","Z"];
@@ -122,18 +184,25 @@ export function LetterBoard({ level, layout }: LetterBoardProps) {
         if (specialTileSettings.allowPresetTiles) {
           if (presetType === "fire" && specialTileSettings.allowFireTiles)
             rowTiles.push({ ...generateRandomTile(), isFire: true, presets: true });
+         else if (presetType === "removed") {
+           rowTiles.push({ isRemoved: true } as Tile);}
           else if (presetType === "cursed" && specialTileSettings.allowCursedTiles)
             rowTiles.push({ ...generateRandomTile(), isCursed: true, curseTurns: 3, presets: true });
           else if (presetType === "warped" && specialTileSettings.allowWarpedTiles)
             rowTiles.push({ ...generateRandomTile(), isWarped: true, warpTurns: 3, presets: true });
           else rowTiles.push(generateRandomTile());
         } else rowTiles.push(generateRandomTile());
+
+        
       }
       newGrid.push(rowTiles);
     }
 
+    
+
     return newGrid;
   };
+  
 
   useEffect(() => setGrid(initializeBoard(8, 8)), []);
   useEffect(() => {
@@ -147,23 +216,30 @@ export function LetterBoard({ level, layout }: LetterBoardProps) {
     r === 'bronze' ? 'bg-amber-700' : r === 'silver' ? 'bg-gray-300' : 'bg-yellow-400';
 
   const clearSelection = () => setSelected([]);
-  const handleRightClick = (r: number, c: number) =>
+  const handleRightClick = (r: number, c: number) => {
+     const tile = grid[r][c];
+  if (!tile || tile.isRemoved) return;
     setSelected((p) => p.filter((pos) => !(pos.row === r && pos.col === c)));
+  };
 
   const getSelectedWord = () => selected.map(({ row, col }) => grid[row]?.[col]?.letter ?? '').join('');
   const isSelected = (r: number, c: number) => selected.some((p) => p.row === r && p.col === c);
   const isAdjacent = (a: Position, b: Position) => Math.abs(a.row - b.row) <= 1 && Math.abs(a.col - b.col) <= 1 && !(a.row === b.row && a.col === b.col);
 
   const handleTileClick = (row: number, col: number) => {
+    const tile = grid[row][col];
+     if (!tile || tile.isRemoved) return;
     const last = selected[selected.length - 1];
     const current = { row, col };
     if (selected.length === 0 || isAdjacent(last, current))
       if (!isSelected(row, col)) setSelected([...selected, current]);
+  
   };
+
 
   useEffect(() => setIsWordValid(selected.length >= 3), [selected]);
 
-  // 🔥 warped effect helper
+  //  warped effect helper
   function getNewWarpedLetter(current: string) {
     const available = letters.filter((l) => l !== current);
     return available[Math.floor(Math.random() * available.length)];
@@ -176,17 +252,19 @@ export function LetterBoard({ level, layout }: LetterBoardProps) {
     for (let c = 0; c < 8; c++) {
       const t = grid[r][c];
 
+
+
       if (t?.isWarped) {
         const newTurns = (t.warpTurns ?? 1) - 1;
 
         if (newTurns <= 0) {
-          // 🌀 Turns expired → revert to normal tile
+          //  Turns expired → revert to normal tile
           warpedGrid[r][c] = {
             letter: getNewWarpedLetter(t.letter),
             rarity: getRarityByLetter(t.letter),
           };
         } else {
-          // 🌀 Still warped → mutate slightly
+          //  Still warped → mutate slightly
           warpedGrid[r][c] = {
             ...t,
             letter: getNewWarpedLetter(t.letter),
@@ -201,12 +279,23 @@ export function LetterBoard({ level, layout }: LetterBoardProps) {
 }
 
 
-  // ✅ main logic
+
+
+
+  //  main logic
   const applyWordMatch = () => {
+
+
+
     if (selected.length < 3) return;
 
     let updatedGrid = grid.map((r) => [...r]);
     updatedGrid = applyWarpedEffect(updatedGrid);
+
+    // Update objective progress and moves
+     setObjMet((p) => p + 1);
+     setMovesLeft((p) => p - 1);
+
 
     // burn tiles
     for (let r = 0; r < 7; r++) {
@@ -230,8 +319,8 @@ export function LetterBoard({ level, layout }: LetterBoardProps) {
       if (l === 7) return 'orange';
       if (l === 8) return 'blue';
       if (l === 9) return 'red';
-      if (l >= 10 && l < 12) return 'pink';
-      if (l >= 12) return 'whiteDiamond';
+      if (l === 10) return 'pink';
+      if (l >= 11) return 'whiteDiamond';
       return null;
     }
 
@@ -250,54 +339,53 @@ export function LetterBoard({ level, layout }: LetterBoardProps) {
 
    // gravity + regen
 const cols = updatedGrid[0].length;
+const rows = updatedGrid.length;
 
 for (let c = 0; c < cols; c++) {
   const colTiles: Tile[] = [];
 
-  for (let r = 7; r >= 0; r--) {
+  // Collect all valid tiles in this column (ignore removed ones)
+  for (let r = rows - 1; r >= 0; r--) {
     const t = updatedGrid[r][c];
-    if (t) {
-      // 🔮 Handle cursed tiles
+
+    if (t && !t.isRemoved) {
+      // Handle cursed tiles
       if (t.isCursed) {
         const remaining = (t.curseTurns ?? 0) - 1;
-
         if (remaining > 0) {
           t.curseTurns = remaining;
         } else {
-          // ✅ Remove curse completely
+          // Remove curse completely
           delete t.isCursed;
           delete t.curseTurns;
         }
       }
 
-      // 🌀 Handle warped tiles
-      if (t.isWarped) {
-        const remaining = (t.warpTurns ?? 0) - 1;
-
-        if (remaining > 0) {
-          t.warpTurns = remaining;
-        } else {
-          // ✅ Remove warp completely
-          delete t.isWarped;
-          delete t.warpTurns;
-        }
-      }
-
+      // Push valid tiles into the column collector
       colTiles.push(t);
     }
   }
 
-  // gravity + refill
-  for (let r = 7; r >= 0; r--) {
-    if (colTiles.length > 0) {
+  // Refill each column while preserving removed spaces
+  for (let r = rows - 1; r >= 0; r--) {
+    const current = updatedGrid[r][c];
+
+    if (current?.isRemoved) {
+      // Keep removed tiles unchanged
+      updatedGrid[r][c] = { ...current };
+    } else if (colTiles.length > 0) {
+      // Drop existing tiles downward
       updatedGrid[r][c] = colTiles.shift()!;
     } else {
-      const newT = generateRandomTile();
-      updatedGrid[r][c] = newT;
+      // Generate new tiles for remaining empty spaces
+      updatedGrid[r][c] = generateRandomTile();
       newGenerated.push({ row: r, col: c });
     }
   }
 }
+
+
+  
 
 setGrid(updatedGrid);
 setNewTiles(newGenerated);
@@ -346,20 +434,28 @@ setSelected([]);
       p-3
     "
   >
-    {/* 🎯 Sidebar */}
+    {/*  Sidebar */}
     <div
       className="
         flex flex-col justify-between
         bg-neutral-950 p-4 rounded-lg border border-neutral-800
         h-[900px] md:h-auto
-        overflow-y-auto space-y-3
-      "
+        overflow-y-auto space-y-3"
+      
     >
+      <div className="flex flex-col items-start p-1">
+  {levelName && (
+    <h2 className="text-lg sm:text-xl font-bold text-yellow-400 mb-2">
+      {levelName}
+    </h2>
+  )}
+  </div>
      {/* Words Left Counter + Info Icon */}
           <div className="flex items-center justify-between bg-neutral-800/70 border border-neutral-700 rounded-lg p-3 mb-2">
             <p className="text-white text-sm font-semibold">
               Words Left {objMet}/{goal}
             </p>
+            
             <button
               onClick={() => setShowObjectivePopup(true)}
               className="text-gray-300 hover:text-white transition"
@@ -368,6 +464,8 @@ setSelected([]);
               <Info size={18} />
             </button>
           </div>
+<MovesDisplay movesLeft={movesLeft} />
+
 
       {/* Score + Controls */}
       <div className="flex flex-col gap-3 flex-grow overflow-hidden">
@@ -380,17 +478,17 @@ setSelected([]);
           Clear Selection
         </button>
 
-        <button
-          disabled={!isWordValid}
-          onClick={applyWordMatch}
-          className={`px-4 py-2 rounded transition ${
-            isWordValid
-              ? 'bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse'
-              : 'bg-gray-700 text-white'
-          }`}
-        >
-          Submit Word
-        </button>
+       <button
+  disabled={!isWordValid || movesLeft <= 0 || isGameOver}
+  onClick={applyWordMatch}
+  className={`px-4 py-2 rounded transition ${
+    isWordValid && movesLeft > 0 && !isGameOver
+      ? 'bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse z-20'
+      : 'bg-gray-700 text-white z-20 cursor-not-allowed opacity-60'
+  }`}
+>
+  Submit Word
+</button>
 
         {/* Current word (desktop only) */}
         <div className="hidden md:block flex-1 overflow-auto mt-2">
@@ -399,7 +497,7 @@ setSelected([]);
       </div>
     </div>
 
-    {/* 🧩 Board */}
+    {/*  Board */}
     <div
       className="
         bg-neutral-950 rounded-lg p-3
@@ -409,71 +507,100 @@ setSelected([]);
       "
     >
       {/* Tile Grid */}
-      <div
-        className="
-          grid grid-cols-8
-          gap-[2px] sm:gap-[4px] md:gap-[6px]
-          justify-center
-        "
-      >
-        {grid.map((row, r) =>
-          row.map((tile, c) => {
-            const sel = isSelected(r, c);
-            const isNew = newTiles.some((p) => p.row === r && p.col === c);
-            const glow = sel
-              ? isWordValid
-                ? 'ring-2 ring-green-400 shadow-green-500/30'
-                : 'ring-2 ring-white shadow-white/20'
-              : '';
-            const anim = isNew ? 'tile-drop' : '';
-            const fire = tile?.isFire
-              ? 'animate-fire-tile bg-orange-700 text-white shadow-lg shadow-orange-500/30 fire-particles'
-              : '';
-            const cursed = tile?.isCursed
-              ? 'tile cursed-tile border-2 border-red-700 shadow-red-500/40 cursed-particles'
-              : '';
+<div
+  className="
+    grid grid-cols-8
+    gap-[2px] sm:gap-[4px] md:gap-[6px]
+    justify-center
+  "
+>
+  {grid.map((row, r) =>
+    row.map((tile, c) => {
+      const sel = isSelected(r, c);
+      const isNew = newTiles.some((p) => p.row === r && p.col === c);
+      const anim = isNew ? 'tile-drop' : '';
 
-            return (
-              <div
-                key={`${r}-${c}`}
-                onClick={() => handleTileClick(r, c)}
-                onContextMenu={(e) => {
-                  e.preventDefault();
-                  handleRightClick(r, c);
-                }}
-                className={`
-                  relative
-                  w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14
-                  rounded-[6px] cursor-pointer
-                  bg-gradient-to-br from-[#fdf5e6] to-[#f5e1b9]
-                  text-black text-sm sm:text-lg md:text-xl font-serif
-                  flex items-center justify-center
-                  border border-[#d6c6a1] shadow-md shadow-black/10
-                  transition duration-150 ease-in-out
-                  ${glow} ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${fire} ${cursed}
-                `}
-              >
-                {tile?.gem && (
-                  <div
-                    className={`absolute inset-0 z-0 rounded-[6px] animate-pulse ${getGemBackground(tile.gem)}`}
-                  />
-                )}
-                <span className="z-10 font-bold">{tile?.letter}</span>
+      // effects
+      const fire = tile?.isFire
+        ? 'animate-fire-tile bg-orange-700 text-white shadow-lg shadow-orange-500/30 fire-particles'
+        : '';
+      const cursed = tile?.isCursed
+        ? 'tile cursed-tile shadow-red-500/40 cursed-particles'
+        : '';
+      const warped = tile?.isWarped
+        ? 'tile warped-tile animate-warped'
+        : '';
+      if (tile?.isRemoved) {
+      return (
+        <div
+          key={`${r}-${c}`}
+          className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 bg-transparent pointer-events-none"
+        />
+      );
+    }
 
-                {tile?.isCursed ? (
-                  <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-red-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-1">
-                    {tile.curseTurns}
-                  </div>
-                ) : (
-                  <div
-                    className={`absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full z-10 ${getRarityColor(tile?.rarity)}`}
-                  />
-                )}
-              </div>
-            );
-          })
-        )}
-      </div>
+      return (
+        <div
+          key={`${r}-${c}`}
+          onClick={() => handleTileClick(r, c)}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            handleRightClick(r, c);
+          }}
+          className={`
+            relative
+            w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14
+            rounded-[6px] cursor-pointer
+            bg-gradient-to-br from-[#fdf5e6] to-[#f5e1b9]
+            text-black text-sm sm:text-lg md:text-xl font-serif
+            flex items-center justify-center
+            border border-[#d6c6a1] shadow-md shadow-black/10
+            transition duration-150 ease-in-out
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${fire} ${cursed} ${warped}
+          `}
+        >
+          {tile?.gem && (
+            <div
+              className={`absolute inset-0 z-0 rounded-[6px] animate-pulse ${getGemBackground(tile.gem)}`}
+            />
+          )}
+
+          {/* Letter */}
+          <span className="z-10 font-bold">{tile?.letter}</span>
+
+          {/* Status dots */}
+          {tile?.isCursed ? (
+            <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-red-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+              {tile.curseTurns}
+            </div>
+          ) : tile?.isWarped ? (
+            <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-yellow-400 text-black text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md shadow-yellow-300/50 animate-pulse">
+              {tile.warpTurns}
+            </div>
+          ) : (
+            <div
+              className={`absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full z-10 ${getRarityColor(tile?.rarity)}`}
+            />
+          )}
+
+          {/*Selection glow (no border, full glow layer) */}
+          {sel && (
+            <div
+              className={`
+                absolute inset-0 rounded-[6px]
+                ${isWordValid
+                  ? 'shadow-[0_0_16px_4px_rgba(34,197,94,0.8)]'
+                  : 'shadow-[0_0_12px_2px_rgba(255,255,255,0.5)]'}
+                z-20 pointer-events-none
+              `}
+            />
+          )}
+        </div>
+      );
+    })
+  )}
+</div>
+
 
       {/*  Current Word for Mobile */}
       <div className="block md:hidden w-full mt-4 text-center">
@@ -496,6 +623,47 @@ setSelected([]);
           </div>
         </div>
       ) : null}
+
+
+      {/* End results after mov */}
+
+      {isGameOver && (
+  <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
+    <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 w-11/12 max-w-md text-center space-y-4 shadow-xl">
+      <h2 className="text-xl font-semibold text-white">
+        {gameResult === 'win' ? 'Level Complete!' : 'Game Over'}
+      </h2>
+      <p className="text-gray-300 text-sm">
+        {gameResult === 'win'
+          ? 'You successfully completed the objective!'
+          : 'You ran out of moves.'}
+      </p>
+
+      <div className="flex justify-center gap-3 mt-4">
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded transition"
+        >
+          Retry
+        </button>
+
+        {gameResult === 'win' && (
+          <button
+             onClick={() => {
+      const nextLevel = levelId + 1;
+      localStorage.setItem("currentLevel", nextLevel.toString());
+window.location.href = "/play"; // reload same /play route with new level data
+    }}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded transition"
+          >
+            Next Level
+          </button>
+        )}
+      </div>
+    </div>
+  </div>
+)}
+
 </div>
 
 

@@ -125,7 +125,7 @@
 
 
 .warped-tile {
-  background-color: yellow;
+  background-color: rgb(173, 142, 55);
   animation: spiral 1.5s infinite linear;
 }
 
@@ -138,10 +138,52 @@
   opacity: 0;
 }
 
-@keyframes spiral {
-  0% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.05); }
-  100% { transform: rotate(360deg) scale(1); }
+
+@keyframes warped-glow {
+  0%, 100% {
+    background-color: rgba(250, 204, 21, 0.7); /* warm yellow */
+    box-shadow:
+      0 0 10px rgba(250, 204, 21, 0.6),
+      inset 0 0 10px rgba(255, 255, 255, 0.3);
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    background-color: rgba(253, 224, 71, 0.9); /* lighter yellow */
+    box-shadow:
+      0 0 25px rgba(250, 204, 21, 0.9),
+      inset 0 0 15px rgba(255, 255, 255, 0.4);
+    transform: scale(1.02);
+    filter: brightness(1.2);
+  }
+}
+
+.animate-warped-glow {
+  animation: warped-glow 1.6s ease-in-out infinite;
+}
+
+.warped-tile {
+  background-color: rgba(255, 204, 0, 0.8); /* base yellow */
+  border: 2px solid rgba(250, 204, 21, 0.9);
+  box-shadow:
+    0 0 10px rgba(250, 204, 21, 0.5),
+    inset 0 0 6px rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(250, 204, 21, 0.6),
+                0 0 15px rgba(250, 204, 21, 0.8);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(250, 204, 21, 0.8),
+                0 0 30px rgba(250, 204, 21, 1);
+  }
+}
+
+.animate-glow {
+  animation: glow 1.2s ease-in-out infinite;
 }
 
 

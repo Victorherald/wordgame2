@@ -1,18 +1,20 @@
-'use client';
-
+// components/MovesDisplay.tsx
 import React from 'react';
 
-type ScoreCounterProps = {
-  moves: number;
-  
-};
+type MovesDisplayProps = { movesLeft: number };
 
-export function MovesCounter({ moves }: ScoreCounterProps) {
+export function MovesDisplay({ movesLeft }: MovesDisplayProps) {
+  const isLow = movesLeft <= 3;
+
   return (
-    <div className="mb-4 text-white text-2xl font-bold flex gap-6">
-      <div>
-        Moves: <span className="text-green-400">{moves}</span>
-      </div>
+    <div
+      className={`text-center font-bold px-3 py-2 rounded-md border ${
+        isLow
+          ? 'bg-red-900/50 border-red-700 text-red-300 animate-pulse'
+          : 'bg-neutral-800/70 border-neutral-700 text-white'
+      }`}
+    >
+      Moves Left: {movesLeft}
     </div>
   );
 }
