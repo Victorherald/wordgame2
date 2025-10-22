@@ -31,7 +31,14 @@ type Position = { row: number; col: number };
 type LetterBoardProps = {
   level?: LevelData;
   layout?: ("normal" | "cursed" | "warped" | "fire" | "removed")[][];
-  objective?: string;
+  objective?: {
+  type: 'score' | 'words' | 'destroy';
+  objGoal: number;
+  tileType?: 'cursed' | 'fire' | 'warped';
+  minLength?: number;
+
+};
+
   moves: number;
     onNextLevel?: () => void;
    levelName: string;
@@ -50,7 +57,7 @@ const specialTileSettings = {
   allowRandomSpecialTiles: true
 };
 
-export function LetterBoard({ level,  levelName, layout, moves = 15, onNextLevel}: LetterBoardProps) {
+export function LetterBoard({ level,   objective,  levelName, layout, moves = 15, onNextLevel}: LetterBoardProps) {
   const [grid, setGrid] = useState<Tile[][]>([]);
   const [selected, setSelected] = useState<Position[]>([]);
   const [newTiles, setNewTiles] = useState<Position[]>([]);
@@ -89,20 +96,21 @@ function saveProgress(data: { unlockedLevel: number }) {
   }, [moves]);
 
  // Objective setup
-  const objective = level?.objective || 'Form 5 words of 4+ letters';
-  const goal = level?.goal || 5;
+
+const goal = objective?.objGoal ?? 5;
+
 
  useEffect(() => {
-  if (movesLeft <= 0 && !isGameOver) {
-    setIsGameOver(true);
-    setGameResult('fail');
-    return;
-  }
+
 
   if (objMet >= goal && !isGameOver) {
     setIsGameOver(true);
     setGameResult('win');
     setScore((prev) => prev + movesLeft * 10);
+    
+
+
+  
 
     // Unlock next level only on wjn
     const progress = loadProgress();
@@ -116,6 +124,13 @@ function saveProgress(data: { unlockedLevel: number }) {
     //  Trigger next level callback ONCE — only when win happens
     if (onNextLevel) onNextLevel();
   }
+
+  
+   if (movesLeft <= 0 && !isGameOver) {
+    setIsGameOver(true);
+    setGameResult('fail');
+    return;
+  }   
 }, [movesLeft, objMet, goal, isGameOver]);
 
 
@@ -128,7 +143,7 @@ function saveProgress(data: { unlockedLevel: number }) {
   }, []);
 
 
-   //  Prefer layout from prop → fallback to level.board
+   //  Layout from data otherwise fallback
   const presetTileMap = layout ?? level?.board ?? [];
 
   const letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","QU","R","S","T","U","V","W","X","Y","Z"];
@@ -172,7 +187,7 @@ function saveProgress(data: { unlockedLevel: number }) {
     return { letter, rarity };
   }
 
-  // board init
+  // board setup
   const initializeBoard = (rows: number, cols: number): Tile[][] => {
     const newGrid: Tile[][] = [];
 
@@ -258,13 +273,13 @@ function saveProgress(data: { unlockedLevel: number }) {
         const newTurns = (t.warpTurns ?? 1) - 1;
 
         if (newTurns <= 0) {
-          //  Turns expired → revert to normal tile
+          //  Turns expired and revert to normal tile
           warpedGrid[r][c] = {
             letter: getNewWarpedLetter(t.letter),
             rarity: getRarityByLetter(t.letter),
           };
         } else {
-          //  Still warped → mutate slightly
+          // if still warped it changes every turn
           warpedGrid[r][c] = {
             ...t,
             letter: getNewWarpedLetter(t.letter),
@@ -282,6 +297,8 @@ function saveProgress(data: { unlockedLevel: number }) {
 
 
 
+
+
   //  main logic
   const applyWordMatch = () => {
 
@@ -292,9 +309,7 @@ function saveProgress(data: { unlockedLevel: number }) {
     let updatedGrid = grid.map((r) => [...r]);
     updatedGrid = applyWarpedEffect(updatedGrid);
 
-    // Update objective progress and moves
-     setObjMet((p) => p + 1);
-     setMovesLeft((p) => p - 1);
+   
 
 
     // burn tiles
@@ -304,15 +319,8 @@ function saveProgress(data: { unlockedLevel: number }) {
       }
     }
 
-    // score system
-    let points = selected.length * 10;
-    selected.forEach(({ row, col }) => {
-      const t = grid[row][col];
-      if (t?.isCursed && t.curseTurns && t.curseTurns > 0) points -= 15;
-    });
-    setScore((p) => p + points);
 
-    // gem color logic
+ // gem color logic
     function getGemByLength(l: number): GemColor | null {
       if (l === 5) return 'purple';
       if (l === 6) return 'green';
@@ -324,6 +332,71 @@ function saveProgress(data: { unlockedLevel: number }) {
       return null;
     }
 
+
+
+
+    // score system
+    
+    let points = selected.length * 10;
+    selected.forEach(({ row, col }) => {
+      const t = grid[row][col];
+      if (t?.isCursed && t.curseTurns && t.curseTurns > 0) points -= 15;
+
+      if (t.gem && gem?.includes("purple")){
+          points += 20
+      }
+    });
+    setScore((p) => p + points);
+
+    const goal = objective?.objGoal ?? 0;
+let label = "Progress";
+
+if (objective?.type === "words") label = "Words Found";
+else if (objective?.type === "score") label = "Score";
+else if (objective?.type === "destroy")
+  label = `Destroy ${objective.tileType} tiles`;
+
+    
+if (objective) {
+  let updatedObjMet = objMet;
+  setMovesLeft(prev => prev- 1);
+
+  // Word-based objective (e.g., make 5 words of 3+ letters)
+  if (objective.type === 'words') {
+    if (selected.length >= (objective.minLength ?? 3)) {
+      updatedObjMet += 1;
+    }
+  }
+
+  // Score-based objective (e.g., reach 500 points)
+  else if (objective.type === 'score') {
+    updatedObjMet += points;
+  }
+
+  // Destroy-based objective (e.g., destroy fire or cursed tiles)
+  else if (objective.type === 'destroy') {
+    const destroyed = selected.filter(({ row, col }) => {
+      const t = grid[row][col];
+      if (!t) return false;
+
+      if (objective.tileType === 'fire') return t.isFire;
+      if (objective.tileType === 'cursed') return t.isCursed;
+      if (objective.tileType === 'warped') return t.isWarped;
+
+      return false;
+    }).length;
+
+    updatedObjMet += destroyed;
+  }
+
+  setObjMet(updatedObjMet);
+
+
+}
+
+   
+  
+
     const gem = getGemByLength(selected.length);
     const newGenerated: Position[] = [];
 
@@ -332,6 +405,14 @@ function saveProgress(data: { unlockedLevel: number }) {
       const last = selected[selected.length - 1];
       updatedGrid[last.row][last.col] = { ...updatedGrid[last.row][last.col], gem };
       skipLast = true;
+    }
+
+    //Negate gem if the last tile involves a negative one
+    if (gem){
+       const last = selected[selected.length - 1];
+       updatedGrid[last.row][last.col].isCursed || updatedGrid[last.row][last.col].isFire ||
+       updatedGrid[last.row][last.col].isWarped
+       skipLast = false;
     }
 
     const clearTiles = skipLast ? selected.slice(0, -1) : selected;
@@ -383,6 +464,8 @@ for (let c = 0; c < cols; c++) {
     }
   }
 }
+
+
 
 
   
@@ -453,7 +536,14 @@ setSelected([]);
      {/* Words Left Counter + Info Icon */}
           <div className="flex items-center justify-between bg-neutral-800/70 border border-neutral-700 rounded-lg p-3 mb-2">
             <p className="text-white text-sm font-semibold">
-              Words Left {objMet}/{goal}
+            {objective
+      ? `${objective.type === 'words'
+          ? 'Words Found'
+          : objective.type === 'score'
+          ? 'Score'
+          : `Destroy ${objective.tileType} tiles`
+        }: ${objMet}/${objective.objGoal}`
+      : 'No objective'}
             </p>
             
             <button
@@ -613,7 +703,16 @@ setSelected([]);
         <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
           <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 w-11/12 max-w-md text-center space-y-4 shadow-xl animate-fade-in">
             <h2 className="text-xl font-semibold text-white">Objective</h2>
-            <p className="text-gray-300 text-sm leading-snug">{objective}</p>
+          {objective ? (
+  <p className="text-gray-300 text-sm leading-snug">
+  {objective?.type === "score" && `Reach ${objective.objGoal} points`}
+  {objective?.type === "words" && `Find ${objective.objGoal} words`}
+  {objective?.type === "destroy" && `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
+  </p>
+) : (
+  <p className="text-gray-500 text-sm italic">No objective</p>
+)}
+
             <button
               onClick={() => setShowObjectivePopup(false)}
               className="mt-4 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded transition"

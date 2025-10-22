@@ -2,17 +2,22 @@
 
 export type TileType = "normal" | "fire" | "cursed" | "warped" | "removed";
 
+export type Objective = 
+  | { type: 'score'; objGoal: number }
+  | { type: 'words'; objGoal: number; minLength?: number }
+  | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' };
+
 export type LevelData = {
   id: number;
   name: string;
-  objective: string;
+  objective: Objective;
   locked: boolean;
   board: TileType[][];
   layout?: string[][];
     shouldWarpedSpawn?: boolean;
   shouldCursedSpawn?: boolean;
   shouldFireSpawn?: boolean;
-  goal?: number;
+
   moves?: number;
 };
 
@@ -22,17 +27,17 @@ export function baseLevels(): LevelData[] {
     {
       id: 1,
       name: "Level 1",
-      objective: "Form 8 words of 4+ letters",
-      moves: 20,
+      objective: { type: 'words', objGoal: 5, minLength: 4 },
+      moves: 5,
       locked: false,
       board: [
       ["removed", "normal", "normal", "normal", "normal", "removed", "removed", "removed"],
-  ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-  ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+  ["removed", "normal", "cursed", "normal", "normal", "normal", "normal", "normal"],
+  ["removed", "normal", "normal", "normal", "normal", "normal", "cursed", "normal"],
   ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
   ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-  ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
-  ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+  ["normal", "cursed", "normal", "normal", "normal", "normal", "normal", "removed"],
+  ["normal", "normal", "normal", "normal", "normal", "cursed", "normal", "removed"],
   ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "removed"]
       ],
       shouldWarpedSpawn: true,
@@ -42,7 +47,7 @@ export function baseLevels(): LevelData[] {
     {
       id: 2,
       name: "Level 2",
-      objective: "Score 1000 points",
+      objective: { type: 'destroy', objGoal: 3, tileType: 'cursed' },
       locked: true,
       board: [
         ["normal", "normal", "fire", "normal", "cursed", "normal", "normal", "normal"],
@@ -61,7 +66,7 @@ export function baseLevels(): LevelData[] {
     {
       id: 3,
       name: "Level 3",
-      objective: "Use 1 gem tile",
+      objective: { type: 'destroy', objGoal: 4, tileType: 'cursed' },
       locked: true,
       board: [
         ["normal", "normal", "warped", "normal", "normal", "normal", "cursed", "normal"],
@@ -80,7 +85,7 @@ export function baseLevels(): LevelData[] {
     {
       id: 4,
       name: "Level 4",
-      objective: "Finish in 90 seconds",
+      objective: { type: 'destroy', objGoal: 6, tileType: 'cursed' },
       locked: true,
       moves: 40,
       board: [

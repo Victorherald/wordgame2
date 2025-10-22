@@ -48,7 +48,9 @@ export default function LevelList({ overrideLevels }: LevelListProps) {
               }`}
             >
               <h2 className="text-xl font-bold">{lvl.name}</h2>
-              <p className="text-sm text-gray-400">{lvl.objective}</p>
+              <p className="text-sm text-gray-400">{lvl.objective?.type === "score" && `Reach ${lvl.objective.objGoal} points`}
+  {lvl.objective?.type === "words" && `Find ${lvl.objective.objGoal} words`}
+  {lvl.objective?.type === "destroy" && `Destroy ${lvl.objective.objGoal} ${lvl.objective.tileType} tiles`}</p>
 
               {isUnlocked ? (
                 <button
