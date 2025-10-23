@@ -4,10 +4,11 @@ import '../animations/tileAnimations.css';
 import { ScoreCounter } from '../components/ScoreCounter';
 import { WordDisplay } from '../components/WordDisp';
 import { wordList } from '../dictionary/wordlist';
-import { LevelData } from '../data/levels';
+import { baseLevels, LevelData } from '../data/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
 import { useRouter } from 'next/navigation';
+import { basename } from 'node:path';
 
 type Rarity = 'bronze' | 'silver' | 'gold' | 'none';
 type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'whiteDiamond';
@@ -22,19 +23,21 @@ type Tile = {
   presets?: boolean;
   isWarped?: boolean;
   warpTurns?: number;
+  isDull?: boolean;
   isChanging?: boolean;
   isRemoved?: boolean;
+   dullTurns?: number;
 };
 
 type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal" | "cursed" | "warped" | "fire" | "removed")[][];
+  layout?: ("normal" | "cursed" | "warped" | "fire" | "removed" | "dull")[][];
   objective?: {
   type: 'score' | 'words' | 'destroy';
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'warped';
+  tileType?: 'cursed' | 'fire' | 'warped' | "dull";
   minLength?: number;
 
 };
@@ -54,7 +57,13 @@ const specialTileSettings = {
   allowPresetTiles: true,
   allowFireTiles: true,
   allowCursedTiles: true,
-  allowRandomSpecialTiles: true
+  allowDullTiles: true,
+  allowRandomSpecialTiles: true,
+
+   cursedTurns: 5 ,
+  warpedTurns: 6,
+  fireTurns: 5,
+
 };
 
 export function LetterBoard({ level,   objective,  levelName, layout, moves = 15, onNextLevel}: LetterBoardProps) {
@@ -125,7 +134,7 @@ const goal = objective?.objGoal ?? 5;
     if (onNextLevel) onNextLevel();
   }
 
-  
+    // when move runs out without reaching the goal
    if (movesLeft <= 0 && !isGameOver) {
     setIsGameOver(true);
     setGameResult('fail');
@@ -160,32 +169,68 @@ const goal = objective?.objGoal ?? 5;
     return bronze.includes(letter) ? 'bronze' : silver.includes(letter) ? 'silver' : gold.includes(letter) ? 'gold' : 'none' ;
   }
 
-  // random tile
-  function generateRandomTile(): Tile {
-    const letter = letters[Math.floor(Math.random() * letters.length)];
-    const rarity = getRarityByLetter(letter);
+  
 
-    const shouldBeFire =
-      specialTileSettings.allowFireTiles &&
-      specialTileSettings.allowRandomSpecialTiles &&
-      Math.random() < 0.0;
+function generateRandomTile(): Tile {
+  const letter = letters[Math.floor(Math.random() * letters.length)];
+  const rarity = getRarityByLetter(letter);
 
-    const shouldBeWarped =
-      specialTileSettings.allowWarpedTiles &&
-      specialTileSettings.allowRandomSpecialTiles &&
-      Math.random() < 0.0;
+  const shouldBeFire =
+    specialTileSettings.allowFireTiles &&
+    specialTileSettings.allowRandomSpecialTiles &&
+    Math.random() < 0.0;
 
-    const shouldBeCursed =
-      specialTileSettings.allowCursedTiles &&
-      specialTileSettings.allowRandomSpecialTiles &&
-      Math.random() < 0.0;
+  const shouldBeWarped =
+    specialTileSettings.allowWarpedTiles &&
+    specialTileSettings.allowRandomSpecialTiles &&
+    Math.random() < 0.0;
 
-    if (shouldBeWarped) return { letter, isWarped: true, warpTurns: 5, rarity: 'bronze' };
-    if (shouldBeFire) return { letter, rarity, isFire: true };
-    if (shouldBeCursed) return { letter, rarity: 'bronze', isCursed: true, curseTurns: 3 };
+  const shouldBeCursed =
+    specialTileSettings.allowCursedTiles &&
+    specialTileSettings.allowRandomSpecialTiles &&
+    Math.random() < 0.0;
 
-    return { letter, rarity };
+   const shouldBeDull =
+  specialTileSettings.allowDullTiles &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < 0.0;
+
+  if (shouldBeWarped) {
+    return {
+      letter,
+      isWarped: true,
+      warpTurns: specialTileSettings.warpedTurns,
+      rarity: 'bronze',
+    };
   }
+
+  if (shouldBeFire) {
+    return {
+      letter,
+      isFire: true,
+      rarity,
+    };
+  }
+
+  if (shouldBeCursed) {
+    return {
+      letter,
+      isCursed: true,
+      rarity: 'bronze',
+    };
+  }
+
+  if (shouldBeDull) {
+  return {
+    letter,
+    isDull: true,
+    rarity: "none", // default 3 turns
+  };
+}
+
+  return { letter, rarity };
+}
+
 
   // board setup
   const initializeBoard = (rows: number, cols: number): Tile[][] => {
@@ -195,18 +240,44 @@ const goal = objective?.objGoal ?? 5;
       const rowTiles: Tile[] = [];
       for (let col = 0; col < cols; col++) {
         const presetType = presetTileMap[row]?.[col] ?? "normal";
+if (specialTileSettings.allowPresetTiles) {
+  if (presetType === "fire" && specialTileSettings.allowFireTiles) {
+    rowTiles.push({
+      ...generateRandomTile(),
+      isFire: true,
+      presets: true,
+    });
+  } else if (presetType === "removed") {
+    rowTiles.push({ isRemoved: true } as Tile);
+  } else if (presetType === "cursed" && specialTileSettings.allowCursedTiles) {
+    rowTiles.push({
+      ...generateRandomTile(),
+      isCursed: true,
+      curseTurns: level?.cursedTurns ?? 3, //  use custom setting
+      presets: true,
+    });
+  } else if (presetType === "warped" && specialTileSettings.allowWarpedTiles) {
+    rowTiles.push({
+      ...generateRandomTile(),
+      isWarped: true,
+      warpTurns: level?.warpTurns ?? 3, //  use custom setting
+      presets: true,
+    });
+  }
+  else if (presetType === "dull" && specialTileSettings.allowDullTiles) {
+    rowTiles.push({
+      ...generateRandomTile(),
+      isDull: true,
+      dullTurns: level?.dullTurns ?? 3, //  use custom setting
+      presets: true,
+    });
+  } else {
+    rowTiles.push(generateRandomTile());
+  }
+} else {
+  rowTiles.push(generateRandomTile());
+}
 
-        if (specialTileSettings.allowPresetTiles) {
-          if (presetType === "fire" && specialTileSettings.allowFireTiles)
-            rowTiles.push({ ...generateRandomTile(), isFire: true, presets: true });
-         else if (presetType === "removed") {
-           rowTiles.push({ isRemoved: true } as Tile);}
-          else if (presetType === "cursed" && specialTileSettings.allowCursedTiles)
-            rowTiles.push({ ...generateRandomTile(), isCursed: true, curseTurns: 3, presets: true });
-          else if (presetType === "warped" && specialTileSettings.allowWarpedTiles)
-            rowTiles.push({ ...generateRandomTile(), isWarped: true, warpTurns: 3, presets: true });
-          else rowTiles.push(generateRandomTile());
-        } else rowTiles.push(generateRandomTile());
 
         
       }
@@ -268,7 +339,7 @@ const goal = objective?.objGoal ?? 5;
       const t = grid[r][c];
 
 
-
+//reduce turns by 1 after each moves
       if (t?.isWarped) {
         const newTurns = (t.warpTurns ?? 1) - 1;
 
@@ -341,14 +412,13 @@ const goal = objective?.objGoal ?? 5;
     selected.forEach(({ row, col }) => {
       const t = grid[row][col];
       if (t?.isCursed && t.curseTurns && t.curseTurns > 0) points -= 15;
+      if (t.isDull && t.dullTurns && t.dullTurns > 0) points += 0;
 
-      if (t.gem && gem?.includes("purple")){
-          points += 20
-      }
+      
     });
     setScore((p) => p + points);
 
-    const goal = objective?.objGoal ?? 0;
+    
 let label = "Progress";
 
 if (objective?.type === "words") label = "Words Found";
@@ -407,16 +477,18 @@ if (objective) {
       skipLast = true;
     }
 
-    //Negate gem if the last tile involves a negative one
+   
+
+    const clearTiles = skipLast ? selected.slice(0, -1) : selected;
+    clearTiles.forEach(({ row, col }) => (updatedGrid[row][col] = null as any));
+
+     //Negate gem if the last tile involves a negative one
     if (gem){
        const last = selected[selected.length - 1];
        updatedGrid[last.row][last.col].isCursed || updatedGrid[last.row][last.col].isFire ||
        updatedGrid[last.row][last.col].isWarped
        skipLast = false;
     }
-
-    const clearTiles = skipLast ? selected.slice(0, -1) : selected;
-    clearTiles.forEach(({ row, col }) => (updatedGrid[row][col] = null as any));
 
    // gravity + regen
 const cols = updatedGrid[0].length;
@@ -442,6 +514,18 @@ for (let c = 0; c < cols; c++) {
         }
       }
 
+      if (t.isDull) {
+        const dullremaining = (t.dullTurns ?? 0) - 1;
+        if (dullremaining > 0){
+          t.curseTurns = dullremaining;
+        }  else {
+          //remove dull completely
+          delete t.isDull;
+          delete t.dullTurns;
+        }
+      }
+
+     
       // Push valid tiles into the column collector
       colTiles.push(t);
     }
@@ -620,6 +704,9 @@ setSelected([]);
       const warped = tile?.isWarped
         ? 'tile warped-tile animate-warped'
         : '';
+        const dull = tile?.isDull 
+        ? 'bg-gradient-to-br from-neutral-700 to-neutral-700 text-gray-100 border border-neutral-500  brightness-85'
+        : '';
       if (tile?.isRemoved) {
       return (
         <div
@@ -646,7 +733,7 @@ setSelected([]);
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${fire} ${cursed} ${warped}
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${fire} ${cursed} ${warped} ${dull}
           `}
         >
           {tile?.gem && (
@@ -663,11 +750,17 @@ setSelected([]);
             <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-red-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
               {tile.curseTurns}
             </div>
+          ) : tile?.isDull ? (
+              <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+              {tile.dullTurns}
+            </div>
+                    
           ) : tile?.isWarped ? (
             <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-yellow-400 text-black text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md shadow-yellow-300/50 animate-pulse">
               {tile.warpTurns}
             </div>
-          ) : (
+          ) : 
+           (
             <div
               className={`absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full z-10 ${getRarityColor(tile?.rarity)}`}
             />

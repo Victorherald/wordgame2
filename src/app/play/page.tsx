@@ -57,6 +57,7 @@ export default function PlayPage() {
         moves={level.moves ?? 15}
         levelName={level.name}
         onNextLevel={handleNextLevel}
+        level={level}
       />
 
       <div className="mt-4 flex flex-col items-center gap-3 text-sm text-gray-400">
