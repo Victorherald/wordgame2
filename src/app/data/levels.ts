@@ -1,11 +1,11 @@
 // src/data/levelData.ts
 
-export type TileType = "normal" | "fire" | "cursed" | "warped" | "removed" | "dull";
+export type TileType = "normal" | "locked"| "fire" | "cursed" | "warped" | "removed" | "dull";
 
 export type Objective =
   | { type: 'score'; objGoal: number }
   | { type: 'words'; objGoal: number; minLength?: number }
-  | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' };
+  | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' | 'locked' };
 
 export type LevelData = {
   id: number;
@@ -18,6 +18,8 @@ export type LevelData = {
   shouldCursedSpawn?: boolean;
   shouldFireSpawn?: boolean;
   cursedTurns?: number;
+  shouldLockSpawn?: boolean;
+  lockTurns?: number;
   warpTurns?: number;
   moves?: number;
   dullTurns?: number;
@@ -33,14 +35,14 @@ export function baseLevels(): LevelData[] {
       moves: 5,
       locked: false,
       board: [
-        ["removed", "normal", "normal", "normal", "normal", "removed", "removed", "removed"],
-        ["removed", "normal", "cursed", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "dull", "normal", "normal", "normal", "normal", "cursed", "normal"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["normal", "fire", "normal", "normal", "normal", "normal", "cursed", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["normal", "cursed", "normal", "normal", "normal", "normal", "normal", "removed"],
-        ["normal", "normal", "normal", "normal", "normal", "cursed", "normal", "removed"],
-        ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "removed"]
+        ["normal", "warped", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
       ],
       shouldWarpedSpawn: true,
       shouldCursedSpawn: false,
@@ -50,36 +52,36 @@ export function baseLevels(): LevelData[] {
     {
       id: 2,
       name: "Level 2",
-      objective: { type: 'destroy', objGoal: 2, tileType: 'cursed' },
+      objective:  { type: "score", objGoal: 300},
       locked: true,
       board: [
         ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
         ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
-        ["warped", "normal", "normal", "normal", "normal", "normal", "normal", "warped"],
-        ["warped", "cursed", "normal", "normal", "normal", "normal", "cursed", "warped"],
-        ["warped", "normal", "normal", "normal", "normal", "normal", "normal", "warped"],
-        ["warped", "normal", "normal", "normal", "normal", "normal", "normal", "warped"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
         ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"]
       ],
       shouldWarpedSpawn: false,
-      shouldCursedSpawn: false,
+      shouldCursedSpawn: true,
       shouldFireSpawn: false,
     },
     {
       id: 3,
       name: "Level 3",
-      objective: { type: 'destroy', objGoal: 4, tileType: 'cursed' },
+      objective: { type: "score", objGoal: 500 },
       locked: true,
       board: [
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
-        ["removed", "warped", "normal", "normal", "normal", "normal", "normal", "warped"],
-        ["removed", "normal", "warped", "normal", "normal", "normal", "warped", "normal"],
-        ["removed", "normal", "normal", "normal", "cursed", "normal", "normal", "normal"],
-        ["removed", "normal", "normal", "cursed", "fire", "cursed", "normal", "normal"],
-        ["removed", "normal", "normal", "normal", "cursed", "normal", "normal", "normal"],
-        ["removed", "normal", "warped", "normal", "normal", "normal", "warped", "normal"],
-        ["removed", "warped", "normal", "normal", "normal", "normal", "normal", "warped"]
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
       ],
       shouldWarpedSpawn: false,
       shouldCursedSpawn: false,
@@ -88,18 +90,18 @@ export function baseLevels(): LevelData[] {
     {
       id: 4,
       name: "Level 4",
-      objective: { type: 'destroy', objGoal: 6, tileType: 'cursed' },
+      objective: { type: "score", objGoal: 500},
       locked: true,
       moves: 40,
       board: [
-        ["cursed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "cursed", "normal", "normal", "normal", "normal", "normal", "cursed"],
-        ["removed", "removed", "cursed", "normal", "normal", "normal", "cursed", "removed"],
-        ["removed", "removed", "removed", "normal", "normal", "normal", "removed", "removed"],
-        ["removed", "removed", "normal", "normal", "normal", "removed", "removed", "removed"],
-        ["removed", "cursed", "normal", "normal", "normal", "cursed", "removed", "removed"],
-        ["cursed", "normal", "normal", "normal", "normal", "normal", "cursed", "removed"],
-        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "cursed"]
+            ["normal", "removed", "removed", "removed", "removed", "removed", "removed", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "removed", "removed", "normal", "normal", "removed", "removed", "normal"]
       ],
       shouldWarpedSpawn: false,
       shouldCursedSpawn: true,
@@ -108,9 +110,9 @@ export function baseLevels(): LevelData[] {
      {
       id: 5,
       name: "Level 5",
-      objective: { type: 'words', objGoal: 10, minLength: 3 },
+      objective: { type: "score", objGoal: 1000 },
       locked: true,
-      moves: 14,
+      moves: 35,
       board: [
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
@@ -128,7 +130,7 @@ export function baseLevels(): LevelData[] {
      {
       id: 6,
       name: "Level 6",
-      objective: { type: 'destroy', objGoal: 11, tileType: 'cursed' },
+      objective: { type: 'words', objGoal: 10, minLength: 3 },
       locked: true,
       moves: 14,
       board: [
@@ -136,15 +138,37 @@ export function baseLevels(): LevelData[] {
         ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "normal", "normal", "warped", "normal", "warped", "normal", "normal"],
-        ["removed", "cursed", "normal", "normal", "warped", "normal", "cursed", "normal"],
-        ["removed", "normal", "normal", "warped", "normal", "warped", "normal", "normal"],
-        ["removed", "normal", "normal", "normal", "warped", "normal", "normal", "normal"]
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "cursed", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+      ],
+      shouldWarpedSpawn: false,
+      shouldCursedSpawn: false,
+      shouldFireSpawn: false,
+      cursedTurns: 4,
+    },
+     {
+      id: 7,
+      name: "Level 30",
+      objective: { type: 'destroy', objGoal: 4, tileType: 'warped' },
+      locked: true,
+      moves: 14,
+      board: [
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["dull", "dull", "dull", "dull", "normal", "normal", "normal", "normal"],
+        ["dull", "dull", "dull", "dull", "dull", "normal", "normal", "normal"],
+        ["dull", "dull", "dull", "dull", "dull", "dull", "normal", "normal"],
+        ["dull", "dull", "dull", "dull", "dull", "dull", "dull", "normal"],
+        ["dull", "dull", "dull", "dull", "dull", "dull", "dull", "dull"]
       ],
       shouldWarpedSpawn: false,
       shouldCursedSpawn: true,
       shouldFireSpawn: false,
-      cursedTurns: 4,
+      warpTurns: 6,
+      dullTurns: 8
     }
   ];
 }
