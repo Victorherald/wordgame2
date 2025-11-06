@@ -214,9 +214,93 @@
   cursor: not-allowed;
 }
 
-.locked-chain {
-  background-image: url('/chains.png');
-  background-size: cover;
-  opacity: 0.8;
+/* Example CSS for burnt tile */
+.tile.burnt {
+  background: linear-gradient(145deg, #3e2f2f, #2b1f1f);
+  color: #a89179;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.6);
+  animation: burnFade 1.5s ease-in-out forwards;
 }
+
+@keyframes burnFade {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(0.5) grayscale(0.8); }
+}
+
+@keyframes fire-glow {
+  0% { box-shadow: 0 0 10px #ff6600; }
+  50% { box-shadow: 0 0 25px #ff3300; }
+  100% { box-shadow: 0 0 10px #ff6600; }
+}
+
+.animate-fire-glow {
+  animation: fire-glow 1s infinite;
+}
+
+/*CSS styling for bone tile animations*/
+
+
+/*  Unripe Bone Tile — dull teal, faint shimmer */
+.tile-bone-unripe {
+  background: linear-gradient(145deg, #083a3a, #0a4c4c);
+  border: 2px solid #0c6666;
+  box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.2);
+  animation: boneUnripePulse 3s infinite ease-in-out;
+  opacity: 0.85;
+  position: relative;
+  color: transparent; /* empty tile */
+}
+
+@keyframes boneUnripePulse {
+  0%, 100% {
+    box-shadow: inset 0 0 10px rgba(0, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: inset 0 0 20px rgba(0, 255, 255, 0.4);
+  }
+}
+
+/*  Ripe Bone Tile — ethereal teal with glowing energy */
+.tile-bone-ripe {
+  background: radial-gradient(circle at 50% 50%, #0bf483 0%, #05994d 100%);
+  border: 2px solid #0fe97c;
+  box-shadow:
+    0 0 15px rgba(13, 225, 112, 0.8),
+    inset 0 0 10px rgba(0, 255, 145, 0.4);
+  animation: boneRipeGlow 1.8s infinite alternate ease-in-out;
+  color: #e6ffff;
+  font-weight: 700;
+  position: relative;
+}
+
+@keyframes boneRipeGlow {
+  0% {
+    filter: brightness(1);
+    box-shadow:
+      0 0 15px rgba(0, 255, 255, 0.8),
+      inset 0 0 10px rgba(101, 243, 155, 0.4);
+  }
+  100% {
+    filter: brightness(1.5);
+    box-shadow:
+      0 0 25px rgb(0, 255, 162),
+      inset 0 0 20px rgba(0, 255, 157, 0.6);
+  }
+}
+
+/* Turn Counter Overlay */
+.tile-bone-turns::after {
+  content: attr(data-turns);
+  position: absolute;
+  bottom: 3px;
+  right: 5px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 5px rgb(197, 249, 225);
+  pointer-events: none;
+}
+
+
+
 

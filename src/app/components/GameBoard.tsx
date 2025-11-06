@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation';
 import { basename } from 'node:path';
 
 type Rarity = 'bronze' | 'silver' | 'gold' | 'none';
-type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'whiteDiamond';
+type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'whiteDiamond' | 'bone';
 
 type Tile = {
   letter: string;
@@ -30,18 +30,21 @@ type Tile = {
    dullTurns?: number;
    isLocked?: boolean;
 lockTurns?: number;
-
+isBone?: boolean;        // identifies it's a bone tile
+isRipe?: boolean;        // true if glowing, usable in words
+boneTurns?: number;      // how many turns before it ripens
+isStationary?: boolean;  // true if it cannot move (unripe)
 };
 
 type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull")[][];
+  layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone")[][];
   objective?: {
   type: 'score' | 'words' | 'destroy';
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked";
+  tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone";
   minLength?: number;
 
 };
@@ -64,6 +67,7 @@ const specialTileSettings = {
   allowDullTiles: true,
   allowRandomSpecialTiles: false,
    allowLockedTiles: true,
+   allowBoneTiles: true,
   allowRandomLockedTiles: false, // you can toggle this
   lockedTurns: 4,
 
@@ -164,8 +168,9 @@ const goal = objective?.objGoal ?? 5;
 
   const letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","QU","R","S","T","U","V","W","X","Y","Z"];
   const HARD_LETTERS = ['Q', 'X', 'Z', 'J', 'K', 'Y'];
+  const EASY_LETTERS = ['A','E','I','O','U','T','N','S','R','L'];
 
-
+const allowHardLetters = level?.allowHardLetters ?? true;
 
 
   // rarity logic
@@ -178,8 +183,14 @@ const goal = objective?.objGoal ?? 5;
 
   
 
-function generateRandomTile(p0?: boolean): Tile {
-  const letter = letters[Math.floor(Math.random() * letters.length)];
+function generateRandomTile(includeHardLetters = true): Tile {
+
+  // pick allowed letters based on toggle
+  const allowedLetters = includeHardLetters
+    ? letters
+    : letters.filter((l) => !HARD_LETTERS.includes(l.replace("QU", "Q"))); // QU check
+const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)];
+
   const rarity = getRarityByLetter(letter);
 
    // probabilities when allowed
@@ -188,12 +199,18 @@ function generateRandomTile(p0?: boolean): Tile {
   const pCursed = 0.03;
   const pDull = 0.02;
   const pLocked = 0.02;
+  const pBone = 0.02;
 
 
   const shouldBeFire =
     specialTileSettings.allowFireTiles &&
     specialTileSettings.allowRandomSpecialTiles &&
     Math.random() < pFire;
+
+  const shouldBeBone = 
+  specialTileSettings.allowBoneTiles &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < pBone;
 
   const shouldBeWarped =
     specialTileSettings.allowWarpedTiles &&
@@ -214,6 +231,17 @@ const shouldBeLocked =
   specialTileSettings.allowLockedTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pLocked;
+
+
+if (shouldBeBone) {
+  return {  isBone: true,
+    isRipe: false,
+    isStationary: true,
+    boneTurns: level?.boneTurns ?? 3,
+    letter: "", 
+    rarity: "none" //when its unripe
+} 
+}
 
   
 if (shouldBeLocked) {
@@ -238,85 +266,78 @@ if (shouldBeLocked) {
 }
 
 
-  // board setup
-  const initializeBoard = (rows: number, cols: number): Tile[][] => {
-    const newGrid: Tile[][] = [];
+ // board setup
+const initializeBoard = (rows: number, cols: number): Tile[][] => {
+  const newGrid: Tile[][] = [];
 
-    for (let row = 0; row < rows; row++) {
-      const rowTiles: Tile[] = [];
-      for (let col = 0; col < cols; col++) {
-        const presetType = presetTileMap[row]?.[col] ?? "normal";
+  for (let row = 0; row < rows; row++) {
+    const rowTiles: Tile[] = [];
+    for (let col = 0; col < cols; col++) {
+      const presetType = presetTileMap[row]?.[col] ?? "normal";
 
+      if (specialTileSettings.allowPresetTiles) {
+        if (presetType === "fire" && specialTileSettings.allowFireTiles) {
+          rowTiles.push({
+            ...generateRandomTile(),
+            isFire: true,
+            presets: false,
+          });
+        } else if (presetType === "removed") {
+          rowTiles.push({ isRemoved: true } as Tile);
+        } else if (presetType === "cursed" && specialTileSettings.allowCursedTiles) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isCursed: true,
+            curseTurns: level?.cursedTurns ?? 3,
+            presets: true,
+          });
+        } else if (presetType === "locked" && specialTileSettings.allowLockedTiles) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isLocked: true,
+            lockTurns: level?.lockTurns ?? 3,
+            presets: true,
+          });
+        } else if (presetType === "warped" && specialTileSettings.allowWarpedTiles) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isWarped: true,
+            warpTurns: level?.warpTurns ?? 3,
+            presets: true,
+          });
+        } else if (presetType === "dull" && specialTileSettings.allowDullTiles) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isDull: true,
+            dullTurns: level?.dullTurns ?? 3,
+            presets: true,
+          });
 
+        // 🦴 Bone tile (unripe by default)
+        } else if (presetType === "bone" && specialTileSettings.allowBoneTiles) {
+          rowTiles.push({
+            isBone: true,
+            isRipe: false,
+            isStationary: true,
+            boneTurns: level?.boneTurns ?? 3, // default to 3 turns to ripen
+            letter: "",
+            rarity: "none",
+            presets: true,
+          });
 
-
-if (specialTileSettings.allowPresetTiles) {
-  if (presetType === "fire" && specialTileSettings.allowFireTiles) {
-    rowTiles.push({
-      ...generateRandomTile(true),
-      isFire: true,
-      presets: false,
-    });
-
-
-
-    
-
-
-  } else if (presetType === "removed") {
-    rowTiles.push({ isRemoved: true } as Tile);
-
-
-  } else if (presetType === "cursed" && specialTileSettings.allowCursedTiles) {
-    rowTiles.push({
-      ...generateRandomTile(),
-      isCursed: true,
-      curseTurns: level?.cursedTurns ?? 3, //  use custom setting
-      presets: true,
-    });
-  }
-    else if (presetType === "locked" && specialTileSettings.allowLockedTiles) {
-    rowTiles.push({
-      ...generateRandomTile(),
-      isLocked: true,
-      lockTurns: level?.lockTurns ?? 3, //  use custom setting
-      presets: true,
-    });
-
-
-
-  } else if (presetType === "warped" && specialTileSettings.allowWarpedTiles) {
-    rowTiles.push({
-      ...generateRandomTile(),
-      isWarped: true,
-      warpTurns: level?.warpTurns ?? 3, //  use custom setting
-      presets: true,
-    });
-  }
-  else if (presetType === "dull" && specialTileSettings.allowDullTiles) {
-    rowTiles.push({
-      ...generateRandomTile(),
-      isDull: true,
-      dullTurns: level?.dullTurns ?? 3, //  use custom setting
-      presets: true,
-    });
-  } else {
-    rowTiles.push(generateRandomTile());
-  }
-} else {
-  rowTiles.push(generateRandomTile());
-}
-
-
-        
+        } else {
+          rowTiles.push(generateRandomTile(level?.allowHardLetters ?? true));
+        }
+      } else {
+        rowTiles.push(generateRandomTile(level?.allowHardLetters ?? true));
       }
-      newGrid.push(rowTiles);
     }
+    newGrid.push(rowTiles);
+  }
 
-    
+  return newGrid;
+};
 
-    return newGrid;
-  };
   
 
   useEffect(() => setGrid(initializeBoard(8, 8)), []);
@@ -344,7 +365,7 @@ if (specialTileSettings.allowPresetTiles) {
 
   const handleTileClick = (row: number, col: number) => {
     const tile = grid[row][col];
-     if (!tile || tile.isRemoved || tile.isLocked) return;
+     if (!tile || tile.isRemoved || tile.isLocked ||  tile.isBone && tile.isStationary) return;
     const last = selected[selected.length - 1];
     const current = { row, col };
     if (selected.length === 0 || isAdjacent(last, current))
@@ -357,7 +378,7 @@ if (specialTileSettings.allowPresetTiles) {
 
   //  warped effect helper
   function getNewWarpedLetter(current: string) {
-    const available = letters.filter((l) => l !== current);
+    const available = HARD_LETTERS.filter((l) => l !== current);
     return available[Math.floor(Math.random() * available.length)];
   }
 
@@ -394,6 +415,8 @@ if (specialTileSettings.allowPresetTiles) {
   return warpedGrid;
 }
 
+
+// Bone Tile mechanics
 
 
 
@@ -563,7 +586,7 @@ if (objective) {
       if (objective.tileType === 'fire') return t.isFire;
       if (objective.tileType === 'cursed') return t.isCursed;
       if (objective.tileType === 'warped') return t.isWarped;
-
+      if (objective.tileType === 'bone') return t.isBone;
       return false;
     }).length;
 
@@ -620,82 +643,163 @@ if (gem) {
 }
 
 
-     
-   // gravity + regen
-const cols = updatedGrid[0].length;
-const rows = updatedGrid.length;
 
-for (let c = 0; c < cols; c++) {
-  const colTiles: Tile[] = [];
 
-  // Collect all valid tiles in this column (ignore removed ones)
-  for (let r = rows - 1; r >= 0; r--) {
-    const t = updatedGrid[r][c];
 
-    if (t && !t.isRemoved) {
-      // Handle cursed tiles
-      if (t.isCursed) {
-        const remaining = (t.curseTurns ?? 0) - 1;
-        if (remaining > 0) {
-          t.curseTurns = remaining;
-        } else {
-          // Remove curse completely
-          delete t.isCursed;
-          delete t.curseTurns;
-        }
-      }
+// Find if the word used a ripe bone
+const boneUsed = selected.find(({ row, col }) => grid[row][col]?.isBone && grid[row][col]?.isRipe);
 
-      if (t.isDull) {
-        const dullremaining = (t.dullTurns ?? 0) - 1;
-        if (dullremaining > 0){
-          t.dullTurns = dullremaining;
-        }  else {
-          //remove dull completely
-          delete t.isDull;
-          delete t.dullTurns;
-        }
-      }
+if (boneUsed) {
+  const { row, col } = boneUsed;
 
-//locked tile turn decreasing
-      if (t.isLocked) {
-  const remaining = (t.lockTurns ?? 0) - 1;
-  if (remaining > 0) {
-    t.lockTurns = remaining;
-  } else {
-    delete t.isLocked;
-    delete t.lockTurns;
+  // Pick a random adjacent tile to infect
+  const directions = [
+    [1, 0],
+    [-1, 0],
+    [0, 1],
+    [0, -1],
+  ];
+
+  const validNeighbors = directions
+    .map(([dr, dc]) => ({ r: row + dr, c: col + dc }))
+    .filter(({ r, c }) => grid[r]?.[c] && !grid[r][c].isRemoved);
+
+  if (validNeighbors.length > 0) {
+    const chosen = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
+    const target = grid[chosen.r][chosen.c];
+
+    updatedGrid[chosen.r][chosen.c] = {
+      ...target,
+      isBone: true,
+      isStationary: true,
+      isRipe: false,
+      boneTurns: level?.boneUnripeTurns ?? 2,
+      letter: "",
+      rarity: "bronze",
+    };
   }
 }
 
+
+
      
-      // Push valid tiles into the column collector
-      colTiles.push(t);
+// 🧠 Gravity + Regeneration (fixed, supports stationary bone tiles)
+const cols = updatedGrid[0].length;
+ const rows = updatedGrid.length;
+
+
+ // Handle bone tile ripening before gravity/refill
+for (let r = 0; r < rows; r++) {
+  for (let c = 0; c < cols; c++) {
+    const t = updatedGrid[r][c];
+    if (!t?.isBone) continue;
+
+    const remaining = (t.boneTurns ?? 0) - 1;
+    if (remaining <= 0) {
+      if (t.isRipe) {
+        // Ripe → Unripe
+        updatedGrid[r][c] = {
+          ...t,
+          isRipe: false,
+          isStationary: true,
+          boneTurns: level?.boneUnripeTurns ?? 2,
+          letter: "",
+          rarity: "none",
+        };
+      } else {
+        // Unripe → Ripe
+        updatedGrid[r][c] = {
+          ...t,
+          isRipe: true,
+          isStationary: false,
+          boneTurns: level?.boneRipeTurns ?? 3,
+          letter: "B",
+          rarity: "gold",
+        };
+      }
+    } else {
+      updatedGrid[r][c] = { ...t, boneTurns: remaining };
+    }
+  }
+}
+
+
+
+
+for (let c = 0; c < cols; c++) {
+  const newCol: (Tile | null)[] = Array(rows).fill(null);
+  let insertRow = rows - 1;
+
+  // Go upward to collect movable tiles
+  for (let r = rows - 1; r >= 0; r--) {
+    const t = updatedGrid[r][c];
+    if (!t) continue;
+
+    // 🔥 Skip removed tiles but keep them in place visually
+    if (t.isRemoved) {
+      newCol[r] = { ...t };
+      continue;
+    }
+
+    // 🦴 Stationary bone tiles stay fixed — nothing can fall past them
+    if (t.isBone && t.isStationary) {
+      newCol[r] = { ...t };
+      insertRow = r - 1; // everything above falls only to just above this tile
+      continue;
+    }
+
+    // Handle timed effects before moving
+    if (t.isCursed) {
+      const remaining = (t.curseTurns ?? 0) - 1;
+      if (remaining > 0) t.curseTurns = remaining;
+      else {
+        delete t.isCursed;
+        delete t.curseTurns;
+      }
+    }
+
+    if (t.isDull) {
+      const remaining = (t.dullTurns ?? 0) - 1;
+      if (remaining > 0) t.dullTurns = remaining;
+      else {
+        delete t.isDull;
+        delete t.dullTurns;
+      }
+    }
+
+    if (t.isLocked) {
+      const remaining = (t.lockTurns ?? 0) - 1;
+      if (remaining > 0) t.lockTurns = remaining;
+      else {
+        delete t.isLocked;
+        delete t.lockTurns;
+      }
+    }
+
+    // Find the nearest empty cell above any stationary blockers
+    while (insertRow >= 0 && newCol[insertRow] !== null) insertRow--;
+
+    if (insertRow >= 0) {
+      newCol[insertRow] = { ...t };
+      insertRow--;
     }
   }
 
-  // Refill each column while preserving removed spaces
-  for (let r = rows - 1; r >= 0; r--) {
-    const current = updatedGrid[r][c];
-
-    if (current?.isRemoved) {
-      // Keep removed tiles unchanged
-      updatedGrid[r][c] = { ...current };
-    } else if (colTiles.length > 0) {
-      // Drop existing tiles downward
-      updatedGrid[r][c] = colTiles.shift()!;
-    } else {
-      // Generate new tiles for remaining empty spaces
-      updatedGrid[r][c] = generateRandomTile();
+  // Fill top with new tiles
+  for (let r = 0; r < rows; r++) {
+    if (!newCol[r]) {
+      newCol[r] = generateRandomTile(level?.allowHardLetters ?? true);
       newGenerated.push({ row: r, col: c });
     }
   }
+
+  // Write back this column
+  for (let r = 0; r < rows; r++) {
+    updatedGrid[r][c] = newCol[r]!;
+  }
 }
 
-
-
-
-  
-
+// ✅ Apply updates
 setGrid(updatedGrid);
 setNewTiles(newGenerated);
 setSelected([]);
@@ -723,6 +827,13 @@ setSelected([]);
       whiteDiamond: 'bg-gradient-to-br from-white via-sky-100 to-white opacity-70'
     }[gem] || '');
 
+
+
+    useEffect(() => {
+  document.body.style.overflow = showObjectivePopup ? 'hidden' : 'auto';
+}, [showObjectivePopup]);
+
+
   return (
 
     
@@ -730,25 +841,49 @@ setSelected([]);
 
    
 
-   <div className="min-h-screen w-full bg-neutral-950 flex justify-center items-start py-1 px-2">
+   <div className="min-h-screen w-full bg-neutral-950 flex justify-center items-start py-1 sm:py-3 px-1 sm:px-4">
   <div
     className="
       w-full max-w-6xl
-      grid grid-cols-3 md:grid-cols-[280px_1fr]
+      flex flex-col md:grid md:grid-cols-[280px_1fr]
       gap-4
       bg-neutral-900
       rounded-xl
       shadow-inner shadow-black/30
       overflow-hidden
-      p-3
+      p-2 sm:p-3
     "
   >
+{/* --- Top Bar (Mobile only) --- */}
+    <div className="flex md:hidden justify-between items-center bg-neutral-950 border border-neutral-800 rounded-lg p-2 mb-2">
+      <div className="text-xs sm:text-sm font-semibold text-white">
+        {levelName ? levelName : "Level"}
+      </div>
+      <div className="text-xs sm:text-sm text-white font-semibold">
+        Moves: {movesLeft}
+      </div>
+      <div className="text-xs sm:text-sm text-yellow-400 font-semibold flex items-center gap-1">
+         {objective
+      ? `${objective.type === 'words'
+          ? 'Words Found'
+          : objective.type === 'score'
+          ? 'Score'
+          : `Destroy ${objective.tileType} tiles`
+        }: ${objMet}/${objective.objGoal}`
+      : 'No objective'}
+      </div>
+      
+    </div>
+<div className='flex md:hidden '>
+        <ScoreCounter score={score} />
+      </div>
+
+
     {/*  Sidebar */}
     <div
       className="
-        flex flex-col justify-between
+        hidden md:flex flex-col justify-between
         bg-neutral-950 p-4 rounded-lg border border-neutral-800
-        h-[900px] md:h-auto
         overflow-y-auto space-y-3"
       
     >
@@ -786,6 +921,7 @@ setSelected([]);
       {/* Score + Controls */}
       <div className="flex flex-col gap-3 flex-grow overflow-hidden">
         <ScoreCounter score={score} />
+        
 
         <button
           onClick={clearSelection}
@@ -800,7 +936,7 @@ setSelected([]);
   className={`px-4 py-2 rounded transition ${
     isWordValid && movesLeft > 0 && !isGameOver
       ? 'bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse z-20'
-      : 'bg-gray-700 text-white z-20 cursor-not-allowed opacity-60'
+      : 'bg-gray-200 text-white z-20 cursor-not-allowed opacity-60'
   }`}
 >
   Submit Word
@@ -826,8 +962,8 @@ setSelected([]);
 <div
   className="
     grid grid-cols-8
-    gap-[2px] sm:gap-[4px] md:gap-[6px]
-    justify-center
+          gap-[2px] sm:gap-[4px] md:gap-[6px]
+          justify-center
   "
 >
   {grid.map((row, r) =>
@@ -852,6 +988,12 @@ setSelected([]);
         const locked = tile?.isLocked
   ? 'bg-gray-800 text-gray-400 border-2 border-gray-500 relative overflow-hidden locked-chain'
   : '';
+  const bone = tile?.isBone
+  ? tile.isRipe
+    ? 'tile-bone-ripe'
+    : 'tile-bone-unripe'
+  : '';
+
       if (tile?.isRemoved) {
       return (
         <div
@@ -878,7 +1020,7 @@ setSelected([]);
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${tile.isBurnt ? 'tile-burnt' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull}
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${bone} ${tile.isBurnt ? 'bg-[#fff000] opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull}
           `}
         >
           {tile?.gem && (
@@ -913,7 +1055,17 @@ setSelected([]);
             <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-yellow-400 text-black text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md shadow-yellow-300/50 animate-pulse">
               {tile.warpTurns}
             </div>
-          ) : 
+          )  : tile?.isBone ? (
+  <div
+    className={`absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md transition-all ${
+      tile.isRipe
+        ? "bg-teal-400/80 shadow-teal-300/50 animate-pulse"
+        : "bg-[#0f3b3a]/80 text-teal-200"
+    }`}
+  >
+    {tile.boneTurns}
+  </div>
+) : 
            (
             <div
               className={`absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full z-10 ${getRarityColor(tile?.rarity)}`}
@@ -940,70 +1092,96 @@ setSelected([]);
 
 
       {/*  Current Word for Mobile */}
-      <div className="block md:hidden w-full mt-4 text-center">
+      <div className="block md:hidden w-full mt-2 text-center absolute top-105">
         <WordDisplay word={getSelectedWord()} />
+      </div>
+
+ {/* --- Bottom Bar (Mobile only) --- */}
+      <div className="flex md:hidden justify-around items-center w-full mt-10 bg-neutral-900 border border-neutral-800 rounded-lg p-2">
+        <button
+          onClick={clearSelection}
+          className="px-3 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition"
+        >
+          Clear
+        </button>
+        <button
+          disabled={!isWordValid || movesLeft <= 0 || isGameOver}
+          onClick={applyWordMatch}
+          className={`px-3 py-2 text-sm rounded transition ${
+            isWordValid && movesLeft > 0 && !isGameOver
+              ? "bg-green-600 text-white shadow-md shadow-green-400 animate-pulse"
+              : "bg-gray-700 text-white cursor-not-allowed opacity-60"
+          }`}
+        >
+          Submit
+        </button>
       </div>
     </div>
   </div>
-   {/* Objective Popup (shown at start and reopened with "i" icon) */}
-      {showObjectivePopup ? (
-        <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
-          <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 w-11/12 max-w-md text-center space-y-4 shadow-xl animate-fade-in">
-            <h2 className="text-xl font-semibold text-white">Objective</h2>
-          {objective ? (
-  <p className="text-gray-300 text-sm leading-snug">
-  {objective?.type === "score" && `Reach ${objective.objGoal} points`}
-  {objective?.type === "words" && `Find ${objective.objGoal} words`}
-  {objective?.type === "destroy" && `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
-  </p>
-) : (
-  <p className="text-gray-500 text-sm italic">No objective</p>
+
+{/* --- Objective Popup (Fixed & Responsive) --- */}
+{showObjectivePopup && (
+  <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 overflow-hidden">
+    <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in">
+      <h2 className="text-lg sm:text-xl font-semibold text-white">Objective</h2>
+
+      {objective ? (
+        <p className="text-gray-300 text-xs sm:text-sm leading-snug">
+          {objective.type === "score" && `Reach ${objective.objGoal} points`}
+          {objective.type === "words" && `Find ${objective.objGoal} words`}
+          {objective.type === "destroy" &&
+            `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
+        </p>
+      ) : (
+        <p className="text-gray-500 text-xs sm:text-sm italic">No objective</p>
+      )}
+
+      <button
+        onClick={() => setShowObjectivePopup(false)}
+        className="mt-3 sm:mt-4 bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base"
+      >
+        Ok
+      </button>
+    </div>
+  </div>
 )}
 
-            <button
-              onClick={() => setShowObjectivePopup(false)}
-              className="mt-4 bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded transition"
-            >
-              Ok
-            </button>
-          </div>
-        </div>
-      ) : null}
-
-
-      {/* End results after mov */}
-
-      {isGameOver && (
+{/* --- End Results Popup --- */}
+{isGameOver && (
   <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
-    <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 w-11/12 max-w-md text-center space-y-4 shadow-xl">
-      <h2 className="text-xl font-semibold text-white">
-        {gameResult === 'win' ? 'Level Complete!' :  gameResult === 'fail' || 'fire' ? 'Game Over' : ''}
+    <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-11/12 max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in mb-32 sm:mb-16">
+      <h2 className="text-lg sm:text-xl font-semibold text-white">
+        {gameResult === "win"
+          ? "Level Complete!"
+          : gameResult === "fail" || gameResult === "fire"
+          ? "Game Over"
+          : ""}
       </h2>
-      <p className="text-gray-300 text-sm">
-        {gameResult === 'win'
-          ? 'You successfully completed the objective!' 
-          :
-        gameResult === 'fire' 
-        ? 'Tiles are ignited!'
-          : 'You ran out of moves.'}
+
+      <p className="text-gray-300 text-xs sm:text-sm">
+        {gameResult === "win"
+          ? "You successfully completed the objective!"
+          : gameResult === "fire"
+          ? "Tiles are ignited!"
+          : "You ran out of moves."}
       </p>
 
-      <div className="flex justify-center gap-3 mt-4">
+      <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mt-3 sm:mt-4">
         <button
           onClick={() => window.location.reload()}
-          className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded transition"
+          className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base"
         >
           Retry
         </button>
 
-        {gameResult === 'win' && (
+        {gameResult === "win" && (
           <button
-             onClick={() => {
-      const nextLevel = levelId + 1;
-      localStorage.setItem("currentLevel", nextLevel.toString());
-window.location.href = "/play"; // reload same /play route with new level data
-    }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded transition"
+            onClick={() => {
+              const nextLevel = levelId + 1;
+              localStorage.setItem("currentLevel", nextLevel.toString());
+              window.location.href = "/play";
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base"
           >
             Next Level
           </button>
@@ -1012,8 +1190,8 @@ window.location.href = "/play"; // reload same /play route with new level data
     </div>
   </div>
 )}
-
 </div>
+
 
 
 

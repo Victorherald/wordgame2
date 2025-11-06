@@ -12,8 +12,8 @@ export type LevelData = {
   name: string;
   objective: Objective;
   locked: boolean;
-  layout?: TileType[][];
   board: TileType[][];
+  layout?: string[][];
   shouldWarpedSpawn?: boolean;
   shouldCursedSpawn?: boolean;
   shouldFireSpawn?: boolean;
@@ -32,8 +32,8 @@ boneUnripeTurns?: number;
 };
 
 
-export function baseLevels(): LevelData[] {
-  return [
+export const levels: LevelData[] = [
+
     {
       id: 1,
       name: "Level 1",
@@ -45,8 +45,8 @@ export function baseLevels(): LevelData[] {
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["normal", "bone", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["normal", "fire", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
@@ -200,4 +200,4 @@ export function baseLevels(): LevelData[] {
       dullTurns: 10
     }
   ];
-}
+

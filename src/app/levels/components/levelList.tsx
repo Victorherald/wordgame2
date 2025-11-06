@@ -1,30 +1,89 @@
 "use client";
 import { useEffect, useState } from "react";
-import { baseLevels } from "../../data/levels";
 import { loadProgress, saveProgress } from "@/utils/storage";
 import { useRouter } from "next/navigation";
 import { Lock, Unlock, Play} from "lucide-react";
 
-type LevelListProps = {
-  overrideLevels?: ReturnType<typeof baseLevels>;
+type Level = {
+  id: number;
+  name: string;
+  objective?: {
+    type: string;
+    objGoal: number;
+    tileType?: string;
+  };
 };
 
-export default function LevelList({ overrideLevels }: LevelListProps) {
-  const [levels, setLevels] = useState(baseLevels());
+
+type Props = {
+  overrideLevels?: Level[]; // optional -- used by LevelList if provided
+};
+
+
+export default function LevelList({ overrideLevels }: Props) {
+  const [levels, setLevels] = useState<Level[]>([]);
   const [unlockedLevels, setUnlockedLevels] = useState<number[]>([1]);
+  const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(0);
   const router = useRouter();
 
-    // Load unlocked progress
-  useEffect(() => {
-    const savedUnlocked = localStorage.getItem("unlockedLevels");
-    if (savedUnlocked) {
-      try {
-        const parsed = JSON.parse(savedUnlocked);
-        if (Array.isArray(parsed)) setUnlockedLevels(parsed);
-      } catch {}
-    }
-  }, []);
+  
+  const levelsPerPage = 6;
+  const totalPages = Math.max(1, Math.ceil(levels.length / levelsPerPage));
 
+    // If overrideLevels changes (or exists on first render), use it and skip fetch
+  useEffect(() => {
+    if (overrideLevels && overrideLevels.length > 0) {
+      setLevels(overrideLevels);
+      setLoading(false);
+      setPage(0);
+      return;
+    }
+
+    // otherwise fetch from backend
+    let mounted = true;
+    const fetchLevels = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/levels", { cache: "no-store" });
+        if (!res.ok) throw new Error(`Failed to fetch levels (${res.status})`);
+        const data = await res.json();
+        if (mounted) {
+          setLevels(Array.isArray(data) ? data : []);
+          setPage(0);
+        }
+      } catch (err) {
+        console.error("Failed to fetch levels:", err);
+        if (mounted) setLevels([]);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+
+    fetchLevels();
+    return () => {
+      mounted = false;
+    };
+  }, [overrideLevels]);
+
+   
+const goNext = () => {
+    if (page < totalPages - 1) setPage(page + 1);
+  };
+  const goPrev = () => {
+    if (page > 0) setPage(page - 1);
+  };
+
+  if (loading) {
+    return (
+      <main className="min-h-screen bg-neutral-950 text-white flex items-center justify-center p-6">
+        <div className="text-lg animate-pulse">Loading levels...</div>
+      </main>
+    );
+  }
+
+  const startIndex = page * levelsPerPage;
+  const visibleLevels = levels.slice(startIndex, startIndex + levelsPerPage);
   
 
  const handlePlay = (lvlId: number) => {
