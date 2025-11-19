@@ -4,7 +4,7 @@ import React from 'react';
 type MovesDisplayProps = { movesLeft: number };
 
 export function MovesDisplay({ movesLeft }: MovesDisplayProps) {
-  const isLow = movesLeft <= 3;
+  const isLow = movesLeft <= 5;
 
   return (
     <div

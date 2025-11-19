@@ -8,7 +8,7 @@ import { baseLevels, LevelData } from '../data/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
 import { useRouter } from 'next/navigation';
-import { basename } from 'node:path';
+
 
 type Rarity = 'bronze' | 'silver' | 'gold' | 'none';
 type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'whiteDiamond' | 'bone';
@@ -34,17 +34,19 @@ isBone?: boolean;        // identifies it's a bone tile
 isRipe?: boolean;        // true if glowing, usable in words
 boneTurns?: number;      // how many turns before it ripens
 isStationary?: boolean;  // true if it cannot move (unripe)
+isLightBulb?: boolean;
+isBulbOn?: boolean
 };
 
 type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone")[][];
+  layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb")[][];
   objective?: {
   type: 'score' | 'words' | 'destroy';
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone";
+  tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone" | "bulb";
   minLength?: number;
 
 };
@@ -68,6 +70,7 @@ const specialTileSettings = {
   allowRandomSpecialTiles: false,
    allowLockedTiles: true,
    allowBoneTiles: true,
+   allowBulbTiles: true,
   allowRandomLockedTiles: false, // you can toggle this
   lockedTurns: 4,
 
@@ -168,7 +171,7 @@ const goal = objective?.objGoal ?? 5;
 
   const letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","QU","R","S","T","U","V","W","X","Y","Z"];
   const HARD_LETTERS = ['Q', 'X', 'Z', 'J', 'K', 'Y'];
-  const EASY_LETTERS = ['A','E','I','O','U','T','N','S','R','L'];
+ // const EASY_LETTERS = ['A','E','I','O','U','T','N','S','R','L'];
 
 const allowHardLetters = level?.allowHardLetters ?? true;
 
@@ -200,12 +203,17 @@ const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)]
   const pDull = 0.02;
   const pLocked = 0.02;
   const pBone = 0.02;
-
+  const pBulb = 0.03;
 
   const shouldBeFire =
     specialTileSettings.allowFireTiles &&
     specialTileSettings.allowRandomSpecialTiles &&
     Math.random() < pFire;
+
+    const shouldBeBulb = 
+    specialTileSettings.allowBulbTiles &&
+    specialTileSettings.allowRandomSpecialTiles &&
+    Math.random() < pBulb;
 
   const shouldBeBone = 
   specialTileSettings.allowBoneTiles &&
@@ -248,6 +256,16 @@ if (shouldBeLocked) {
   return { letter, isLocked: true, lockTurns: specialTileSettings.lockedTurns, rarity };
 }
 
+if (shouldBeBulb){
+  return {
+    isLightBulb: true,
+    isStationary: true,
+    isBulbOn: false,
+    letter: letter,
+    rarity: rarity
+  }
+}
+
 
    if (shouldBeWarped) {
     return { letter, isWarped: true, warpTurns: specialTileSettings.warpedTurns, rarity: 'bronze' };
@@ -261,6 +279,7 @@ if (shouldBeLocked) {
   if (shouldBeDull) {
     return { letter, isDull: true, dullTurns: specialTileSettings.dullTurns ?? 3, rarity: 'none' };
   }
+
 
   return { letter, rarity };
 }
@@ -310,6 +329,14 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
             ...generateRandomTile(level?.allowHardLetters ?? true),
             isDull: true,
             dullTurns: level?.dullTurns ?? 3,
+            presets: true,
+          }); }
+          
+          else if (presetType === "bulb" && specialTileSettings.allowBulbTiles) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isLightBulb: true,
+            isBulbOn: false,
             presets: true,
           });
 
@@ -373,8 +400,19 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
   
   };
 
+function isValidWord(word: string) {
+  return wordList.includes(word.toLowerCase());
+}
 
-  useEffect(() => setIsWordValid(selected.length >= 3), [selected]);
+
+  useEffect(() => {
+  const word = getSelectedWord();
+  setIsWordValid(word.length >=  3 || isValidWord(word));
+}, [selected]);
+
+   console.log("WordList:", wordList);
+console.log("Valid?", wordList.includes("cat"));
+
 
   //  warped effect helper
   function getNewWarpedLetter(current: string) {
@@ -499,7 +537,62 @@ if (fireReachedBottom && !isGameOver) {
 }
 
 
-    
+
+
+    // BULB TOGGLING LOGIC
+const bulbsToggledThisMatch: Position[] = [];
+
+selected.forEach(({ row, col }) => {
+  const tile = updatedGrid[row][col];
+  if (tile?.isLightBulb) {
+    // toggle bulb state
+    updatedGrid[row][col] = {
+      ...tile,
+      isBulbOn: !tile.isBulbOn
+    };
+
+    bulbsToggledThisMatch.push({ row, col });
+  }
+});
+
+// checking if all bulbs are lit   note, the [][] means both grid directions row and column
+function allBulbsLit(grid: Tile[][]) {   //looping through every row and column to check bulb statuses
+  for (let r = 0; r < grid.length; r++) {
+    for (let c = 0; c < grid[r].length; c++) {
+      const t = grid[r][c];
+      if (t?.isLightBulb && !t.isBulbOn) {
+        return false; // at least one bulb is OFF
+      }
+    }
+  }
+  return true; // all bulbs are ON
+}
+
+const allBulbsAreLit = allBulbsLit(updatedGrid);
+
+
+// CLEAR ALL BULBS IF EVERY BULB IS LIT
+if (allBulbsAreLit) {
+  let bulbsCleared = 0;
+
+  for (let r = 0; r < updatedGrid.length; r++) {
+    for (let c = 0; c < updatedGrid[r].length; c++) {
+      const t = updatedGrid[r][c];
+      if (t?.isLightBulb) {
+        updatedGrid[r][c] = null as any; // remove bulb
+        bulbsCleared++;
+      }
+    }
+  }
+
+  // Add to objective progress if objective.type === 'destroy' and tileType === 'bulb'
+  if (objective?.type === 'destroy' && objective.tileType === 'bulb') {
+    setObjMet((prev) => prev + bulbsCleared);
+  }
+
+  // reward points for bulb collection
+  setScore(prev => prev + bulbsCleared * 50);
+}
 
 
 
@@ -584,6 +677,7 @@ if (objective) {
       if (!t) return false;
 
       if (objective.tileType === 'fire') return t.isFire;
+       if (objective.tileType === 'dull') return t.isDull;
       if (objective.tileType === 'cursed') return t.isCursed;
       if (objective.tileType === 'warped') return t.isWarped;
       if (objective.tileType === 'bone') return t.isBone;
@@ -683,7 +777,7 @@ if (boneUsed) {
 
 
      
-// 🧠 Gravity + Regeneration (fixed, supports stationary bone tiles)
+//  Gravity + Regeneration (fixed, supports stationary bone tiles)
 const cols = updatedGrid[0].length;
  const rows = updatedGrid.length;
 
@@ -793,7 +887,7 @@ for (let c = 0; c < cols; c++) {
     }
   }
 
-  // Write back this column
+  // Write back this column   New tiles dropping
   for (let r = 0; r < rows; r++) {
     updatedGrid[r][c] = newCol[r]!;
   }
@@ -993,6 +1087,8 @@ setSelected([]);
     ? 'tile-bone-ripe'
     : 'tile-bone-unripe'
   : '';
+   const bulb = tile?.isLightBulb ? tile.isBulbOn ? "bulb bulb-on"
+   : "bulb bulb-off" : "";
 
       if (tile?.isRemoved) {
       return (
@@ -1020,7 +1116,7 @@ setSelected([]);
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${bone} ${tile.isBurnt ? 'bg-[#fff000] opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull}
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${bulb} ${bone} ${tile.isBurnt ? 'bg-[#fff000] opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull}
           `}
         >
           {tile?.gem && (

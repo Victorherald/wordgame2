@@ -1,25 +1,35 @@
 "use client";
 import { useState, useEffect } from "react";
 import { LetterBoard } from "../components/GameBoard";
+import { loadProgress, unlockNextLevel } from "@/utils/storage";
+import { LevelData } from "@/app/data/levels";
 
 export default function PlayPage() {
-  const [level, setLevel] = useState<any>(null);
+  const [levels, setLevels] = useState<LevelData[]>([]);
+  const [level, setLevel] = useState<LevelData | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedId, setSelectedId] = useState<number>(1);
 
-
+  // ✅ Always read localStorage freshly when this page mounts
   useEffect(() => {
-  const saved = localStorage.getItem("selectedLevel");
-  setSelectedId(saved ? Number(saved) : 1);
-}, []);
+    const storedId = localStorage.getItem("selectedLevel");
+    const levelId = storedId ? Number(storedId) : 1;
+    setSelectedId(levelId);
 
+    const savedProgress = loadProgress();
+    if (savedProgress) setLevels(savedProgress);
+  }, []);
+
+  // ✅ Fetch the actual level data every time selectedId changes
   useEffect(() => {
+    if (!selectedId) return;
     async function loadLevel() {
       try {
-        const res = await fetch(`/api/levels/${selectedId}`);
+        setLoading(true);
+        const res = await fetch(`/api/levels/${selectedId}`, { cache: "no-store" });
         if (!res.ok) throw new Error("Level not found");
-        const data = await res.json();
+        const data: LevelData = await res.json();
         setLevel(data);
       } catch (err: any) {
         setError(err.message);
@@ -27,20 +37,23 @@ export default function PlayPage() {
         setLoading(false);
       }
     }
-
     loadLevel();
   }, [selectedId]);
 
+  // ✅ Unlock next level & save progress
   const handleNextLevel = () => {
+    if (!levels || !selectedId) return;
+    const updated = unlockNextLevel(levels, selectedId);
+    setLevels(updated);
     const nextId = selectedId + 1;
     localStorage.setItem("selectedLevel", String(nextId));
-    window.location.reload(); // reload to fetch next level
+    setSelectedId(nextId);
   };
 
   if (loading) {
     return (
       <main className="min-h-screen flex items-center justify-center text-white bg-neutral-950">
-        Loading level...
+        <div className="animate-pulse text-lg">Loading level...</div>
       </main>
     );
   }

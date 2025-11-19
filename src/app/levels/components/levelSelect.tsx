@@ -17,22 +17,26 @@ export default function LevelSelect() {
   const [levels, setLevels] = useState<Level[]>([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const levelsPerPage = 6;
   const totalPages = Math.ceil(levels.length / levelsPerPage);
 
   useEffect(() => {
-    const fetchLevels = async () => {
+    async function fetchLevels() {
       try {
         const res = await fetch("/api/levels", { cache: "no-store" });
+        if (!res.ok) throw new Error(`Failed to fetch levels (${res.status})`);
         const data = await res.json();
+        if (!Array.isArray(data)) throw new Error("Invalid data from server");
         setLevels(data);
-      } catch (err) {
+      } catch (err: any) {
         console.error("Failed to fetch levels:", err);
+        setError(err.message);
       } finally {
         setLoading(false);
       }
-    };
+    }
 
     fetchLevels();
   }, []);
@@ -45,6 +49,7 @@ export default function LevelSelect() {
     if (page > 0) setPage(page - 1);
   };
 
+  // Loading state
   if (loading) {
     return (
       <main className="min-h-screen bg-neutral-950 text-white flex items-center justify-center">
@@ -53,6 +58,16 @@ export default function LevelSelect() {
     );
   }
 
+  // Error state
+  if (error) {
+    return (
+      <main className="min-h-screen bg-neutral-950 text-red-400 flex items-center justify-center">
+        <p>⚠️ {error}</p>
+      </main>
+    );
+  }
+
+  // Compute visible levels for the current page
   const startIndex = page * levelsPerPage;
   const visibleLevels = levels.slice(startIndex, startIndex + levelsPerPage);
 
@@ -62,7 +77,7 @@ export default function LevelSelect() {
 
       {/* Level grid */}
       <div className="w-full max-w-3xl">
-        <LevelList overrideLevels={visibleLevels} />
+        <LevelList/>
       </div>
 
       {/* Pagination controls */}
