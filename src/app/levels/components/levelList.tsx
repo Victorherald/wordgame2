@@ -26,7 +26,7 @@ export default function LevelList() {
           // initialize localStorage with fresh levels (lock all but 1)
           const initialized = data.map((lvl) => ({
             ...lvl,
-            locked: lvl.id !== 1,
+            locked: false,
           }));
           setLevels(initialized);
           saveProgress(initialized);

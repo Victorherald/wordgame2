@@ -21,6 +21,7 @@ export type LevelData = {
   shouldLockSpawn?: boolean;
   lockTurns?: number;
   allowHardLetters?: boolean;
+  allowBulbTiles?: boolean;
   warpTurns?: number;
   moves?: number;
   dullTurns?: number;
@@ -42,14 +43,15 @@ export const levels: LevelData[] = [
       moves: 6,
       allowHardLetters: false,
       locked: false,
+      allowBulbTiles: true,
       board: [
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["normal", "normal", "fire", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "bulb", "normal", "normal", "normal", "normal", "normal"],
-        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "removed", "normal", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
       ],
      
@@ -186,7 +188,7 @@ export const levels: LevelData[] = [
       id: 9,
       name: "Level 9",
       objective: {type: 'score', objGoal: 100},
-      locked: false,
+      locked: true,
       moves: 18,
       board: [
          ["normal", "removed", "normal", "normal", "normal", "normal", "removed", "normal"],
@@ -205,7 +207,7 @@ export const levels: LevelData[] = [
       id: 10,
       name: "Level 10",
       objective: {type: 'words', objGoal: 1, minLength: 8},
-      locked: false,
+      locked: true,
       moves: 18,
       board: [
            ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
@@ -224,7 +226,7 @@ export const levels: LevelData[] = [
       id: 11,
       name: "Level 11",
       objective: {type: 'destroy', tileType: 'dull', objGoal: 5},
-      locked: false,
+      locked: true,
       moves: 18,
       board: [
            ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
@@ -259,6 +261,93 @@ export const levels: LevelData[] = [
       
       dullTurns: 3,
       shouldCursedSpawn: true
-    }
+    },
+     {
+      id: 13,
+      name: "Level 13",
+      objective: {type: 'destroy', tileType: 'dull', objGoal: 4},
+      locked: false,
+      moves: 18,
+      
+      board: [
+        ["normal", "normal", "removed", "normal", "normal", "removed", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["dull", "normal", "normal", "dull", "normal", "normal", "normal", "dull"],
+        ["dull", "normal", "normal", "normal", "normal", "normal", "normal", "dull"],
+        ["dull", "normal", "normal", "normal", "normal", "normal", "normal", "dull"],
+        ["dull", "normal", "normal", "normal", "dull", "normal", "normal", "dull"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "removed", "dull", "dull", "removed", "normal", "normal"]
+      ],
+      
+      dullTurns: 5,
+      shouldCursedSpawn: true
+    },
+     {
+      id: 14,
+      name: "Level 14",
+      objective: {type: 'destroy', tileType: 'dull', objGoal: 4},
+      locked: false,
+      moves: 33,
+      
+      board: [
+        ["removed", "dull", "removed", "dull", "dull", "removed", "dull", "removed"],
+        ["removed", "dull", "normal", "normal", "normal", "normal", "dull", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["dull", "normal", "dull", "normal", "normal", "dull", "normal", "dull"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "removed", "normal", "removed", "removed", "normal", "removed", "normal"],
+        ["normal", "removed", "normal", "removed", "removed", "normal", "removed", "normal"]
+      ],
+      
+      dullTurns: 6,
+      shouldCursedSpawn: true,
+      shouldFireSpawn: true
+    },
+     {
+      id: 15,
+      name: "Level 15",
+      objective: {type: 'destroy', tileType: 'dull', objGoal: 17},
+      locked: false,
+      moves: 33,
+      
+      board: [
+        ["normal", "dull", "removed", "dull", "normal", "normal", "normal", "normal"],
+        ["normal", "dull", "dull", "dull", "normal", "normal", "dull", "dull"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "dull", "removed"],
+        ["normal", "normal", "normal", "dull", "dull", "normal", "dull", "dull"],
+        ["dull", "dull", "normal", "dull", "dull", "normal", "normal", "normal"],
+        ["removed", "dull", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["dull", "dull", "normal", "normal", "dull", "dull", "dull", "normal"],
+        ["normal", "normal", "normal", "normal", "dull", "removed", "dull", "normal"]
+      ],
+      
+      dullTurns: 15,
+      shouldCursedSpawn: true,
+      shouldFireSpawn: true
+    },
+     {
+      id: 16,
+      name: "Level 16",
+      objective: {type: 'words', minLength: 5 , objGoal: 5},
+      locked: false,
+      moves: 33,
+      
+      board: [
+        ["normal", "normal", "normal", "normal", "dull", "dull", "dull", "dull"],
+        ["normal", "normal", "normal", "normal", "normal", "dull", "dull", "dull"],
+        ["normal", "normal", "dull", "normal", "normal", "normal", "dull", "dull"],
+        ["normal", "normal", "normal", "dull", "normal", "normal", "normal", "dull"],
+        ["dull", "normal", "normal", "normal", "dull", "normal", "normal", "normal"],
+        ["dull", "dull", "normal", "normal", "normal", "dull", "normal", "normal"],
+        ["dull", "dull", "dull", "normal", "normal", "normal", "normal", "normal"],
+        ["dull", "dull", "dull", "dull", "normal", "normal", "normal", "normal"]
+      ],
+      
+      dullTurns: 8,
+      shouldCursedSpawn: true,
+      shouldFireSpawn: true
+    },
   ];
 

@@ -67,9 +67,7 @@ export default function LevelSelect() {
     );
   }
 
-  // Compute visible levels for the current page
-  const startIndex = page * levelsPerPage;
-  const visibleLevels = levels.slice(startIndex, startIndex + levelsPerPage);
+  
 
   return (
     <main className="min-h-screen bg-neutral-950 text-white flex flex-col items-center justify-center p-6">

@@ -32,7 +32,7 @@ type Tile = {
 lockTurns?: number;
 isBone?: boolean;        // identifies it's a bone tile
 isRipe?: boolean;        // true if glowing, usable in words
-boneTurns?: number;      // how many turns before it ripens
+boneTurns?: number;    
 isStationary?: boolean;  // true if it cannot move (unripe)
 isLightBulb?: boolean;
 isBulbOn?: boolean
@@ -62,6 +62,7 @@ const specialTileSettings = {
   allowRandomFireTiles: false,
   allowRandomCursedTiles: false,
   allowRandomWarpedTiles: false,
+  allowRandomBulbTiles: false,
   allowWarpedTiles: true,
   allowPresetTiles: true,
   allowFireTiles: true,
@@ -173,7 +174,7 @@ const goal = objective?.objGoal ?? 5;
   const HARD_LETTERS = ['Q', 'X', 'Z', 'J', 'K', 'Y'];
  // const EASY_LETTERS = ['A','E','I','O','U','T','N','S','R','L'];
 
-const allowHardLetters = level?.allowHardLetters ?? true;
+
 
 
   // rarity logic
@@ -397,7 +398,7 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
     const current = { row, col };
     if (selected.length === 0 || isAdjacent(last, current))
       if (!isSelected(row, col)) setSelected([...selected, current]);
-  
+    
   };
 
 function isValidWord(word: string) {
@@ -539,60 +540,60 @@ if (fireReachedBottom && !isGameOver) {
 
 
 
-    // BULB TOGGLING LOGIC
-const bulbsToggledThisMatch: Position[] = [];
+//  BULB TOGGLING
+let usedBulbThisMatch = false;
 
 selected.forEach(({ row, col }) => {
   const tile = updatedGrid[row][col];
+
   if (tile?.isLightBulb) {
-    // toggle bulb state
     updatedGrid[row][col] = {
       ...tile,
-      isBulbOn: !tile.isBulbOn
+      isBulbOn: !tile.isBulbOn   // toggle ON/OFF
     };
-
-    bulbsToggledThisMatch.push({ row, col });
+    usedBulbThisMatch = true;
   }
 });
 
-// checking if all bulbs are lit   note, the [][] means both grid directions row and column
-function allBulbsLit(grid: Tile[][]) {   //looping through every row and column to check bulb statuses
+// Check if all bulbs are lit
+function allBulbsLit(grid: Tile[][]) {
   for (let r = 0; r < grid.length; r++) {
     for (let c = 0; c < grid[r].length; c++) {
       const t = grid[r][c];
-      if (t?.isLightBulb && !t.isBulbOn) {
-        return false; // at least one bulb is OFF
-      }
+      if (t?.isLightBulb && !t.isBulbOn) return false;
     }
   }
-  return true; // all bulbs are ON
+  return true;
 }
 
 const allBulbsAreLit = allBulbsLit(updatedGrid);
 
-
-// CLEAR ALL BULBS IF EVERY BULB IS LIT
-if (allBulbsAreLit) {
+// CLEAR bulbs ONLY if:
+// 1. all bulbs are ON
+// 2. a bulb was used in the matched word
+if (usedBulbThisMatch && allBulbsAreLit) {
   let bulbsCleared = 0;
 
   for (let r = 0; r < updatedGrid.length; r++) {
     for (let c = 0; c < updatedGrid[r].length; c++) {
       const t = updatedGrid[r][c];
       if (t?.isLightBulb) {
-        updatedGrid[r][c] = null as any; // remove bulb
+       updatedGrid[r][c] = generateRandomTile(level?.allowHardLetters ?? true);
+ // remove bulb
         bulbsCleared++;
       }
     }
   }
 
-  // Add to objective progress if objective.type === 'destroy' and tileType === 'bulb'
+  // objective updates
   if (objective?.type === 'destroy' && objective.tileType === 'bulb') {
     setObjMet((prev) => prev + bulbsCleared);
   }
 
-  // reward points for bulb collection
+  // reward points
   setScore(prev => prev + bulbsCleared * 50);
 }
+
 
 
 
@@ -681,6 +682,7 @@ if (objective) {
       if (objective.tileType === 'cursed') return t.isCursed;
       if (objective.tileType === 'warped') return t.isWarped;
       if (objective.tileType === 'bone') return t.isBone;
+      if (objective.tileType === 'bulb') return t.isLightBulb;
       return false;
     }).length;
 
@@ -922,10 +924,6 @@ setSelected([]);
     }[gem] || '');
 
 
-
-    useEffect(() => {
-  document.body.style.overflow = showObjectivePopup ? 'hidden' : 'auto';
-}, [showObjectivePopup]);
 
 
   return (
