@@ -44,7 +44,7 @@ type LetterBoardProps = {
   level?: LevelData;
   layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb")[][];
   objective?: {
-  type: 'score' | 'words' | 'destroy';
+  type: 'score' | 'words' | 'destroy' | 'lightsUp';
   objGoal: number;
   tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone" | "bulb";
   minLength?: number;
@@ -545,15 +545,22 @@ let usedBulbThisMatch = false;
 
 selected.forEach(({ row, col }) => {
   const tile = updatedGrid[row][col];
+  if (!tile?.isLightBulb) return;
 
-  if (tile?.isLightBulb) {
-    updatedGrid[row][col] = {
-      ...tile,
-      isBulbOn: !tile.isBulbOn   // toggle ON/OFF
-    };
-    usedBulbThisMatch = true;
+  const wasOn = tile.isBulbOn;
+  const isNowOn = !wasOn;
+
+  // Toggle the bulb
+  updatedGrid[row][col] = {
+    ...tile,
+    isBulbOn: isNowOn
+  };
+
+  if (objective?.type === "lightsUp" && isNowOn){
+      setObjMet(prev => prev + 1);
   }
 });
+
 
 // Check if all bulbs are lit
 function allBulbsLit(grid: Tile[][]) {
@@ -652,8 +659,9 @@ let label = "Progress";
 if (objective?.type === "words") label = "Words Found";
 else if (objective?.type === "score") label = "Score";
 else if (objective?.type === "destroy")
-  label = `Destroy ${objective.tileType} tiles`;
-
+  label = `Destroy ${objective.tileType} tiles!`;
+else if (objective?.type === "lightsUp")
+  label = "Lights turned on"
     
 if (objective) {
   let updatedObjMet = objMet;
@@ -670,6 +678,20 @@ if (objective) {
   else if (objective.type === 'score') {
     updatedObjMet += points;
   }
+
+  else if (objective?.type === "lightsUp") {
+  selected.forEach(({ row, col }) => {
+    const tile = grid[row][col];
+    if (!tile?.isLightBulb) return;
+
+    const wasOn = tile.isBulbOn;
+    const isNowOn = !wasOn; // because toggle happens this turn
+
+    // If turning ON  +1
+    // If turning OFF  -1
+    updatedObjMet += isNowOn ? +1 : -1;
+  });
+}
 
   // Destroy-based objective (e.g., destroy fire or cursed tiles)
   else if (objective.type === 'destroy') {
@@ -726,16 +748,22 @@ if (gem) {
   newGenerated.push({ row: last.row, col: last.col });
 
   // Clear other selected tiles
-  selected.slice(0, -1).forEach(({ row, col }) => {
+ selected.slice(0, -1).forEach(({ row, col }) => {
+  const t = updatedGrid[row][col];
+  if (!t?.isLightBulb) {
     updatedGrid[row][col] = null as any;
-    newGenerated.push({ row, col });
-  });
+  }
+});
+
 } else {
   // Normal clearing if no gem created
   selected.forEach(({ row, col }) => {
+  const t = updatedGrid[row][col];
+  if (!t?.isLightBulb) {       // ⬅️ Do NOT clear bulbs
     updatedGrid[row][col] = null as any;
     newGenerated.push({ row, col });
-  });
+  }
+});
 }
 
 
@@ -958,6 +986,8 @@ setSelected([]);
          {objective
       ? `${objective.type === 'words'
           ? 'Words Found'
+          : objective.type === 'lightsUp' 
+          ? `Lights Up`
           : objective.type === 'score'
           ? 'Score'
           : `Destroy ${objective.tileType} tiles`
@@ -994,6 +1024,8 @@ setSelected([]);
           ? 'Words Found'
           : objective.type === 'score'
           ? 'Score'
+           : objective.type === 'lightsUp' 
+          ? `Lights turned on `
           : `Destroy ${objective.tileType} tiles`
         }: ${objMet}/${objective.objGoal}`
       : 'No objective'}
@@ -1225,6 +1257,7 @@ setSelected([]);
           {objective.type === "words" && `Find ${objective.objGoal} words`}
           {objective.type === "destroy" &&
             `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
+            {objective.type === "lightsUp" && `Turn up the lights!`}
         </p>
       ) : (
         <p className="text-gray-500 text-xs sm:text-sm italic">No objective</p>

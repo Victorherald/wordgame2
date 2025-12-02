@@ -4,7 +4,8 @@ export type TileType = "normal" | "locked"| "fire" | "cursed" | "warped" | "remo
 
 export type Objective =
   | { type: 'score'; objGoal: number }
-  | { type: 'words'; objGoal: number; minLength?: number }
+  | { type: 'words'; objGoal: number; minLength?: number } 
+  |  {type: 'lightsUp'; objGoal: number ; tileType: 'bulb'}
   | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' | 'locked' | 'bone' | "bulb"};
 
 export type LevelData = {
@@ -343,6 +344,28 @@ export const levels: LevelData[] = [
         ["dull", "dull", "normal", "normal", "normal", "dull", "normal", "normal"],
         ["dull", "dull", "dull", "normal", "normal", "normal", "normal", "normal"],
         ["dull", "dull", "dull", "dull", "normal", "normal", "normal", "normal"]
+      ],
+      
+      dullTurns: 8,
+      shouldCursedSpawn: true,
+      shouldFireSpawn: true
+    },
+     {
+      id: 17,
+      name: "Beta Level",
+      objective: {type: 'lightsUp', objGoal: 18, tileType: "bulb"},
+      locked: false,
+      moves: 33,
+      
+      board: [
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "bulb", "bulb", "bulb", "normal", "normal", "normal", "normal"],
+        ["normal", "bulb", "normal", "normal", "bulb", "bulb", "bulb", "normal"],
+        ["normal", "bulb", "normal", "normal", "normal", "normal", "bulb", "normal"],
+        ["normal", "bulb", "normal", "normal", "normal", "normal", "bulb", "normal"],
+        ["normal", "bulb", "normal", "normal", "bulb", "bulb", "bulb", "normal"],
+        ["normal", "bulb", "bulb", "bulb", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
       ],
       
       dullTurns: 8,
