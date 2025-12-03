@@ -356,7 +356,7 @@ export const levels: LevelData[] = [
       objective: {type: 'lightsUp', objGoal: 18, tileType: "bulb"},
       locked: false,
       moves: 33,
-      
+      allowHardLetters: false,
       board: [
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "bulb", "bulb", "bulb", "normal", "normal", "normal", "normal"],

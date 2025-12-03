@@ -1,0 +1,1 @@
+export const words = ["CAT", "DOG","GOAT", "MONKEY"]

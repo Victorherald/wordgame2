@@ -4,7 +4,7 @@ import '../animations/tileAnimations.css';
 import { ScoreCounter } from '../components/ScoreCounter';
 import { WordDisplay } from '../components/WordDisp';
 import { wordList } from '../dictionary/wordlist';
-import { baseLevels, LevelData } from '../data/levels';
+import { LevelData } from '../data/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
 import { useRouter } from 'next/navigation';
@@ -405,14 +405,25 @@ function isValidWord(word: string) {
   return wordList.includes(word.toLowerCase());
 }
 
+useEffect(() => {
+  const word = getSelectedWord().toUpperCase();
 
-  useEffect(() => {
-  const word = getSelectedWord();
-  setIsWordValid(word.length >=  3 || isValidWord(word));
+  if (word.length < 3) {
+    setIsWordValid(false);
+    return;
+  }
+
+  if (word.length <= 3){
+    setIsWordValid(true);
+    return;
+  }
+
+  setIsWordValid(isValidWord(word));
 }, [selected]);
 
+
    console.log("WordList:", wordList);
-console.log("Valid?", wordList.includes("cat"));
+console.log("Valid?", wordList.includes('CAT'));
 
 
   //  warped effect helper
