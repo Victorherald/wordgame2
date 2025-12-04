@@ -40,7 +40,7 @@ export const levels: LevelData[] = [
     {
       id: 1,
       name: "Level 1",
-      objective: { type: 'words', objGoal: 5, minLength: 4 },
+      objective: { type: 'words', objGoal: 5, minLength: 3 },
       moves: 6,
       allowHardLetters: false,
       locked: false,
@@ -210,6 +210,7 @@ export const levels: LevelData[] = [
       objective: {type: 'words', objGoal: 1, minLength: 8},
       locked: true,
       moves: 18,
+      allowHardLetters: false,
       board: [
            ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],

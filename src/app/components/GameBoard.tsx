@@ -175,8 +175,6 @@ const goal = objective?.objGoal ?? 5;
  // const EASY_LETTERS = ['A','E','I','O','U','T','N','S','R','L'];
 
 
-
-
   // rarity logic
   function getRarityByLetter(letter: string): Rarity {
     const bronze = ['A', 'D', 'E', 'G', 'I', 'L', 'N', 'S', 'O', 'R', 'T', 'U'];
@@ -993,7 +991,7 @@ setSelected([]);
       <div className="text-xs sm:text-sm text-white font-semibold">
         Moves: {movesLeft}
       </div>
-      <div className="text-xs sm:text-sm text-yellow-400 font-semibold flex items-center gap-1">
+      <div   onClick={() => setShowObjectivePopup(true)} className="text-xs sm:text-sm text-yellow-400 font-semibold flex items-center gap-1">
          {objective
       ? `${objective.type === 'words'
           ? 'Words Found'
@@ -1004,6 +1002,7 @@ setSelected([]);
           : `Destroy ${objective.tileType} tiles`
         }: ${objMet}/${objective.objGoal}`
       : 'No objective'}
+      
       </div>
       
     </div>
@@ -1032,7 +1031,7 @@ setSelected([]);
             <p className="text-white text-sm font-semibold">
             {objective
       ? `${objective.type === 'words'
-          ? 'Words Found'
+          ? `${objective.minLength}-letter words found`
           : objective.type === 'score'
           ? 'Score'
            : objective.type === 'lightsUp' 
@@ -1051,7 +1050,7 @@ setSelected([]);
             </button>
           </div>
 <MovesDisplay movesLeft={movesLeft} />
-
+         
 
       {/* Score + Controls */}
       <div className="flex flex-col gap-3 flex-grow overflow-hidden">
@@ -1060,7 +1059,7 @@ setSelected([]);
 
         <button
           onClick={clearSelection}
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+          className="px-4 py-2 bg-red-900 text-white rounded hover:bg-red-700 transition"
         >
           Clear Selection
         </button>
@@ -1076,11 +1075,18 @@ setSelected([]);
 >
   Submit Word
 </button>
+   
+
 
         {/* Current word (desktop only) */}
         <div className="hidden md:block flex-1 overflow-auto mt-2">
           <WordDisplay word={getSelectedWord()} />
         </div>
+
+
+        <div className="hidden md:block flex-1 overflow-auto mt-2">
+          <button onClick={() => router.push("/levels")} className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-red-700 transition">Back</button>
+      </div>
       </div>
     </div>
 
@@ -1252,6 +1258,9 @@ setSelected([]);
         >
           Submit
         </button>
+        <div className="bg-orange-700 rounded text-white cursor-not-allowed opacity-60">
+          <button onClick={() => router.push("/levels")} className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition">Back</button>
+      </div>
       </div>
     </div>
   </div>
@@ -1265,7 +1274,7 @@ setSelected([]);
       {objective ? (
         <p className="text-gray-300 text-xs sm:text-sm leading-snug">
           {objective.type === "score" && `Reach ${objective.objGoal} points`}
-          {objective.type === "words" && `Find ${objective.objGoal} words`}
+          {objective.type === "words" && `Find ${objective.objGoal} words of ${objective.minLength} letters`}
           {objective.type === "destroy" &&
             `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
             {objective.type === "lightsUp" && `Turn up the lights!`}
