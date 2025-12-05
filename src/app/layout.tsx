@@ -1,6 +1,14 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono} from "next/font/google";
+import { Geist, Geist_Mono, Nunito_Sans} from "next/font/google";
 import "./globals.css";
+
+
+const nunito = Nunito_Sans({
+  subsets: ["latin"],
+  weight: ["400", "700", "900"],
+});
+
+
 
 
 const geistSans = Geist({

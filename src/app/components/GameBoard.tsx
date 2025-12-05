@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import '../animations/tileAnimations.css';
 import { ScoreCounter } from '../components/ScoreCounter';
 import { WordDisplay } from '../components/WordDisp';
-import { wordList } from '../dictionary/wordlist';
+
 import { LevelData } from '../data/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
@@ -399,29 +399,34 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
     
   };
 
-function isValidWord(word: string) {
-  return wordList.includes(word.toLowerCase());
+async function validateWord(word: string): Promise<boolean> {
+  try {
+    const res = await fetch("/api/validate", {
+      method: "POST",
+      body: JSON.stringify({ word }),
+      headers: { "Content-Type": "application/json" },
+    });
+
+    const data = await res.json();
+    return data.valid;
+  } catch (err) {
+    return false;
+  }
 }
 
 useEffect(() => {
-  const word = getSelectedWord().toUpperCase();
-
+  const word = getSelectedWord(); // already uppercase or lowercase?
   if (word.length < 3) {
     setIsWordValid(false);
     return;
   }
 
-  if (word.length <= 3){
-    setIsWordValid(true);
-    return;
-  }
-
-  setIsWordValid(isValidWord(word));
+  validateWord(word).then((isValid) => {
+    setIsWordValid(isValid);
+  });
 }, [selected]);
 
 
-   console.log("WordList:", wordList);
-console.log("Valid?", wordList.includes('CAT'));
 
 
   //  warped effect helper
@@ -657,7 +662,9 @@ if (tile.isDull) return;
 
       if(tile.letter.includes("QU")) points += 20;
       
-
+      if (tile.gem?.includes("purple")) points += 30;
+      if (tile.gem?.includes("green")) points += 45;
+      if (tile.gem?.includes("blue")) points += 60;
       
     });
     setScore((p) => p + points);
@@ -970,7 +977,7 @@ setSelected([]);
 
    
 
-   <div className="min-h-screen w-full bg-neutral-950 flex justify-center items-start py-1 sm:py-3 px-1 sm:px-4">
+   <div className="min-h-screen w-full bg-neutral-950 flex justify-center items-start py-1 sm:py-3 px-1 sm:px-5">
   <div
     className="
       w-full max-w-6xl

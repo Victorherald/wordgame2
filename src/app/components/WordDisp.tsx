@@ -9,8 +9,7 @@ type WordDisplayProps = {
 export function WordDisplay({ word }: WordDisplayProps) {
   if (!word) return null;
 
-  if (word.includes("Qu"))
-    word.toUpperCase;
+
 
   return (
     <div className="text-white mb-2 text-xl font-bold">

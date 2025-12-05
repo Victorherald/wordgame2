@@ -48,11 +48,11 @@ export const levels: LevelData[] = [
       board: [
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
-        ["normal", "normal", "fire", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["normal", "normal", "bulb", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "removed", "removed", "removed", "normal", "removed", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
       ],
      
@@ -353,25 +353,63 @@ export const levels: LevelData[] = [
     },
      {
       id: 17,
-      name: "Beta Level",
-      objective: {type: 'lightsUp', objGoal: 18, tileType: "bulb"},
+      name: "Level 17",
+      objective: {type: 'destroy', tileType: 'dull' , objGoal: 2},
       locked: false,
-      moves: 33,
+      moves: 15,
       allowHardLetters: false,
       board: [
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["normal", "bulb", "bulb", "bulb", "normal", "normal", "normal", "normal"],
-        ["normal", "bulb", "normal", "normal", "bulb", "bulb", "bulb", "normal"],
-        ["normal", "bulb", "normal", "normal", "normal", "normal", "bulb", "normal"],
-        ["normal", "bulb", "normal", "normal", "normal", "normal", "bulb", "normal"],
-        ["normal", "bulb", "normal", "normal", "bulb", "bulb", "bulb", "normal"],
-        ["normal", "bulb", "bulb", "bulb", "normal", "normal", "normal", "normal"],
-        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "removed", "dull", "dull", "dull", "dull", "removed", "normal"]
       ],
       
-      dullTurns: 8,
-      shouldCursedSpawn: true,
-      shouldFireSpawn: true
+      dullTurns: 5,
+    },
+     {
+      id: 18,
+      name: "Level 18",
+      objective: {type: 'score',  objGoal: 7000},
+      locked: false,
+      moves: 45,
+      allowHardLetters: false,
+      board: [
+        ["removed", "removed", "removed", "dull", "dull", "removed", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "normal", "dull", "dull", "dull", "dull", "normal", "removed"],
+        ["dull", "normal", "dull", "removed", "removed", "dull", "normal", "dull"],
+        ["dull", "normal", "dull", "removed", "removed", "dull", "normal", "dull"],
+        ["removed", "normal", "dull", "dull", "dull", "dull", "normal", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "removed", "removed", "dull", "dull", "removed", "removed", "removed"]
+      ],
+      
+      dullTurns: 12,
+    },
+     {
+      id: 19,
+      name: "Level 19",
+      objective: {type: 'score',  objGoal: 5000},
+      locked: false,
+      moves: 20,
+      allowHardLetters: false,
+      board: [
+        ["dull", "normal", "dull", "normal", "dull", "normal", "dull", "removed"],
+        ["normal", "dull", "normal", "dull", "normal", "dull", "normal", "removed"],
+        ["dull", "normal", "dull", "normal", "dull", "normal", "dull", "removed"],
+        ["normal", "dull", "normal", "dull", "normal", "dull", "normal", "removed"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "dull", "normal", "dull", "normal", "dull", "normal", "dull"],
+        ["removed", "normal", "dull", "normal", "dull", "normal", "dull", "normal"],
+        ["removed", "dull", "normal", "dull", "normal", "dull", "normal", "dull"]
+      ],
+      
+      dullTurns: 10,
     },
   ];
 
