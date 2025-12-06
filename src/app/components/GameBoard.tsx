@@ -650,7 +650,7 @@ function NegativeTile(tile: Tile) {
 
     
     
-    let points = validTiles.length * 10;
+    let points = validTiles.length * 40;
 
 
     
@@ -660,13 +660,16 @@ if (tile.isDull) return;
 
       if (tile?.isCursed && tile.curseTurns && tile.curseTurns > 0) points -= 15;
 
-      if(tile.letter.includes("QU")) points += 20;
+      if(tile.letter.includes("QU")) points += 80;
       
-      if (tile.gem?.includes("purple")) points += 30;
-      if (tile.gem?.includes("green")) points += 45;
-      if (tile.gem?.includes("blue")) points += 60;
-      
-    });
+      if (tile.gem?.includes("purple")) points += 100;
+      if (tile.gem?.includes("green")) points += 150;
+      if (tile.gem?.includes("blue")) points += 200;
+       if (tile.gem?.includes("orange")) points += 170;
+        if (tile.gem?.includes("red")) points += 250;
+         if (tile.gem?.includes("pink")) points += 500;
+       if (tile.gem?.includes("blue")) points += 1000;
+    })
     setScore((p) => p + points);
 
     
