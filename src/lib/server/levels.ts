@@ -625,10 +625,10 @@ export const levels: LevelData[] = [
         ["normal", "locked", "locked", "locked", "locked", "locked", "locked", "normal"],
         ["normal", "locked", "locked", "locked", "locked", "locked", "locked", "normal"],
         ["locked", "locked", "locked", "locked", "locked", "locked", "locked", "locked"],
-        ["locked", "locked", "locked", "dull", "dull", "locked", "locked", "locked"]
+        ["locked", "locked", "locked", "dull", "dull", "locked", "locked", "locked"]  
       ],
       dullTurns: 14,
-      lockTurns: 7
+      lockTurns: 6
     },
   ];
 
