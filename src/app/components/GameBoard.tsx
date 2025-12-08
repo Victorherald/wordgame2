@@ -92,6 +92,30 @@ export function LetterBoard({ level,   objective,  levelName, layout, moves = 15
  const [movesLeft, setMovesLeft] = useState(moves);
 const [isGameOver, setIsGameOver] = useState(false);
 const [gameResult, setGameResult] = useState<'win' | 'fire' | 'fail' | null>(null);
+const [tutorialActive, setTutorialActive] = useState(false);
+const [showTutorialPopup, setShowTutorialPopup] = useState(false);
+
+if (!level) return null;   // <-- prevents undefined crash
+
+useEffect(() => {
+       
+  if (level.tutorial && !tutorialActive) {
+    setShowTutorialPopup(true);
+  }
+}, [level]);
+
+
+const tutorialType = level.tutorialTileType;
+const tutorialEnabled = level.shouldShowTutorial;
+
+let tutorialTiles: {row: number, col: number}[] = [];
+
+if (level.tutorialTilePosition) {
+  tutorialTiles = [level.tutorialTilePosition];
+}
+
+
+
 
 // Progress helpers (keep near the top; safe-guard for SSR)
 function loadProgress(): { unlockedLevel: number } {
@@ -171,7 +195,7 @@ const goal = objective?.objGoal ?? 5;
   const presetTileMap = layout ?? level?.board ?? [];
 
   const letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","QU","R","S","T","U","V","W","X","Y","Z"];
-  const HARD_LETTERS = ['Q', 'X', 'Z', 'J', 'K', 'Y'];
+  const HARD_LETTERS = ['Q', 'X', 'Z', 'J', 'K', 'Y', 'V'];
  // const EASY_LETTERS = ['A','E','I','O','U','T','N','S','R','L'];
 
 
@@ -188,11 +212,11 @@ const goal = objective?.objGoal ?? 5;
 function generateRandomTile(includeHardLetters = true): Tile {
 
   // pick allowed letters based on toggle
-  const allowedLetters = includeHardLetters
+  const allowedLetters = includeHardLetters && Math.random() < 0.26
     ? letters
     : letters.filter((l) => !HARD_LETTERS.includes(l.replace("QU", "Q"))); // QU check
 const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)];
-
+ 
   const rarity = getRarityByLetter(letter);
 
    // probabilities when allowed
@@ -203,6 +227,11 @@ const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)]
   const pLocked = 0.02;
   const pBone = 0.02;
   const pBulb = 0.03;
+  const pHardLetters = 0.08;
+
+  
+  
+  
 
   const shouldBeFire =
     specialTileSettings.allowFireTiles &&
@@ -389,15 +418,35 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
   const isSelected = (r: number, c: number) => selected.some((p) => p.row === r && p.col === c);
   const isAdjacent = (a: Position, b: Position) => Math.abs(a.row - b.row) <= 1 && Math.abs(a.col - b.col) <= 1 && !(a.row === b.row && a.col === b.col);
 
-  const handleTileClick = (row: number, col: number) => {
-    const tile = grid[row][col];
-     if (!tile || tile.isRemoved || tile.isLocked ||  tile.isBone && tile.isStationary) return;
-    const last = selected[selected.length - 1];
-    const current = { row, col };
-    if (selected.length === 0 || isAdjacent(last, current))
-      if (!isSelected(row, col)) setSelected([...selected, current]);
-    
-  };
+  const handleTileClick = async (row: number, col: number) => {
+  const tile = grid[row][col];
+  if (!tile || tile.isRemoved || tile.isLocked || (tile.isBone && tile.isStationary))
+    return;
+
+  const last = selected[selected.length - 1];
+  const current = { row, col };
+
+  if (selected.length === 0 || isAdjacent(last, current)) {
+    if (!isSelected(row, col)) {
+      const newSelected = [...selected, current];
+
+      // update the selected state
+      setSelected(newSelected);
+
+      // 🔥 instant validation
+      const word = newSelected
+        .map(({ row, col }) => grid[row]?.[col]?.letter ?? "")
+        .join("");
+
+      if (word.length < 3) {
+        setIsWordValid(false);
+      } else {
+        const valid = await validateWord(word);
+        setIsWordValid(valid);
+      }
+    }
+  }
+};
 
 async function validateWord(word: string): Promise<boolean> {
   try {
@@ -414,17 +463,6 @@ async function validateWord(word: string): Promise<boolean> {
   }
 }
 
-useEffect(() => {
-  const word = getSelectedWord(); // already uppercase or lowercase?
-  if (word.length < 3) {
-    setIsWordValid(false);
-    return;
-  }
-
-  validateWord(word).then((isValid) => {
-    setIsWordValid(isValid);
-  });
-}, [selected]);
 
 
 
@@ -970,6 +1008,17 @@ setSelected([]);
       whiteDiamond: 'bg-gradient-to-br from-white via-sky-100 to-white opacity-70'
     }[gem] || '');
 
+function onObjectivePopupClosed() {
+  if (tutorialEnabled) {
+    setTutorialActive(true);      // Turn on glow
+    setShowTutorialPopup(true);   // Show popup
+  }
+}
+
+function closeTutorial() {
+  setTutorialActive(false);       // Stop glow
+  setShowTutorialPopup(false);    // Hide popup
+}
 
 
 
@@ -1182,6 +1231,8 @@ setSelected([]);
             />
           )}
 
+
+
           {tile?.isLocked && (
   <div className="absolute inset-0 z-10 flex justify-center items-center pointer-events-none">
     <div className="w-3/4 h-3/4 border-4 border-gray-600 rounded-lg rotate-45 opacity-70" />
@@ -1302,6 +1353,18 @@ setSelected([]);
     </div>
   </div>
 )}
+
+{/* --- Tutorial Popup --- */}
+{showTutorialPopup && (
+  <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-40">
+    <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-11/12 max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in mb-32 sm:mb-16">
+      <h2>New Tile: {tutorialType}</h2>
+      <p>{level.tutorialMessage}</p>   {/* USE LEVEL DATA */}
+      <button  className="mt-3 sm:mt-4 bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base" onClick={closeTutorial}>Got it</button>
+    </div>
+  </div>
+)}
+
 
 {/* --- End Results Popup --- */}
 {isGameOver && (

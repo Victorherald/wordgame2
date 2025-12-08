@@ -31,7 +31,17 @@ export type LevelData = {
   boneRipeTurns?: number;
 boneUnripeTurns?: number;
    isLightBulb?: boolean;
-isBulbOn?: boolean
+isBulbOn?: boolean;
+shouldShowTutorial?: boolean;
+tutorialTileType?: TileType;
+
+tutorialTilePosition?: { row: number; col: number };
+tutorialMessage?: string;
+
+  tutorial?: {
+    title?: string;
+    message?: string;
+    highlightedTile?: { row: number; col: number }; }
 };
 
 
@@ -147,6 +157,12 @@ export const levels: LevelData[] = [
         ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
       ],
        dullTurns: 3,
+       tutorialTileType: 'dull',
+       tutorialMessage: "Dull tiles gives no points when used, Tile returns to normal when number gets to 0",
+       tutorial: {}
+    
+    
+  
     },
      {
       id: 7,
@@ -449,7 +465,11 @@ export const levels: LevelData[] = [
         ["locked", "locked", "locked", "locked", "locked", "locked", "locked", "removed"]
       ],
       lockTurns: 7,
-      dullTurns: 19,
+   
+
+       tutorialTileType: 'locked',
+       tutorialMessage: "Tile can not be selected for a determined number of turns",
+       tutorial: {}
     },
      {
       id: 22,

@@ -28,6 +28,15 @@ export type LevelData = {
   boneTurns?: number;
   boneRipeTurns?: number;
 boneUnripeTurns?: number;
+   shouldShowTutorial?: boolean;
+  tutorialTileType?: TileType;
+  tutorialTilePosition?: { row: number; col: number };
+  tutorialMessage?: string;
+
+   tutorial?: {
+    title: string;
+    message: string;
+    highlightedTile?: { row: number; col: number }; }
 
 };
 
@@ -132,6 +141,9 @@ export function baseLevels(): LevelData[] {
       objective: { type: 'score' , objGoal: 700 },
       locked: true,
       moves: 14,
+        shouldShowTutorial: true,
+  tutorialTileType: "dull",
+  tutorialMessage: "Dull tiles dont give any points when matched, Tile returnes back to normal when it reaches 0",
       board: [
         ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
