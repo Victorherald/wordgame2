@@ -26,7 +26,7 @@ export type LevelData = {
   warpTurns?: number;
   moves?: number;
   dullTurns?: number;
-  shouldBoneSpawn?: boolean;
+  shouldDullSpawn?: boolean;
   boneTurns?: number;
   boneRipeTurns?: number;
 boneUnripeTurns?: number;
@@ -649,6 +649,109 @@ export const levels: LevelData[] = [
       ],
       dullTurns: 14,
       lockTurns: 6
+    },
+      {
+      id: 31,
+      name: "Level 31",
+      objective: {type: 'destroy', objGoal: 3, tileType: 'dull'},
+      locked: false,
+      moves:20,
+      allowHardLetters: false,
+      board: [
+    ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "dull"],
+        ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "removed", "normal", "normal", "normal"],
+        ["dull", "normal", "normal", "normal", "removed", "normal", "normal", "dull"]  
+      ],
+      dullTurns: 8,
+      
+    },
+        {
+      id: 32,
+      name: "Level 32",
+      objective: {type: 'score', objGoal: 3500},
+      locked: false,
+      moves: 38,
+      allowHardLetters: false,
+      board: [
+    ["dull", "dull", "locked", "dull", "dull", "locked", "dull", "dull"],
+        ["dull", "dull", "locked", "dull", "dull", "locked", "dull", "dull"],
+        ["dull", "dull", "locked", "dull", "dull", "locked", "dull", "dull"],
+        ["dull", "dull", "locked", "dull", "dull", "locked", "dull", "dull"],
+        ["dull", "dull", "locked", "dull", "dull", "locked", "dull", "dull"],
+        ["dull", "dull", "locked", "dull", "dull", "locked", "dull", "dull"],
+        ["dull", "dull", "locked", "dull", "dull", "locked", "dull", "dull"],
+        ["dull", "dull", "locked", "dull", "dull", "locked", "dull", "dull"]  
+      ],
+      dullTurns: 25,
+      shouldCursedSpawn: true
+    },
+        {
+      id: 33,
+      name: "Level 33",
+      objective: {type: 'words', minLength: 6, objGoal: 3},
+      locked: false,
+      moves: 40,
+      allowHardLetters: false,
+      board: [
+        ["normal", "normal", "removed", "dull", "dull", "removed", "normal", "normal"],
+        ["normal", "normal", "removed", "normal", "normal", "removed", "normal", "normal"],
+        ["normal", "normal", "removed", "normal", "normal", "removed", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["locked", "normal", "normal", "normal", "normal", "normal", "normal", "locked"],
+        ["removed", "normal", "locked", "normal", "normal", "locked", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "locked", "locked", "normal", "normal", "removed"]
+      ],
+      dullTurns: 8,
+      lockTurns: 10,
+      shouldDullSpawn: true
+    },
+  {
+      id: 34,
+      name: "Level 34",
+      objective: {type: 'words', minLength: 4, objGoal: 10},
+      locked: false,
+      moves: 35,
+      allowHardLetters: false,
+      board: [
+        ["normal", "normal", "locked", "normal", "locked", "normal", "normal", "normal"],
+        ["normal", "locked", "normal", "normal", "normal", "locked", "normal", "normal"],
+        ["locked", "normal", "normal", "normal", "normal", "normal", "locked", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "locked"],
+        ["locked", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "locked", "normal", "normal", "normal", "normal", "normal", "locked"],
+        ["normal", "normal", "locked", "normal", "normal", "normal", "locked", "normal"],
+        ["normal", "normal", "normal", "locked", "normal", "locked", "normal", "normal"]
+      ],
+      dullTurns: 8,
+      lockTurns: 18,
+      shouldDullSpawn: true
+    },
+    {
+      id: 35,
+      name: "Level 35",
+      objective: {type: 'score', objGoal: 3000},
+      locked: false,
+      moves: 15,
+      allowHardLetters: false,
+      board: [
+        ["normal", "normal", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["normal", "normal", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "removed", "removed", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "locked", "locked", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "locked", "locked", "dull", "dull"],
+        ["normal", "normal", "normal", "normal", "locked", "locked", "dull", "dull"],
+        ["normal", "normal", "normal", "normal", "locked", "locked", "dull", "dull"],
+        ["normal", "normal", "normal", "normal", "locked", "locked", "dull", "dull"]
+      ],
+      dullTurns: 12,
+      lockTurns: 9,
+      shouldDullSpawn: true
     },
   ];
 

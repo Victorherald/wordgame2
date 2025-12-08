@@ -74,7 +74,7 @@ const specialTileSettings = {
    allowBulbTiles: true,
   allowRandomLockedTiles: false, // you can toggle this
   lockedTurns: 4,
-
+ shouldDullSpawn: false,
    cursedTurns: 5 ,
   warpedTurns: 6,
   fireTurns: 5,
@@ -212,7 +212,7 @@ const goal = objective?.objGoal ?? 5;
 function generateRandomTile(includeHardLetters = true): Tile {
 
   // pick allowed letters based on toggle
-  const allowedLetters = includeHardLetters && Math.random() < 0.26
+  const allowedLetters = includeHardLetters && Math.random() < 0.56
     ? letters
     : letters.filter((l) => !HARD_LETTERS.includes(l.replace("QU", "Q"))); // QU check
 const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)];
@@ -393,6 +393,12 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
   return newGrid;
 };
 
+  const currentWord = selected
+  .map(({ row, col }) => grid[row]?.[col]?.letter ?? "")
+  .join("");
+
+const canSubmit = currentWord.length >= 3 && isWordValid;
+
   
 
   useEffect(() => setGrid(initializeBoard(8, 8)), []);
@@ -433,6 +439,15 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
       // update the selected state
       setSelected(newSelected);
 
+      if (selected.length > 1) {
+  const prev = selected[selected.length - 2];
+  if (prev.row === row && prev.col === col) {
+    const newSelected = selected.slice(0, -1);
+    setSelected(newSelected);
+    return;
+  }
+}
+
       // 🔥 instant validation
       const word = newSelected
         .map(({ row, col }) => grid[row]?.[col]?.letter ?? "")
@@ -463,7 +478,32 @@ async function validateWord(word: string): Promise<boolean> {
   }
 }
 
+useEffect(() => {
+  const word = getSelectedWord();
 
+  if (word.length < 3) {
+    setIsWordValid(false);
+    return;
+  }
+
+  validateWord(word).then((valid) => {
+    setIsWordValid(valid);
+  });
+}, [selected]);
+
+
+
+const handleSubmit = () => {
+  // ⛔ if somehow invalid don't submit
+  if (!isWordValid || movesLeft <= 0 || isGameOver) return;
+
+  // 🚀 INSTANT-react disable so button stops glowing immediately
+  setSelected([]);
+  setIsWordValid(false);
+
+  // apply the match logic NEXT
+  applyWordMatch();
+};
 
 
 
@@ -699,6 +739,8 @@ if (tile.isDull) return;
       if (tile?.isCursed && tile.curseTurns && tile.curseTurns > 0) points -= 15;
 
       if(tile.letter.includes("QU")) points += 80;
+
+      if(tile.rarity.includes('gold')) points += 70;
       
       if (tile.gem?.includes("purple")) points += 100;
       if (tile.gem?.includes("green")) points += 150;
@@ -969,7 +1011,7 @@ for (let c = 0; c < cols; c++) {
   // Fill top with new tiles
   for (let r = 0; r < rows; r++) {
     if (!newCol[r]) {
-      newCol[r] = generateRandomTile(level?.allowHardLetters ?? true);
+      newCol[r] = generateRandomTile(level?.allowHardLetters ?? level?.shouldCursedSpawn ?? true);
       newGenerated.push({ row: r, col: c });
     }
   }
@@ -1125,15 +1167,16 @@ function closeTutorial() {
 
        <button
   disabled={!isWordValid || movesLeft <= 0 || isGameOver}
-  onClick={applyWordMatch}
+  onClick={handleSubmit}
   className={`px-4 py-2 rounded transition ${
     isWordValid && movesLeft > 0 && !isGameOver
-      ? 'bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse z-20'
-      : 'bg-gray-200 text-white z-20 cursor-not-allowed opacity-60'
+      ? "bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse z-20"
+      : "bg-gray-200 text-white z-20 cursor-not-allowed opacity-60"
   }`}
 >
   Submit Word
 </button>
+
    
 
 
@@ -1308,17 +1351,18 @@ function closeTutorial() {
         >
           Clear
         </button>
-        <button
-          disabled={!isWordValid || movesLeft <= 0 || isGameOver}
-          onClick={applyWordMatch}
-          className={`px-3 py-2 text-sm rounded transition ${
-            isWordValid && movesLeft > 0 && !isGameOver
-              ? "bg-green-600 text-white shadow-md shadow-green-400 animate-pulse"
-              : "bg-gray-700 text-white cursor-not-allowed opacity-60"
-          }`}
-        >
-          Submit
-        </button>
+       <button
+  disabled={!isWordValid || movesLeft <= 0 || isGameOver}
+  onClick={handleSubmit}
+  className={`px-4 py-2 rounded transition ${
+    isWordValid && movesLeft > 0 && !isGameOver
+      ? "bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse z-20"
+      : "bg-gray-200 text-white z-20 cursor-not-allowed opacity-60"
+  }`}
+>
+  Submit
+</button>
+
         <div className="bg-orange-700 rounded text-white cursor-not-allowed opacity-60">
           <button onClick={() => router.push("/levels")} className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition">Back</button>
       </div>
