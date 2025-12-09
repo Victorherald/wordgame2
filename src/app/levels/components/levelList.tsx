@@ -105,6 +105,8 @@ export default function LevelList() {
                 <p className="text-sm text-gray-400">
                   {lvl.objective?.type === "score" &&
                     `Reach ${lvl.objective.objGoal} points`}
+                     {lvl.objective?.type === "lightsUp" &&
+                    `Turn on the lights!`}
                   {lvl.objective?.type === "words" &&
                     `Find ${lvl.objective.objGoal} words`}
                   {lvl.objective?.type === "destroy" &&

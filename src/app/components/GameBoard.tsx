@@ -1380,7 +1380,7 @@ function closeTutorial() {
           {objective.type === "words" && `Find ${objective.objGoal} words of ${objective.minLength} letters`}
           {objective.type === "destroy" &&
             `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
-            {objective.type === "lightsUp" && `Turn up the lights!`}
+            {objective.type === "lightsUp" && `Turn on all the lights!`}
         </p>
       ) : (
         <p className="text-gray-500 text-xs sm:text-sm italic">No objective</p>
