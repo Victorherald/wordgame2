@@ -4,7 +4,7 @@ import '../animations/tileAnimations.css';
 import { ScoreCounter } from '../components/ScoreCounter';
 import { WordDisplay } from '../components/WordDisp';
 
-import { LevelData } from '../data/levels';
+import { LevelData } from '@/lib/server/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
 import { useRouter } from 'next/navigation';
@@ -1085,7 +1085,7 @@ function closeTutorial() {
     "
   >
 {/* --- Top Bar (Mobile only) --- */}
-    <div className="flex md:hidden justify-between items-center bg-neutral-950 border border-neutral-800 rounded-lg p-2 mb-2">
+    <div className={`${level.difficulty === 'Hard Level' ? 'flex md:hidden justify-between items-center bg-red-950 border border-neutral-800 rounded-lg p-2 mb-2' : 'flex md:hidden justify-between items-center bg-neutral-950 border border-neutral-800 rounded-lg p-2 mb-2'}`}>
       <div className="text-xs sm:text-sm font-semibold text-white">
         {levelName ? levelName : "Level"}
       </div>
@@ -1114,15 +1114,12 @@ function closeTutorial() {
 
     {/*  Sidebar */}
     <div
-      className="
-        hidden md:flex flex-col justify-between
-        bg-neutral-950 p-4 rounded-lg border border-neutral-800
-        overflow-y-auto space-y-3"
+      className={`${level.difficulty === 'Hard Level' ? "hidden md:flex flex-col justify-between bg-red-750 p-4 rounded-lg border border-red-700 overflow-y-auto space-y-3" : "hidden md:flex flex-col justify-between bg-neutral-950 p-4 rounded-lg border border-neutral-800 overflow-y-auto space-y-3"}`}
       
     >
       <div className="flex flex-col items-start p-1">
   {levelName && (
-    <h2 className="text-lg sm:text-xl font-bold text-yellow-400 mb-2">
+    <h2 className={`${level.difficulty === "Hard Level" ? "text-lg sm:text-xl font-bold text-red-600 mb-2" : "text-lg sm:text-xl font-bold text-yellow-400 mb-2"}`}>
       {levelName}
     </h2>
   )}
@@ -1223,7 +1220,7 @@ function closeTutorial() {
         ? 'tile cursed-tile shadow-red-500/40 cursed-particles'
         : '';
       const warped = tile?.isWarped
-        ? 'tile animate-warped warped-tile'
+        ? 'tile animate-warped warp-tile'
         : '';
         const dull = tile?.isDull 
         ? 'bg-gradient-to-br from-neutral-700 to-neutral-700 text-gray-100 border border-neutral-500  brightness-85'
@@ -1372,10 +1369,11 @@ function closeTutorial() {
 
 {/* --- Objective Popup (Fixed & Responsive) --- */}
 {showObjectivePopup && (
-  <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50 overflow-hidden">
-    <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in">
-      <h2 className="text-lg sm:text-xl font-semibold text-white">Objective</h2>
+  <div className={`${level.difficulty === 'Hard Level' ? 'fixed inset-0 bg-red/70 flex justify-center items-center z-50 overflow-hidden' : 'fixed inset-0 bg-black/70 flex justify-center items-center z-50 overflow-hidden'}`}>
+    <div className={`${level.difficulty === 'Hard Level' ? 'bg-neutral-900 border border-red-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in' : 'bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in'}`}>
 
+      <h2 className="text-lg sm:text-xl font-semibold text-white">Objective</h2>
+       <p className='text-red-900 p-0'>{`${level.difficulty === 'Hard Level' ? 'Hard Level' : ''}`}</p>
       {objective ? (
         <p className="text-gray-300 text-xs sm:text-sm leading-snug">
           {objective.type === "score" && `Reach ${objective.objGoal} points`}

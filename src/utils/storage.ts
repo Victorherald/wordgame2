@@ -1,6 +1,6 @@
 // utils/storage.ts
 
-import { LevelData } from "../app/data/levels";
+import { LevelData } from "@/lib/server/levels";
 
 const STORAGE_KEY = "worzzle_progress";
 

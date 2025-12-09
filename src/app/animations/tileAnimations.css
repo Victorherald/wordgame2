@@ -11,7 +11,7 @@
   }
   
   .tile-drop {
-    animation: drop 0.3s ease-out;
+    animation: drop 0.3s ease-in;
   }
   
 
@@ -124,7 +124,7 @@
 }
 
 
-.warped-tile {
+.warped-tiles {
   background-color: rgb(173, 142, 55);
   animation: spiral 1.5s infinite linear;
 }
@@ -164,7 +164,7 @@
 
 .warped-tile {
   background-color: rgba(255, 204, 0, 0.8); /* base yellow */
-  border: 2px solid rgba(250, 204, 21, 0.9);
+  border: 2px solid rgba(255, 204, 0, 0.9);
   box-shadow:
     0 0 10px rgba(250, 204, 21, 0.5),
     inset 0 0 6px rgba(255, 255, 255, 0.2);
@@ -211,6 +211,16 @@
   border-radius: 0.5rem;
   animation: dullPulse 1.5s infinite ease-in-out;
   transition: transform 0.2s ease, filter 0.2s ease;
+  cursor: not-allowed;
+}
+
+.warp-tile {
+  background: linear-gradient(#efe300, #e6d009);
+ 
+ 
+  border-radius: 0.5rem;
+ 
+
   cursor: not-allowed;
 }
 

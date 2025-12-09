@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { LetterBoard } from "../components/GameBoard";
 import { loadProgress, unlockNextLevel } from "@/utils/storage";
-import { LevelData } from "@/app/data/levels";
+import { LevelData } from "@/lib/server/levels";
 
 export default function PlayPage() {
   const [levels, setLevels] = useState<LevelData[]>([]);
