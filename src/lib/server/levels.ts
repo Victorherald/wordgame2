@@ -1165,11 +1165,11 @@ export const levels: LevelData[] = [
     {
       id: 55,
       name: "Level 55",
-      objective: { type: 'destroy' , objGoal:18, tileType: 'dull'},
+      objective: { type: 'destroy' , objGoal:10, tileType: 'dull'},
       moves: 50,
   
       allowHardLetters: true, 
-      dullTurns: 9,
+      dullTurns: 25,
       locked: false,
       warpTurns: 6,
       board: [
