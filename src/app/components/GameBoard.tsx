@@ -1,13 +1,18 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import '../animations/tileAnimations.css';
 import { ScoreCounter } from '../components/ScoreCounter';
 import { WordDisplay } from '../components/WordDisp';
-
+import Particles from "react-tsparticles";
+import { loadFull } from "tsparticles";
 import { LevelData } from '@/lib/server/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
 import { useRouter } from 'next/navigation';
+import IceBreakParticles from "@/app/particles/iceBreakParticles";
+
+
+
 
 
 type Rarity = 'bronze' | 'silver' | 'gold' | 'none';
@@ -18,10 +23,12 @@ type Tile = {
   rarity: Rarity;
   gem?: GemColor;
   isFire?: boolean;
+  iceHealth?: number;
   isCursed?: boolean;
   curseTurns?: number;
   presets?: boolean;
   isWarped?: boolean;
+  justBrokeIce?: boolean;
   warpTurns?: number;
   isDull?: boolean;
   isBurnt?: boolean;
@@ -29,6 +36,7 @@ type Tile = {
   isRemoved?: boolean;
    dullTurns?: number;
    isLocked?: boolean;
+   isFrozen?: boolean;
 lockTurns?: number;
 isBone?: boolean;        // identifies it's a bone tile
 isRipe?: boolean;        // true if glowing, usable in words
@@ -42,11 +50,11 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb")[][];
+  layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice")[][];
   objective?: {
   type: 'score' | 'words' | 'destroy' | 'lightsUp';
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone" | "bulb";
+  tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone" | "bulb" | "ice";
   minLength?: number;
 
 };
@@ -55,6 +63,7 @@ type LetterBoardProps = {
     onNextLevel?: () => void;
    levelName: string;
 };
+
 
 
 
@@ -71,14 +80,16 @@ const specialTileSettings = {
   allowRandomSpecialTiles: false,
    allowLockedTiles: true,
    allowBoneTiles: true,
+   allowIceTiles: true,
    allowBulbTiles: true,
-  allowRandomLockedTiles: false, // you can toggle this
+  allowRandomLockedTiles: false, 
   lockedTurns: 4,
  shouldDullSpawn: false,
    cursedTurns: 5 ,
   warpedTurns: 6,
   fireTurns: 5,
-  dullTurns: 3
+  dullTurns: 3,
+  justBrokeIce: false
 };
 
 export function LetterBoard({ level,   objective,  levelName, layout, moves = 15, onNextLevel}: LetterBoardProps) {
@@ -94,6 +105,11 @@ const [isGameOver, setIsGameOver] = useState(false);
 const [gameResult, setGameResult] = useState<'win' | 'fire' | 'fail' | null>(null);
 const [tutorialActive, setTutorialActive] = useState(false);
 const [showTutorialPopup, setShowTutorialPopup] = useState(false);
+
+
+
+
+
 
 if (!level) return null;   // <-- prevents undefined crash
 
@@ -195,7 +211,7 @@ const goal = objective?.objGoal ?? 5;
   const presetTileMap = layout ?? level?.board ?? [];
 
   const letters = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","QU","R","S","T","U","V","W","X","Y","Z"];
-  const HARD_LETTERS = ['Q', 'X', 'Z', 'J', 'K', 'Y', 'V'];
+  const HARD_LETTERS = ['QU', 'X', 'Z', 'J', 'K', 'Y', 'V'];
  // const EASY_LETTERS = ['A','E','I','O','U','T','N','S','R','L'];
 
 
@@ -227,7 +243,7 @@ const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)]
   const pLocked = 0.02;
   const pBone = 0.02;
   const pBulb = 0.03;
-  const pHardLetters = 0.08;
+
 
   
   
@@ -268,6 +284,9 @@ const shouldBeLocked =
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pLocked;
 
+  const shouldBeIced = specialTileSettings.allowIceTiles
+  && specialTileSettings.allowRandomSpecialTiles ;
+
 
 if (shouldBeBone) {
   return {  isBone: true,
@@ -282,6 +301,10 @@ if (shouldBeBone) {
   
 if (shouldBeLocked) {
   return { letter, isLocked: true, lockTurns: specialTileSettings.lockedTurns, rarity };
+}
+
+if (shouldBeIced) {
+  return { letter, isFrozen: true, iceHealth: 1, rarity ,  isStationary: true};
 }
 
 if (shouldBeBulb){
@@ -314,7 +337,7 @@ if (shouldBeBulb){
 
 
  // board setup
-const initializeBoard = (rows: number, cols: number): Tile[][] => {
+const initializeBoard = ( rows: number, cols: number): Tile[][] => {
   const newGrid: Tile[][] = [];
 
   for (let row = 0; row < rows; row++) {
@@ -322,6 +345,9 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
     for (let col = 0; col < cols; col++) {
       const presetType = presetTileMap[row]?.[col] ?? "normal";
 
+
+
+    
       if (specialTileSettings.allowPresetTiles) {
         if (presetType === "fire" && specialTileSettings.allowFireTiles) {
           rowTiles.push({
@@ -338,12 +364,14 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
             curseTurns: level?.cursedTurns ?? 3,
             presets: true,
           });
-        } else if (presetType === "locked" && specialTileSettings.allowLockedTiles) {
+        } 
+        else if (presetType === "ice" && specialTileSettings.allowIceTiles) {
           rowTiles.push({
             ...generateRandomTile(level?.allowHardLetters ?? true),
-            isLocked: true,
-            lockTurns: level?.lockTurns ?? 3,
+            isFrozen: true,
+            isStationary: true,
             presets: true,
+            iceHealth: 1
           });
         } else if (presetType === "warped" && specialTileSettings.allowWarpedTiles) {
           rowTiles.push({
@@ -352,6 +380,7 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
             warpTurns: level?.warpTurns ?? 3,
             presets: true,
           });
+
         } else if (presetType === "dull" && specialTileSettings.allowDullTiles) {
           rowTiles.push({
             ...generateRandomTile(level?.allowHardLetters ?? true),
@@ -359,7 +388,13 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
             dullTurns: level?.dullTurns ?? 3,
             presets: true,
           }); }
-          
+          else if (presetType === "locked" && specialTileSettings.allowLockedTiles) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isLocked: true,
+            lockTurns: level?.lockTurns ?? 3,
+            presets: true,
+          });}
           else if (presetType === "bulb" && specialTileSettings.allowBulbTiles) {
           rowTiles.push({
             ...generateRandomTile(level?.allowHardLetters ?? true),
@@ -397,6 +432,10 @@ const initializeBoard = (rows: number, cols: number): Tile[][] => {
   .map(({ row, col }) => grid[row]?.[col]?.letter ?? "")
   .join("");
 
+  if(currentWord.includes('QU')){
+     currentWord.split
+  }
+
 const canSubmit = currentWord.length >= 3 && isWordValid;
 
   
@@ -418,6 +457,9 @@ const canSubmit = currentWord.length >= 3 && isWordValid;
   if (!tile || tile.isRemoved || tile.isLocked) return;
     setSelected((p) => p.filter((pos) => !(pos.row === r && pos.col === c)));
     
+
+
+    
   };
 
   const getSelectedWord = () => selected.map(({ row, col }) => grid[row]?.[col]?.letter ?? '').join('');
@@ -426,7 +468,7 @@ const canSubmit = currentWord.length >= 3 && isWordValid;
 
   const handleTileClick = async (row: number, col: number) => {
   const tile = grid[row][col];
-  if (!tile || tile.isRemoved || tile.isLocked || (tile.isBone && tile.isStationary))
+  if (!tile || tile.isRemoved || tile.isLocked || (tile.isBone && tile.isStationary) || (tile.isFrozen && tile.isStationary))
     return;
 
   const last = selected[selected.length - 1];
@@ -497,6 +539,8 @@ const handleSubmit = () => {
   // ⛔ if somehow invalid don't submit
   if (!isWordValid || movesLeft <= 0 || isGameOver) return;
 
+
+
   // 🚀 INSTANT-react disable so button stops glowing immediately
   setSelected([]);
   setIsWordValid(false);
@@ -565,6 +609,54 @@ const handleSubmit = () => {
 
     let updatedGrid = grid.map((r) => [...r]);
     updatedGrid = applyWarpedEffect(updatedGrid);
+   updatedGrid = applyIceDamage(updatedGrid, selected);
+
+    
+
+
+    // Frozen tile mechanics
+
+    function applyIceDamage(grid: Tile[][], selected: Position[]) {
+
+
+      
+  const newGrid = grid.map((r) => [...r]);
+
+  const adjacentDirs = [
+    [1, 0],
+    [-1, 0],
+    [0, 1],
+    [0, -1]
+ 
+  ];
+
+  selected.forEach(({ row, col }) => {
+    adjacentDirs.forEach(([dr, dc]) => {
+      const r = row + dr;
+      const c = col + dc;
+      const tile = newGrid[r]?.[c];
+      if (tile?.isFrozen) {
+        tile.iceHealth = (tile.iceHealth ?? 1) - 1;
+
+        if (tile.iceHealth <= 0) {
+          // ice fully broken
+          newGrid[r][c] = {
+            letter: tile.letter,
+            rarity: tile.rarity,
+            isFrozen: false,
+            isStationary: false,
+            presets: false,
+            justBrokeIce: true
+          };
+        }
+      }
+    });
+  });
+  
+  return newGrid;
+}
+
+
 
 
 
@@ -852,6 +944,8 @@ if (gem) {
   if (!t?.isLightBulb) {
     updatedGrid[row][col] = null as any;
   }
+
+  
 });
 
 } else {
@@ -863,6 +957,9 @@ if (gem) {
     newGenerated.push({ row, col });
   }
 });
+
+applyIceDamage(grid, selected);
+
 }
 
 
@@ -959,7 +1056,7 @@ for (let c = 0; c < cols; c++) {
     if (!t) continue;
 
     // 🔥 Skip removed tiles but keep them in place visually
-    if (t.isRemoved) {
+    if (t.isRemoved || t.isFrozen) {
       newCol[r] = { ...t };
       continue;
     }
@@ -1016,7 +1113,7 @@ for (let c = 0; c < cols; c++) {
     }
   }
 
-  // Write back this column   New tiles dropping
+  // New tiles dropping
   for (let r = 0; r < rows; r++) {
     updatedGrid[r][c] = newCol[r]!;
   }
@@ -1219,6 +1316,10 @@ function closeTutorial() {
       const cursed = tile?.isCursed
         ? 'tile cursed-tile shadow-red-500/40 cursed-particles'
         : '';
+        const ice = tile?.isFrozen
+  ? 'ice-tile animate-ice-block bg-blue-300/40 text-white shadow-lg shadow-blue-300/40 backdrop-blur-sanimate-ice-block bg-blue-200/60 text-white shadow-xl shadow-blue-400/40 border-2 border-blue-300/70 ice-particles backdrop-blur-sm saturate-150 z-50'
+  : '';
+
       const warped = tile?.isWarped
         ? 'tile animate-warped warp-tile'
         : '';
@@ -1262,7 +1363,7 @@ function closeTutorial() {
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${bulb} ${bone} ${tile.isBurnt ? 'bg-[#fff000] opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull}
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${bulb} ${bone} ${tile.isBurnt ? 'bg-[#fff000] opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
           `}
         >
           {tile?.gem && (

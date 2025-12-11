@@ -1,10 +1,10 @@
 // src/data/levelData.ts
 
-export type TileType = "normal" | "locked"| "fire" | "cursed" | "warped" | "removed" | "dull" | "bone" | "bulb";
+export type TileType = "normal" | "locked"| "fire" | "cursed" | "warped" | "removed" | "dull" | "bone" | "bulb" | "ice";
 
 export type Difficulty = "Hard Level" | "demon";
 
-export type TutorialTypes = "Locked Tiles" | "Fire Tiles" | "Warped Tiles" |"Cursed Tiles" | "Dull Tiles" | "Lightbulbs" ;
+export type TutorialTypes = "Locked Tiles" | "Fire Tiles" | "Warped Tiles" |"Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" ;
 
 
 export type Objective =
@@ -1097,5 +1097,92 @@ export const levels: LevelData[] = [
        tutorialMessage: "An Objective collectible, Toggles on and off when used in a word, When all bulb tiles are turned on, they all disappear",
        tutorial: {}
     }, 
+    {
+      id: 52,
+      name: "Level 52",
+      objective: { type: 'lightsUp' , objGoal: 8, tileType: 'bulb'},
+      moves: 15,
+      allowHardLetters: true,
+      dullTurns: 6,
+      locked: false,
+      warpTurns: 6,
+      board: [
+        ["removed", "removed", "removed", "removed", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "removed", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "removed", "bulb", "bulb", "normal", "normal"],
+        ["removed", "removed", "removed", "removed", "bulb", "bulb", "normal", "normal"],
+        ["normal", "normal", "bulb", "bulb", "removed", "removed", "removed", "removed"],
+        ["normal", "normal", "bulb", "bulb", "removed", "removed", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "removed", "removed", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "removed", "removed", "removed", "removed"]
+      ],
+       
+    }, 
+ {
+      id: 53,
+      name: "Level 53",
+      objective: { type: 'lightsUp' , objGoal: 4, tileType: 'bulb'},
+      moves: 35,
+      difficulty: 'Hard Level',
+      allowHardLetters: true,
+      dullTurns: 6,
+      locked: false,
+      warpTurns: 6,
+      board: [
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["bulb", "locked", "normal", "normal", "normal", "normal", "warped", "bulb"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["bulb", "warped", "normal", "normal", "normal", "normal", "locked", "bulb"],
+        ["removed", "removed", "removed", "normal", "normal", "removed", "removed", "removed"]
+      ],
+       
+    },
+    {
+      id: 54,
+      name: "Level 54",
+      objective: { type: 'destroy' , objGoal:12, tileType: 'dull'},
+      moves: 35,
+  
+      allowHardLetters: true, 
+      dullTurns: 9,
+      locked: false,
+      warpTurns: 6,
+      board: [
+        ["removed", "removed", "removed", "removed", "removed", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "removed", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["dull", "dull", "dull", "normal", "normal", "normal", "normal", "removed"],
+        ["dull", "dull", "dull", "removed", "normal", "normal", "normal", "removed"],
+        ["dull", "dull", "dull", "removed", "normal", "normal", "normal", "removed"],
+        ["dull", "dull", "dull", "removed", "removed", "removed", "removed", "removed"]
+      ],
+       
+    },
+    {
+      id: 55,
+      name: "Level 55",
+      objective: { type: 'destroy' , objGoal:18, tileType: 'dull'},
+      moves: 50,
+  
+      allowHardLetters: true, 
+      dullTurns: 9,
+      locked: false,
+      warpTurns: 6,
+      board: [
+        ["removed", "dull", "dull", "removed", "dull", "dull", "removed", "removed"],
+        ["dull", "warped", "normal", "dull", "normal", "warped", "dull", "removed"],
+        ["dull", "normal", "normal", "warped", "normal", "normal", "dull", "removed"],
+        ["dull", "normal", "normal", "normal", "normal", "normal", "dull", "removed"],
+        ["dull", "warped", "normal", "normal", "normal", "warped", "dull", "removed"],
+        ["removed", "dull", "normal", "normal", "normal", "dull", "removed", "removed"],
+        ["removed", "removed", "dull", "warped", "dull", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "dull", "removed", "removed", "removed", "removed"]
+      ],
+       
+    },
   ];
 
