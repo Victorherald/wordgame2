@@ -4,6 +4,8 @@ export type TileType = "normal" | "locked"| "fire" | "cursed" | "warped" | "remo
 
 export type Difficulty = "Hard Level" | "demon";
 
+export type GemTiles = "purple"
+
 export type TutorialTypes = "Locked Tiles" | "Fire Tiles" | "Warped Tiles" |"Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" ;
 
 
@@ -16,6 +18,7 @@ export type Objective =
 export type LevelData = {
   id: number;
   name: string;
+  gemtiles?: GemTiles;
   difficulty?: Difficulty;
   objective: Objective;
   locked: boolean;
@@ -1171,7 +1174,7 @@ export const levels: LevelData[] = [
       allowHardLetters: true, 
       dullTurns: 25,
       locked: false,
-      warpTurns: 6,
+      warpTurns: 9,
       board: [
         ["removed", "dull", "dull", "removed", "dull", "dull", "removed", "removed"],
         ["dull", "warped", "normal", "dull", "normal", "warped", "dull", "removed"],
@@ -1181,6 +1184,113 @@ export const levels: LevelData[] = [
         ["removed", "dull", "normal", "normal", "normal", "dull", "removed", "removed"],
         ["removed", "removed", "dull", "warped", "dull", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "dull", "removed", "removed", "removed", "removed"]
+      ],
+       
+    },
+     {
+      id: 56,
+      name: "Level 56",
+      objective: { type: 'lightsUp' , objGoal:10, tileType: 'bulb'},
+      moves: 40,
+  
+      allowHardLetters: false, 
+      locked: false,
+      board: [
+        ["bulb", "normal", "bulb", "removed", "normal", "normal", "normal", "bulb"],
+        ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "removed"],
+        ["bulb", "normal", "normal", "removed", "normal", "normal", "normal", "bulb"],
+        ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "removed"],
+        ["removed", "removed", "removed", "removed", "removed", "normal", "normal", "bulb"],
+        ["bulb", "normal", "normal", "normal", "removed", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "removed", "normal", "normal", "bulb"],
+        ["bulb", "normal", "bulb", "normal", "removed", "normal", "normal", "normal"]
+      ],
+       
+    },
+ {
+      id: 57,
+      name: "Level 57",
+      objective: { type: 'destroy' , objGoal: 3, tileType: 'warped'},
+      moves: 40,
+     warpTurns: 10,
+      allowHardLetters: false, 
+      locked: false,
+      board: [
+        ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "removed"],
+        ["warped", "normal", "removed", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "removed", "normal", "normal", "removed", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "warped"],
+        ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "warped", "normal", "normal", "normal", "removed", "removed", "removed"]
+      ],
+       
+    },
+
+    {
+      id: 58,
+      name: "Level 58",
+      objective: { type: 'destroy' , objGoal: 2, tileType: 'warped'},
+      moves: 30,
+     warpTurns: 19,
+      allowHardLetters: false, 
+      lockTurns: 12,
+      locked: false,
+      board: [
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "normal", "normal", "removed", "removed", "removed"],
+        ["locked", "locked", "locked", "normal", "normal", "locked", "locked", "locked"],
+        ["locked", "warped", "normal", "normal", "normal", "normal", "warped", "locked"],
+        ["locked", "locked", "locked", "normal", "normal", "locked", "locked", "locked"]
+      ],
+       
+    },
+    
+    {
+      id: 59,
+      name: "Level 59",
+      objective: { type: 'words' , minLength: 5 ,  objGoal: 6},
+      moves: 30,
+     warpTurns: 19,
+      allowHardLetters: false, 
+      lockTurns: 12,
+
+      locked: false,
+      board: [
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "removed", "removed", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+      ],
+       
+    },
+     {
+      id: 60,
+      name: "Level 60",
+      objective: { type: 'score' , objGoal: 9000},
+      moves: 35,
+     warpTurns: 8,
+      allowHardLetters: false, 
+    
+
+      locked: false,
+      board: [
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["warped", "normal", "normal", "warped", "warped", "normal", "removed", "removed"],
+        ["bulb", "warped", "warped", "bulb", "bulb", "warped", "warped", "bulb"]
       ],
        
     },

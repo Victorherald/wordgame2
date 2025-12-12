@@ -228,11 +228,12 @@ const goal = objective?.objGoal ?? 5;
 function generateRandomTile(includeHardLetters = true): Tile {
 
   // pick allowed letters based on toggle
-  const allowedLetters = includeHardLetters && Math.random() < 0.56
+  const allowedLetters = includeHardLetters && Math.random() < 0.20
     ? letters
     : letters.filter((l) => !HARD_LETTERS.includes(l.replace("QU", "Q"))); // QU check
 const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)];
  
+
   const rarity = getRarityByLetter(letter);
 
    // probabilities when allowed
@@ -432,11 +433,9 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
   .map(({ row, col }) => grid[row]?.[col]?.letter ?? "")
   .join("");
 
-  if(currentWord.includes('QU')){
-     currentWord.split
-  }
+   const letterCount = currentWord.length
 
-const canSubmit = currentWord.length >= 3 && isWordValid;
+const canSubmit = letterCount >= 3 && isWordValid;
 
   
 
@@ -495,7 +494,7 @@ const canSubmit = currentWord.length >= 3 && isWordValid;
         .map(({ row, col }) => grid[row]?.[col]?.letter ?? "")
         .join("");
 
-      if (word.length < 3) {
+      if (letterCount < 3) {
         setIsWordValid(false);
       } else {
         const valid = await validateWord(word);
@@ -523,7 +522,7 @@ async function validateWord(word: string): Promise<boolean> {
 useEffect(() => {
   const word = getSelectedWord();
 
-  if (word.length < 3) {
+  if (letterCount < 3) {
     setIsWordValid(false);
     return;
   }
@@ -782,7 +781,7 @@ if (usedBulbThisMatch && allBulbsAreLit) {
   }
 
   // reward points
-  setScore(prev => prev + bulbsCleared * 50);
+  setScore(prev => prev + bulbsCleared * 1000);
 }
 
 
