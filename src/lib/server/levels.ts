@@ -13,6 +13,7 @@ export type Objective =
   | { type: 'score'; objGoal: number }
   | { type: 'words'; objGoal: number; minLength?: number } 
   |  {type: 'lightsUp'; objGoal: number ; tileType: 'bulb'}
+  | {type: 'defrost'; objGoal: number; tileType: 'ice'}
   | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' | 'bone' | "bulb"};
 
 export type LevelData = {
@@ -1276,7 +1277,7 @@ export const levels: LevelData[] = [
       id: 60,
       name: "Level 60",
       objective: { type: 'score' , objGoal: 9000},
-      moves: 35,
+      moves: 20,
      warpTurns: 8,
       allowHardLetters: false, 
     
@@ -1291,6 +1292,74 @@ export const levels: LevelData[] = [
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
         ["warped", "normal", "normal", "warped", "warped", "normal", "removed", "removed"],
         ["bulb", "warped", "warped", "bulb", "bulb", "warped", "warped", "bulb"]
+      ],
+       
+    },
+     {
+      id: 61,
+      name: "Level 61",
+      objective: { type: 'defrost' , objGoal: 10  , tileType: 'ice'},
+      moves: 30,
+     warpTurns: 8,
+      allowHardLetters: false, 
+    
+
+      locked: false,
+      board: [
+        ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "ice", "normal", "normal", "normal", "normal", "ice", "removed"],
+        ["removed", "ice", "normal", "normal", "normal", "normal", "ice", "removed"],
+        ["removed", "ice", "normal", "normal", "normal", "normal", "ice", "removed"],
+        ["removed", "ice", "ice", "ice", "ice", "ice", "ice", "removed"]
+      ],
+        tutorialTileType: 'Frozen Tiles',
+       tutorialMessage: "Ice tiles can not be selected, Can be destroyed by making adjacent words next to it!",
+       tutorial: {}
+    },
+     {
+      id: 62,
+      name: "Level 62",
+      objective: { type: 'defrost' , objGoal: 24  , tileType: 'ice'},
+      moves: 30,
+     warpTurns: 8,
+      allowHardLetters: false, 
+    
+
+      locked: false,
+      board: [
+        ["ice", "removed", "ice", "removed", "ice", "removed", "ice", "removed"],
+        ["ice", "normal", "ice", "normal", "ice", "normal", "ice", "normal"],
+        ["ice", "normal", "ice", "normal", "ice", "normal", "ice", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "ice", "normal", "ice", "normal", "ice", "normal", "ice"],
+        ["normal", "ice", "normal", "ice", "normal", "ice", "normal", "ice"],
+        ["removed", "ice", "removed", "ice", "removed", "ice", "removed", "ice"]
+      ],
+       
+    },
+    {
+      id: 63,
+      name: "Level 63",
+      objective: { type: 'destroy' , objGoal: 2  , tileType: 'dull'},
+      moves: 35,
+     warpTurns: 8,
+      allowHardLetters: false, 
+      dullTurns: 10,
+
+      locked: false,
+      board: [
+        ["normal", "normal", "normal", "removed", "removed", "ice", "ice", "ice"],
+        ["normal", "normal", "normal", "normal", "ice", "ice", "dull", "ice"],
+        ["normal", "normal", "normal", "normal", "normal", "ice", "ice", "ice"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "ice", "ice"],
+        ["ice", "ice", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["ice", "ice", "ice", "normal", "normal", "normal", "normal", "normal"],
+        ["ice", "dull", "ice", "ice", "normal", "normal", "normal", "normal"],
+        ["ice", "ice", "ice", "removed", "removed", "normal", "normal", "normal"]
       ],
        
     },

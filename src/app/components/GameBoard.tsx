@@ -52,7 +52,7 @@ type LetterBoardProps = {
   level?: LevelData;
   layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice")[][];
   objective?: {
-  type: 'score' | 'words' | 'destroy' | 'lightsUp';
+  type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost';
   objGoal: number;
   tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone" | "bulb" | "ice";
   minLength?: number;
@@ -608,7 +608,8 @@ const handleSubmit = () => {
 
     let updatedGrid = grid.map((r) => [...r]);
     updatedGrid = applyWarpedEffect(updatedGrid);
-   updatedGrid = applyIceDamage(updatedGrid, selected);
+ 
+
 
     
 
@@ -620,6 +621,8 @@ const handleSubmit = () => {
 
       
   const newGrid = grid.map((r) => [...r]);
+
+   let brokenIce = 0;
 
   const adjacentDirs = [
     [1, 0],
@@ -647,12 +650,13 @@ const handleSubmit = () => {
             presets: false,
             justBrokeIce: true
           };
+          brokenIce++;
         }
       }
     });
   });
   
-  return newGrid;
+    return { grid: newGrid, brokenIce };
 }
 
 
@@ -729,6 +733,9 @@ let usedBulbThisMatch = false;
 selected.forEach(({ row, col }) => {
   const tile = updatedGrid[row][col];
   if (!tile?.isLightBulb) return;
+
+  usedBulbThisMatch = true;
+
 
   const wasOn = tile.isBulbOn;
   const isNowOn = !wasOn;
@@ -829,17 +836,17 @@ if (tile.isDull) return;
 
       if (tile?.isCursed && tile.curseTurns && tile.curseTurns > 0) points -= 15;
 
-      if(tile.letter.includes("QU")) points += 80;
+      if(tile.letter.includes("QU")) points += 300;
 
-      if(tile.rarity.includes('gold')) points += 70;
+      if(tile.rarity.includes('gold')) points += 150;
       
-      if (tile.gem?.includes("purple")) points += 100;
-      if (tile.gem?.includes("green")) points += 150;
-      if (tile.gem?.includes("blue")) points += 200;
-       if (tile.gem?.includes("orange")) points += 170;
-        if (tile.gem?.includes("red")) points += 250;
-         if (tile.gem?.includes("pink")) points += 500;
-       if (tile.gem?.includes("blue")) points += 1000;
+      if (tile.gem?.includes("purple")) points += 300;
+      if (tile.gem?.includes("green")) points += 450;
+      if (tile.gem?.includes("blue")) points += 600;
+       if (tile.gem?.includes("orange")) points += 770;
+        if (tile.gem?.includes("red")) points += 850;
+         if (tile.gem?.includes("pink")) points += 3000;
+       if (tile.gem?.includes("blue")) points += 6000;
     })
     setScore((p) => p + points);
 
@@ -851,11 +858,21 @@ else if (objective?.type === "score") label = "Score";
 else if (objective?.type === "destroy")
   label = `Destroy ${objective.tileType} tiles!`;
 else if (objective?.type === "lightsUp")
-  label = "Lights turned on"
+  label = "Lights turned on";
+else if (objective?.type === "defrost")
+  label = "Ice cleared";
     
 if (objective) {
   let updatedObjMet = objMet;
   setMovesLeft(prev => prev- 1);
+
+
+  const iceResult = applyIceDamage(updatedGrid, selected);
+updatedGrid = iceResult.grid;
+
+if (objective?.type === 'defrost') {
+  updatedObjMet += iceResult.brokenIce;
+}
 
   // Word-based objective (e.g., make 5 words of 3+ letters)
   if (objective.type === 'words') {
@@ -869,6 +886,8 @@ if (objective) {
     updatedObjMet += points;
   }
 
+
+  // lights up mode
   else if (objective?.type === "lightsUp") {
   selected.forEach(({ row, col }) => {
     const tile = grid[row][col];
@@ -882,6 +901,21 @@ if (objective) {
     updatedObjMet += isNowOn ? +1 : -1;
   });
 }
+
+// break the ice 
+else if (objective.type === 'defrost'){
+  const iceBroken = selected.filter(({ row, col }) => {
+      const tiles = grid[row][col];
+      if (!tiles) return false;
+
+      if (objective.tileType === 'ice') return tiles.isFrozen;
+}).length;
+
+updatedObjMet  += iceBroken
+
+}
+
+
 
   // Destroy-based objective (e.g., destroy fire or cursed tiles)
   else if (objective.type === 'destroy') {
@@ -1194,6 +1228,8 @@ function closeTutorial() {
           ? 'Words Found'
           : objective.type === 'lightsUp' 
           ? `Lights Up`
+          : objective.type ===  'defrost'
+          ? ' Defrost'
           : objective.type === 'score'
           ? 'Score'
           : `Destroy ${objective.tileType} tiles`
@@ -1229,9 +1265,15 @@ function closeTutorial() {
           : objective.type === 'score'
           ? 'Score'
            : objective.type === 'lightsUp' 
+          
+
           ? `Lights turned on `
+
+          : objective.type === 'defrost'
+          ? 'Ice cleared'
           : `Destroy ${objective.tileType} tiles`
         }: ${objMet}/${objective.objGoal}`
+
       : 'No objective'}
             </p>
             
@@ -1473,7 +1515,7 @@ function closeTutorial() {
     <div className={`${level.difficulty === 'Hard Level' ? 'bg-neutral-900 border border-red-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in' : 'bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in'}`}>
 
       <h2 className="text-lg sm:text-xl font-semibold text-white">Objective</h2>
-       <p className='text-red-900 p-0'>{`${level.difficulty === 'Hard Level' ? 'Hard Level' : ''}`}</p>
+       <p className='text-red-900'>{`${level.difficulty === 'Hard Level' ? 'Hard Level' : ''}`}</p>
       {objective ? (
         <p className="text-gray-300 text-xs sm:text-sm leading-snug">
           {objective.type === "score" && `Reach ${objective.objGoal} points`}
@@ -1481,6 +1523,7 @@ function closeTutorial() {
           {objective.type === "destroy" &&
             `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
             {objective.type === "lightsUp" && `Turn on all the lights!`}
+            {objective.type === "defrost" && 'Clear all the ice'}
         </p>
       ) : (
         <p className="text-gray-500 text-xs sm:text-sm italic">No objective</p>
