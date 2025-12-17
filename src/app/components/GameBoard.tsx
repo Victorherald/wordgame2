@@ -228,9 +228,9 @@ const goal = objective?.objGoal ?? 5;
 function generateRandomTile(includeHardLetters = true): Tile {
 
   // pick allowed letters based on toggle
-  const allowedLetters = includeHardLetters && Math.random() < 0.20
+  const allowedLetters = includeHardLetters && Math.random() < 0.03
     ? letters
-    : letters.filter((l) => !HARD_LETTERS.includes(l.replace("QU", "Q"))); // QU check
+    : letters.filter((l) => !HARD_LETTERS.includes(l.replace('QU' ,'Q'))); // QU check
 const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)];
  
 
@@ -618,6 +618,8 @@ const handleSubmit = () => {
 
     function applyIceDamage(grid: Tile[][], selected: Position[]) {
 
+      let scoreThisTurn = 0;
+
 
       
   const newGrid = grid.map((r) => [...r]);
@@ -788,7 +790,10 @@ if (usedBulbThisMatch && allBulbsAreLit) {
   }
 
   // reward points
-  setScore(prev => prev + bulbsCleared * 1000);
+  if (objective?.type === 'score'){
+      setScore(prev => prev + bulbsCleared * 1000);
+  }
+
 }
 
 
@@ -834,9 +839,12 @@ function NegativeTile(tile: Tile) {
       const tile = grid[row][col];
 if (tile.isDull) return;
 
-      if (tile?.isCursed && tile.curseTurns && tile.curseTurns > 0) points -= 15;
+      if (tile?.isCursed && tile.curseTurns && tile.curseTurns > 0) points -= 100;
 
       if(tile.letter.includes("QU")) points += 300;
+
+    
+
 
       if(tile.rarity.includes('gold')) points += 150;
       
@@ -884,6 +892,8 @@ if (objective?.type === 'defrost') {
   // Score-based objective (e.g., reach 500 points)
   else if (objective.type === 'score') {
     updatedObjMet += points;
+
+    
   }
 
 
@@ -1194,6 +1204,54 @@ function closeTutorial() {
 
 
 
+
+function canScrambleLetter(tile: Tile | null) {
+  if (!tile) return false;
+
+  // Tiles that should NEVER change
+  if (
+    tile.isLocked ||
+    tile.isFrozen ||
+    tile.isBone ||
+    tile.isRemoved ||
+    tile.isWarped
+  ) return false;
+
+  return true;
+}
+
+
+function scrambleGrid(grid: Tile[][]) {
+  return grid.map(row =>
+    row.map(tile => {
+      if (!canScrambleLetter(tile)) return tile;
+
+      const newTile = generateRandomTile(level?.allowHardLetters ?? true);
+
+      return {
+        ...tile,
+        letter: newTile.letter,
+        rarity: newTile.rarity,
+      };
+    })
+  );
+}
+
+const handleScramble = () => {
+  if (movesLeft < 3 || isGameOver) return;
+
+  const scrambled = scrambleGrid(grid);
+
+  setGrid(scrambled);
+  setMovesLeft(prev => prev - 3);
+
+  // Reset word state immediately
+  setSelected([]);
+  setIsWordValid(false);
+};
+
+
+
   return (
 
     
@@ -1239,9 +1297,26 @@ function closeTutorial() {
       </div>
       
     </div>
-<div className='flex md:hidden '>
-        <ScoreCounter score={score} />
-      </div>
+<div className="flex md:hidden w-full items-center justify-between gap-3 px-2">
+  {/* Score */}
+  <div className="flex-shrink-0">
+    <ScoreCounter score={score} />
+  </div>
+
+  {/* Scramble button */}
+  <button
+    onClick={handleScramble}
+    disabled={movesLeft < 3 || isGameOver}
+    className={`flex-shrink-0 px-3 py-2 text-sm rounded transition ${
+      movesLeft >= 3 && !isGameOver
+        ? "bg-red-600 text-white hover:bg-red-700"
+        : "bg-gray-500 text-gray-300 cursor-not-allowed"
+    }`}
+  >
+    Scramble (-3)
+  </button>
+</div>
+
 
 
     {/*  Sidebar */}
@@ -1295,7 +1370,7 @@ function closeTutorial() {
 
         <button
           onClick={clearSelection}
-          className="px-4 py-2 bg-red-900 text-white rounded hover:bg-red-700 transition"
+          className="px-4 py-2 bg-orange-900 text-white rounded hover:bg-orange-700 transition"
         >
           Clear Selection
         </button>
@@ -1311,7 +1386,17 @@ function closeTutorial() {
 >
   Submit Word
 </button>
-
+  <button
+  onClick={handleScramble}
+  disabled={movesLeft < 3 || isGameOver}
+  className={`px-4 py-2 rounded transition ${
+    movesLeft > 3 && !isGameOver
+      ? "bg-red-600 hover:bg-red-700 text-white"
+      : "bg-gray-500 text-gray-300 cursor-not-allowed"
+  }`}
+>
+  Scramble (-3)
+</button>
    
 
 
@@ -1505,6 +1590,8 @@ function closeTutorial() {
         <div className="bg-orange-700 rounded text-white cursor-not-allowed opacity-60">
           <button onClick={() => router.push("/levels")} className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition">Back</button>
       </div>
+    
+
       </div>
     </div>
   </div>

@@ -7,9 +7,13 @@ export type Objective =
   | { type: 'words'; objGoal: number; minLength?: number }
   | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' | 'locked' | 'bone'};
 
+export type Difficulty = "hard" | "demon";
+  
+
 export type LevelData = {
   id: number;
   name: string;
+  difficulty?: Difficulty;
   objective: Objective;
   locked: boolean;
   layout?: TileType[][];
@@ -140,6 +144,7 @@ export function baseLevels(): LevelData[] {
       name: "Level 6",
       objective: { type: 'score' , objGoal: 700 },
       locked: true,
+      
       moves: 14,
         shouldShowTutorial: true,
   tutorialTileType: "dull",

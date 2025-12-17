@@ -1363,5 +1363,193 @@ export const levels: LevelData[] = [
       ],
        
     },
+      {
+      id: 64,
+      name: "Level 64",
+      objective: { type: 'defrost' , objGoal: 10  , tileType: 'ice'},
+      moves: 38,
+     warpTurns: 8,
+      allowHardLetters: false, 
+      dullTurns: 16,
+      lockTurns: 5,
+      locked: false,
+      board: [
+        ["removed", "removed", "normal", "removed", "normal", "ice", "removed", "removed"],
+        ["removed", "dull", "dull", "normal", "normal", "ice", "normal", "removed"],
+        ["normal", "dull", "dull", "normal", "normal", "ice", "ice", "ice"],
+        ["removed", "normal", "normal", "locked", "locked", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "locked", "locked", "normal", "normal", "removed"],
+        ["ice", "ice", "ice", "normal", "normal",  "dull", "dull", "normal", ],
+        ["removed", "normal", "ice", "normal", "normal", "dull", "dull", "removed"],
+        ["removed", "removed", "ice", "removed", "normal", "normal", "removed", "removed"]
+      ],
+       
+    },
+        {
+      id: 65,
+      name: "Level 65",
+      objective: { type: 'destroy' , objGoal: 24  , tileType: 'dull'},
+      moves: 38,
+     warpTurns: 8,
+      allowHardLetters: false, 
+      dullTurns: 16,
+      lockTurns: 5,
+      locked: false,
+      difficulty: 'Hard Level',
+      board: [
+        ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+        ["normal", "dull", "normal", "removed", "removed", "normal", "dull", "normal"],
+        ["normal", "normal", "dull", "normal", "removed", "dull", "normal", "normal"],
+        ["removed", "normal", "normal", "dull", "dull", "normal", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["dull", "dull", "dull", "removed", "normal",  "dull", "dull", "dull"],
+        ["dull", "dull", "dull", "removed", "removed", "dull", "dull", "dull"],
+        ["dull", "dull", "dull", "removed", "removed", "dull", "dull", "dull"]
+      ],
+       
+    },
+     {
+      id: 66,
+      name: "Level 66",
+      objective: { type: 'score' , objGoal: 13000},
+      moves: 38,
+     warpTurns: 8,
+      allowHardLetters: false, 
+      dullTurns: 19,
+      lockTurns: 13,
+      locked: false,
+      
+      board: [
+        ["removed", "removed", "removed", "removed", "removed", "removed", "normal", "normal"],
+        ["ice", "ice", "removed", "removed", "removed", "removed", "normal", "normal"],
+        ["removed", "ice", "dull", "ice", "locked", "normal", "normal", "normal"],
+        ["removed", "ice", "dull", "ice", "locked", "normal", "normal", "normal"],
+        ["removed", "ice", "dull", "ice", "locked", "normal", "normal", "normal"],
+        ["removed", "ice", "dull", "ice", "locked",  "normal", "normal", "normal"],
+        ["ice", "ice", "removed", "removed", "removed", "removed", "normal", "normal"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "normal", "normal"]
+      ],
+       
+    },
+     {
+      id: 67,
+      name: "Level 67",
+      objective: { type: 'destroy' , objGoal: 4,  tileType: 'dull'},
+      moves: 38,
+     warpTurns: 8,
+      allowHardLetters: false, 
+      dullTurns: 10,
+      lockTurns: 13,
+      locked: false,
+      
+      board: [
+        ["removed", "removed", "dull", "dull", "removed", "removed", "removed", "removed"],
+        ["ice", "ice", "ice", "ice", "ice", "normal", "normal", "normal"],
+        ["ice", "ice", "ice", "normal", "normal", "normal", "normal", "ice"],
+        ["ice", "ice", "normal", "normal", "normal", "normal", "ice", "ice"],
+        ["ice", "normal", "normal", "normal", "normal", "ice", "ice", "ice"],
+        ["normal", "normal", "normal", "normal", "ice",  "ice", "ice", "ice"],
+        ["normal", "normal", "normal", "ice", "ice", "ice", "ice", "ice"],
+        ["removed", "removed", "removed", "removed", "dull", "dull", "removed", "removed"]
+      ],
+       
+    },
+
+     {
+      id: 68,
+      name: "Level 68",
+      objective: { type: 'lightsUp' , objGoal: 12,  tileType: 'bulb'},
+      moves: 45,
+     warpTurns: 8,
+     difficulty: 'Hard Level'
+,      allowHardLetters: false, 
+      dullTurns: 10,
+      lockTurns: 13,
+      locked: false,
+      
+      board: [
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "bulb", "bulb", "bulb", "bulb", "bulb", "bulb", "removed"],
+        ["normal", "removed", "normal", "normal", "normal", "normal", "removed", "normal"],
+        ["normal", "normal", "removed", "normal", "normal", "removed", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal",  "normal", "normal", "normal"],
+        ["normal", "removed", "bulb", "bulb", "bulb", "bulb", "removed", "normal"],
+        ["bulb", "normal", "removed", "normal", "normal", "removed", "normal", "bulb"]
+      ],
+       
+    },
+     {
+      id: 69,
+      name: "Level 69",
+      objective: { type: 'lightsUp' , objGoal: 8,  tileType: 'bulb'},
+      moves: 45,
+     warpTurns: 8,
+       allowHardLetters: false, 
+      dullTurns: 10,
+      lockTurns: 13,
+      locked: false,
+      
+      board: [
+        ["warped", "normal", "normal", "ice", "ice", "normal", "normal", "warped"],
+        ["normal", "warped", "ice", "bulb", "bulb", "ice", "warped", "normal"],
+        ["normal", "ice", "bulb", "ice", "ice", "bulb", "ice", "normal"],
+        ["ice", "ice", "ice", "ice", "ice", "ice", "ice", "ice"],
+        ["ice", "ice", "ice", "ice", "ice", "ice", "ice", "ice"],
+        ["normal", "ice", "bulb", "ice", "ice",  "bulb", "ice", "normal"],
+        ["normal", "dull", "ice", "bulb", "bulb", "ice", "dull", "normal"],
+        ["dull", "normal", "normal", "ice", "ice", "normal", "normal", "dull"]
+      ],
+       
+    },
+     {
+      id: 70,
+      name: "Level 70",
+      objective: { type: 'words', objGoal: 15,  minLength: 4},
+      moves: 50,
+      allowHardLetters: true,
+      locked: false,
+      allowBulbTiles: true,
+      lockTurns: 10,
+      dullTurns: 8,
+      warpTurns: 7,
+      board: [
+        ["normal", "normal", "removed", "removed", "removed", "removed", "normal", "normal"],
+        ["dull", "ice", "normal", "removed", "removed", "normal", "normal", "normal"],
+        ["removed", "ice", "normal", "normal", "normal", "normal", "warped", "warped"],
+        ["removed", "ice", "normal", "normal", "normal", "normal", "warped", "removed"],
+        ["removed", "ice", "normal", "normal", "normal", "normal", "warped", "removed"],
+        ["removed", "ice", "locked", "locked", "locked", "locked", "warped", "warped"],
+        ["dull", "ice", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+      ],
+     
+    },
+      {
+      id: 71,
+      name: "Level 71",
+      objective: { type: 'score', objGoal: 3400},
+      moves: 25,
+      allowHardLetters: true,
+      locked: false,
+      allowBulbTiles: true,
+      lockTurns: 10,
+      dullTurns: 8,
+      cursedTurns: 5,
+      warpTurns: 7,
+      board: [
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["cursed", "normal", "cursed", "cursed", "cursed", "cursed", "normal", "cursed"],
+        ["cursed", "normal", "cursed", "cursed", "cursed", "cursed", "normal", "cursed"],
+        ["removed", "normal", "normal", "cursed", "cursed", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "cursed", "cursed", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "cursed", "cursed", "normal", "normal", "removed"]
+      ],
+  tutorialTileType: 'Cursed Tiles',
+       tutorialMessage: "Cursed tiles are not your friend!, they reduce your points when used in a word, Wait till the timer reaches zero to use it!",
+       tutorial: {}
+    },
   ];
 
