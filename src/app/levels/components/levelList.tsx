@@ -68,7 +68,21 @@ export default function LevelList() {
          
              
               ${lvl.difficulty === "Hard Level" ? "bg-orange-900/40 text-white border-orange-600 hover:border-orange-500" : ""}
-              ${lvl.difficulty === "demon" ? "bg-red-900/40 text-white border-red-700 hover:border-red-500" : ""}
+             ${lvl.difficulty === "demon"
+  ? `
+    bg-gradient-to-br from-red-950 via-red-900 to-orange-900
+    text-red-100
+    border border-red-700
+    shadow-lg shadow-red-900/50
+    hover:shadow-red-700/70
+    hover:border-red-500
+    hover:scale-[1.06]
+    relative
+    overflow-hidden
+  `
+  : ""
+}
+
 
               ${!lvl.locked ? "hover:scale-105" : ""}
             `}
@@ -117,7 +131,7 @@ export default function LevelList() {
 
                 <button
                   onClick={() => handlePlay(lvl.id)}
-                  className={`${lvl.difficulty === 'Hard Level' ? 'mt-3 flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition' : 'mt-3 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition' }`}
+                  className={`${lvl.difficulty === 'Hard Level' ? 'mt-3 flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition' : 'mt-3 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition' } ${lvl.difficulty === 'demon' ? 'mt-3 flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded transition' : 'mt-3 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition'}`}
                 >
                   <Play className="w-4 h-4" /> Play
                 </button>

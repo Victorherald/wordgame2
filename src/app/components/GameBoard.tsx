@@ -102,7 +102,7 @@ export function LetterBoard({ level,   objective,  levelName, layout, moves = 15
   const [objMet, setObjMet] = useState(0);
  const [movesLeft, setMovesLeft] = useState(moves);
 const [isGameOver, setIsGameOver] = useState(false);
-const [gameResult, setGameResult] = useState<'win' | 'fire' | 'fail' | null>(null);
+const [gameResult, setGameResult] = useState<'win' | 'fire' | 'fail' | 'lowScore' | null>(null);
 const [tutorialActive, setTutorialActive] = useState(false);
 const [showTutorialPopup, setShowTutorialPopup] = useState(false);
 
@@ -228,7 +228,7 @@ const goal = objective?.objGoal ?? 5;
 function generateRandomTile(includeHardLetters = true): Tile {
 
   // pick allowed letters based on toggle
-  const allowedLetters = includeHardLetters && Math.random() < 0.03
+  const allowedLetters = includeHardLetters && Math.random() 
     ? letters
     : letters.filter((l) => !HARD_LETTERS.includes(l.replace('QU' ,'Q'))); // QU check
 const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)];
@@ -729,6 +729,8 @@ if (fireReachedBottom && !isGameOver) {
 
 
 
+
+
 //  BULB TOGGLING
 let usedBulbThisMatch = false;
 
@@ -833,6 +835,8 @@ function NegativeTile(tile: Tile) {
     
     let points = validTiles.length * 40;
 
+    
+   
 
     
     selected.forEach(({ row, col }) => {
@@ -1151,7 +1155,7 @@ for (let c = 0; c < cols; c++) {
   // Fill top with new tiles
   for (let r = 0; r < rows; r++) {
     if (!newCol[r]) {
-      newCol[r] = generateRandomTile(level?.allowHardLetters ?? level?.shouldCursedSpawn ?? true);
+      newCol[r] = generateRandomTile(level?.allowHardLetters ?? level?.shouldCursedSpawn ?? true ?? level?.shouldDullSpawn ?? true);
       newGenerated.push({ row: r, col: c });
     }
   }
@@ -1273,7 +1277,25 @@ const handleScramble = () => {
     "
   >
 {/* --- Top Bar (Mobile only) --- */}
-    <div className={`${level.difficulty === 'Hard Level' ? 'flex md:hidden justify-between items-center bg-red-950 border border-neutral-800 rounded-lg p-2 mb-2' : 'flex md:hidden justify-between items-center bg-neutral-950 border border-neutral-800 rounded-lg p-2 mb-2'}`}>
+    <div className={`${level.difficulty === 'Hard Level' ? 'flex md:hidden justify-between items-center bg-red-950 border border-neutral-800 rounded-lg p-2 mb-2' : 'flex md:hidden justify-between items-center bg-neutral-950 border border-neutral-800 rounded-lg p-2 mb-2'} ${level.difficulty === 'demon'
+  ? `
+    flex md:hidden justify-between items-center
+    bg-gradient-to-r from-red-950 via-orange-950 to-red-900
+    border border-red-700
+    rounded-lg p-2 mb-2
+    text-red-100
+    shadow-lg shadow-red-900/60
+    animate-pulse
+    relative overflow-hidden
+  `
+  : `
+    flex md:hidden justify-between items-center
+    bg-neutral-950
+    border border-neutral-800
+    rounded-lg p-2 mb-2
+  `
+}
+`}>
       <div className="text-xs sm:text-sm font-semibold text-white">
         {levelName ? levelName : "Level"}
       </div>
@@ -1321,12 +1343,12 @@ const handleScramble = () => {
 
     {/*  Sidebar */}
     <div
-      className={`${level.difficulty === 'Hard Level' ? "hidden md:flex flex-col justify-between bg-red-750 p-4 rounded-lg border border-red-700 overflow-y-auto space-y-3" : "hidden md:flex flex-col justify-between bg-neutral-950 p-4 rounded-lg border border-neutral-800 overflow-y-auto space-y-3"}`}
+      className={`${level.difficulty === 'Hard Level' ? "hidden md:flex flex-col justify-between bg-red-750 p-4 rounded-lg border border-red-700 overflow-y-auto space-y-3" : "hidden md:flex flex-col justify-between bg-neutral-950 p-4 rounded-lg border border-neutral-800 overflow-y-auto space-y-3"} ${level.difficulty === 'demon' ? "hidden md:flex flex-col justify-between bg-orange-750 p-4 rounded-lg border border-orange-700 overflow-y-auto space-y-3" : "hidden md:flex flex-col justify-between bg-neutral-950 p-4 rounded-lg border border-neutral-800 overflow-y-auto space-y-3"}`}
       
     >
       <div className="flex flex-col items-start p-1">
   {levelName && (
-    <h2 className={`${level.difficulty === "Hard Level" ? "text-lg sm:text-xl font-bold text-red-600 mb-2" : "text-lg sm:text-xl font-bold text-yellow-400 mb-2"}`}>
+    <h2 className={`${level.difficulty === "Hard Level" ? "text-lg sm:text-xl font-bold text-red-600 mb-2" : "text-lg sm:text-xl font-bold text-yellow-400 mb-2"} ${level.difficulty === "demon" ? "text-lg sm:text-xl font-bold text-orange-800 mb-2" : "text-lg sm:text-xl font-bold text-yellow-400 mb-2"}`}>
       {levelName}
     </h2>
   )}
@@ -1563,7 +1585,7 @@ const handleScramble = () => {
 
 
       {/*  Current Word for Mobile */}
-      <div className="block md:hidden w-full mt-2 text-center absolute top-105">
+      <div className="block md:hidden w-full mt-2 text-center absolute top-104">
         <WordDisplay word={getSelectedWord()} />
       </div>
 
@@ -1599,10 +1621,10 @@ const handleScramble = () => {
 {/* --- Objective Popup (Fixed & Responsive) --- */}
 {showObjectivePopup && (
   <div className={`${level.difficulty === 'Hard Level' ? 'fixed inset-0 bg-red/70 flex justify-center items-center z-50 overflow-hidden' : 'fixed inset-0 bg-black/70 flex justify-center items-center z-50 overflow-hidden'}`}>
-    <div className={`${level.difficulty === 'Hard Level' ? 'bg-neutral-900 border border-red-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in' : 'bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in'}`}>
+    <div className={`${level.difficulty === 'Hard Level' ? 'bg-neutral-900 border border-red-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in' : 'bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in'} ${level.difficulty === 'demon' ? 'bg-neutral-900 border border-orange-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in' : 'bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in'}`}>
 
       <h2 className="text-lg sm:text-xl font-semibold text-white">Objective</h2>
-       <p className='text-red-900'>{`${level.difficulty === 'Hard Level' ? 'Hard Level' : ''}`}</p>
+       <p className='text-red-900'>{`${level.difficulty === 'Hard Level' ? 'Hard Level' :  ''} ${level.difficulty === 'demon' ? 'Demon Level' :  ''}`}</p>
       {objective ? (
         <p className="text-gray-300 text-xs sm:text-sm leading-snug">
           {objective.type === "score" && `Reach ${objective.objGoal} points`}
@@ -1626,16 +1648,58 @@ const handleScramble = () => {
   </div>
 )}
 
-{/* --- Tutorial Popup --- */}
+{/* --- Tutorial Side Panel --- */}
 {showTutorialPopup && (
-  <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-40">
-    <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-11/12 max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in mb-32 sm:mb-16">
-      <h2>New Tile: {tutorialType}</h2>
-      <p>{level.tutorialMessage}</p>   {/* USE LEVEL DATA */}
-      <button  className="mt-3 sm:mt-4 bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base" onClick={closeTutorial}>Got it</button>
+  <div className="fixed z-40 pointer-events-none">
+    <div
+      className="
+        pointer-events-auto
+        fixed
+        bottom-4
+        right-4
+        sm:bottom-auto
+        sm:top-1/2
+        sm:-translate-y-1/2
+        sm:right-6
+        w-[90vw]
+        max-w-xs
+        sm:max-w-sm
+        bg-neutral-900
+        border border-neutral-700
+        rounded-xl
+        p-4
+        shadow-2xl
+        tutorial-slide-in
+      "
+    >
+      <h2 className="text-base sm:text-lg font-bold text-white mb-2">
+        New Tile: <span className="text-green-400">{tutorialType}</span>
+      </h2>
+
+      <p className="text-sm sm:text-base text-gray-300">
+        {level.tutorialMessage}
+      </p>
+
+      <button
+        onClick={closeTutorial}
+        className="
+          mt-4
+          w-full
+          bg-green-600
+          hover:bg-green-700
+          text-white
+          py-2
+          rounded
+          transition
+          text-sm sm:text-base
+        "
+      >
+        Got it
+      </button>
     </div>
   </div>
 )}
+
 
 
 {/* --- End Results Popup --- */}
@@ -1645,7 +1709,7 @@ const handleScramble = () => {
       <h2 className="text-lg sm:text-xl font-semibold text-white">
         {gameResult === "win"
           ? "Level Complete!"
-          : gameResult === "fail" || gameResult === "fire"
+          : gameResult === "fail" || gameResult === "fire" 
           ? "Game Over"
           : ""}
       </h2>
@@ -1655,7 +1719,10 @@ const handleScramble = () => {
           ? "You successfully completed the objective!"
           : gameResult === "fire"
           ? "Tiles are ignited!"
-          : "You ran out of moves."}
+         
+          : gameResult === "fail" ?
+        "You ran out of moves!"
+          : ""}
       </p>
 
       <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mt-3 sm:mt-4">
