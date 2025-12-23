@@ -18,12 +18,9 @@ export default function Home() {
     const month = now.getMonth(); // 0 = Jan, 11 = Dec
     const day = now.getDate();
     return month === 11 || (month === 0 && day <= 5);
-
   };
 
-  
   const christmas = isChristmasSeason();
-
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-neutral-950 text-white">
