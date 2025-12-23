@@ -4,8 +4,45 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { SnowEffect } from "./particles/snowParticles";
+import { Snowflake } from "lucide-react";
+
+
 
 export default function Home() {
+
+const SantaHat = ({ className }: { className?: string }) => (
+  <svg
+    viewBox="0 0 64 64"
+    className={className}
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    {/* Hat body */}
+    <path
+      d="M10 38C10 20 48 10 54 32L10 38Z"
+      fill="#dc2626"
+      stroke="#991b1b"
+      strokeWidth="2"
+    />
+
+    {/* White trim */}
+    <rect
+      x="8"
+      y="36"
+      width="48"
+      height="8"
+      rx="4"
+      fill="#f8fafc"
+    />
+
+    {/* Pom */}
+    <circle cx="54" cy="32" r="6" fill="#f8fafc" />
+  </svg>
+);
+
+
+
+
   const router = useRouter();
   const [activePopup, setActivePopup] = useState<string | null>(null);
 
@@ -33,35 +70,54 @@ export default function Home() {
         
         {/* Title */}
         <motion.h1
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{
-            scale: 1,
-            opacity: 1,
-            textShadow: christmas
-              ? [
-                  "0 0 6px rgba(255,255,255,0.6)",
-                  "0 0 14px rgba(180,220,255,0.9)",
-                  "0 0 6px rgba(255,255,255,0.6)",
-                ]
-              : "0 0 15px rgba(255,255,255,0.4)",
-          }}
+  initial={{ scale: 0.8, opacity: 0 }}
+  animate={{ scale: 1, opacity: 1 }}
+  transition={{ duration: 0.6 }}
+  className={`
+    relative flex items-center text-5xl md:text-7xl font-bold mb-12
+    ${
+      isChristmasSeason()
+        ? "text-sky-200 drop-shadow-[0_0_20px_rgba(200,230,255,0.9)]"
+        : "text-amber-400 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+    }
+  `}
+>
+  {/* W + Santa Hat */}
+  <span className="relative inline-block">
+    W
+    {isChristmasSeason() && (
+      <SantaHat className="absolute -top-6 -left-4 w-10 rotate-[-20deg]" />
+    )}
+  </span>
+
+  orzzle
+
+  {/* Snowflakes */}
+  {isChristmasSeason() && (
+    <div className="absolute inset-0 pointer-events-none">
+      {[...Array(6)].map((_, i) => (
+        <motion.div
+          key={i}
+          className="absolute text-white/80"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: [0, 1, 0], y: [0, 30] }}
           transition={{
-            duration: 0.6,
-            textShadow: christmas
-              ? { repeat: Infinity, duration: 2, ease: "easeInOut" }
-              : undefined,
+            duration: 3,
+            repeat: Infinity,
+            delay: i * 0.5,
+            ease: "easeInOut",
           }}
-          className={`
-            text-5xl md:text-7xl font-bold mb-12
-            ${
-              christmas
-                ? "text-sky-200 drop-shadow-[0_0_20px_rgba(200,230,255,0.9)]"
-                : "text-amber-400 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
-            }
-          `}
+          style={{
+            left: `${15 + i * 12}%`,
+          }}
         >
-          Worzzle
-        </motion.h1>
+          <Snowflake size={16 + i * 2} />
+        </motion.div>
+      ))}
+    </div>
+  )}
+</motion.h1>
+
 
         {/* Menu Buttons */}
         <div className="flex flex-col md:flex-row gap-6 items-center">
