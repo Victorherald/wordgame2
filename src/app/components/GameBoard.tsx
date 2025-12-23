@@ -1155,7 +1155,7 @@ for (let c = 0; c < cols; c++) {
   // Fill top with new tiles
   for (let r = 0; r < rows; r++) {
     if (!newCol[r]) {
-      newCol[r] = generateRandomTile(level?.allowHardLetters ?? level?.shouldCursedSpawn ?? true ?? level?.shouldDullSpawn ?? true);
+      newCol[r] = generateRandomTile(level?.allowHardLetters ?? level?.shouldCursedSpawn ?? level?.shouldDullSpawn ?? true);
       newGenerated.push({ row: r, col: c });
     }
   }
