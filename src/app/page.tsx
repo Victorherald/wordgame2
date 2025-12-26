@@ -45,9 +45,15 @@ const SantaHat = ({ className }: { className?: string }) => (
 
   const router = useRouter();
   const [activePopup, setActivePopup] = useState<string | null>(null);
+  const [christmasGreeting , setChristmasGreeting] = useState(true);
 
   const openPopup = (name: string) => setActivePopup(name);
   const closePopup = () => setActivePopup(null);
+
+
+  function closeGreeting() {
+    setChristmasGreeting(false)
+  }
 
   // 🎄 Christmas season check (Dec 1 → Jan 5)
   const isChristmasSeason = () => {
@@ -60,6 +66,7 @@ const SantaHat = ({ className }: { className?: string }) => (
   const christmas = isChristmasSeason();
 
   return (
+    
     <div className="relative min-h-screen overflow-hidden bg-neutral-950 text-white">
       
       {/* ❄️ Snow Particles */}
@@ -192,6 +199,11 @@ const SantaHat = ({ className }: { className?: string }) => (
           </motion.div>
         )}
       </AnimatePresence>
+
+      
     </div>
+
+
+    
   );
 }

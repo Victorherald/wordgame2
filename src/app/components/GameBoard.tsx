@@ -177,16 +177,16 @@ const goal = objective?.objGoal ?? 5;
   
 
     // Unlock next level only on wjn
-    const progress = loadProgress();
+  
+  const progress = loadProgress();
     const unlocked = progress.unlockedLevel ?? 1;
     const nextToUnlock = (levelId ?? 1) + 1;
+    
 
     if (nextToUnlock > unlocked) {
       saveProgress({ unlockedLevel: nextToUnlock });
     }
-
-    //  Trigger next level callback ONCE — only when win happens
-    if (onNextLevel) onNextLevel();
+    
   }
 
     // when move runs out without reaching the goal
@@ -1347,11 +1347,23 @@ const handleScramble = () => {
       
     >
       <div className="flex flex-col items-start p-1">
-  {levelName && (
-    <h2 className={`${level.difficulty === "Hard Level" ? "text-lg sm:text-xl font-bold text-red-600 mb-2" : "text-lg sm:text-xl font-bold text-yellow-400 mb-2"} ${level.difficulty === "demon" ? "text-lg sm:text-xl font-bold text-orange-800 mb-2" : "text-lg sm:text-xl font-bold text-yellow-400 mb-2"}`}>
-      {levelName}
-    </h2>
-  )}
+{levelName && (
+  <h2
+    className={`
+      text-lg sm:text-xl font-bold mb-2
+      ${
+        level.difficulty === "demon"
+          ? "text-orange-500 drop-shadow-[0_0_12px_rgba(255,80,0,0.8)] animate-pulse"
+          : level.difficulty === "Hard Level"
+          ? "text-red-600"
+          : "text-yellow-400"
+      }
+    `}
+  >
+    {levelName}
+  </h2>
+)}
+
   </div>
      {/* Words Left Counter + Info Icon */}
           <div className="flex items-center justify-between bg-neutral-800/70 border border-neutral-700 rounded-lg p-3 mb-2">
@@ -1733,18 +1745,28 @@ const handleScramble = () => {
           Retry
         </button>
 
-        {gameResult === "win" && (
-          <button
-            onClick={() => {
-              const nextLevel = levelId + 1;
-              localStorage.setItem("currentLevel", nextLevel.toString());
-              window.location.href = "/play";
-            }}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base"
-          >
-            Next Level
-          </button>
-        )}
+       {gameResult === "win" && (
+  <button
+    onClick={async () => {
+      const nextLevel = levelId + 1;
+
+      const res = await fetch(`/api/levels/exists?id=${nextLevel}`);
+      const { exists } = await res.json();
+
+      if (!exists) {
+        router.push("/levels"); // or /victory
+        return;
+      }
+
+      localStorage.setItem("currentLevel", nextLevel.toString());
+      router.push(`/levels`);
+    }}
+    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+  >
+    Back
+  </button>
+)}
+
       </div>
     </div>
   </div>
