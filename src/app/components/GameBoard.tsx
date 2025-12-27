@@ -519,18 +519,7 @@ async function validateWord(word: string): Promise<boolean> {
   }
 }
 
-useEffect(() => {
-  const word = getSelectedWord();
 
-  if (letterCount < 3) {
-    setIsWordValid(false);
-    return;
-  }
-
-  validateWord(word).then((valid) => {
-    setIsWordValid(valid);
-  });
-}, [selected]);
 
 
 
@@ -1523,7 +1512,7 @@ const handleScramble = () => {
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${bulb} ${bone} ${tile.isBurnt ? 'bg-[#fff000] opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
           `}
         >
           {tile?.gem && (

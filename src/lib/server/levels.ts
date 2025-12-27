@@ -1852,5 +1852,201 @@ export const levels: LevelData[] = [
       ],
      
     },
+    {
+      id: 85,
+      name: "Level 85",
+      objective: { type: 'destroy', objGoal: 9, tileType: 'cursed'},
+      
+      moves: 40,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 9,
+      cursedTurns: 12,
+      allowBulbTiles: true,
+      board: [
+           ["removed", "removed", "removed", "removed", "removed", "cursed", "cursed", "cursed"],
+        ["removed", "removed", "normal", "normal", "locked", "cursed", "cursed", "cursed"],
+        ["normal", "normal", "normal", "normal", "removed", "removed", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "removed", "normal", "normal", "normal", "normal"],
+        ["cursed", "cursed", "cursed", "locked", "normal", "normal", "removed", "removed"],
+        ["cursed", "cursed", "cursed", "removed", "removed", "removed", "removed", "removed"]
+      ],
+     
+    },
+     {
+      id: 86,
+      name: "Level 86",
+      objective: { type: 'lightsUp', objGoal: 3, tileType: 'dull'},
+      
+      moves: 10,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 9,
+      cursedTurns: 12,
+      allowBulbTiles: true,
+      board: [
+         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "bulb", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "removed", "bulb", "normal", "normal", "bulb", "removed", "removed"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
+      ],
+     
+    },
+     {
+      id: 87,
+      name: "Level 87",
+      objective: { type: 'words', minLength: 5, objGoal: 8},
+      
+      moves: 50,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 9,
+      cursedTurns: 12,
+      allowBulbTiles: true,
+      board: [
+         ["removed", "removed", "removed", "removed", "removed", "normal", "removed", "removed"],
+        ["removed", "removed", "removed", "removed", "normal", "normal", "normal", "removed"],
+        ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "removed", "removed", "removed"],
+        ["removed", "normal", "normal", "normal", "removed", "removed", "removed", "removed"],
+        ["removed", "removed", "normal", "removed", "removed", "removed", "removed", "removed"]
+      ],
+     
+    },
+     {
+      id: 88,
+      name: "Level 88",
+      objective: { type: 'score', objGoal: 9000},
+      
+      moves: 30,
+      allowHardLetters: true,
+      locked: false,
+      lockTurns: 14,
+      cursedTurns: 12,
+      dullTurns: 10,
+      warpTurns: 8,
+      allowBulbTiles: true,
+      board: [
+        ["normal", "normal", "normal", "cursed", "cursed", "normal", "normal", "normal"],
+        ["normal", "normal", "cursed", "dull", "dull", "cursed", "normal", "normal"],
+        ["normal", "cursed", "dull", "warped", "warped", "dull", "cursed", "normal"],
+        ["cursed", "dull", "warped", "locked", "locked", "warped", "dull", "cursed"],
+        ["cursed", "dull", "warped", "locked", "locked", "warped", "dull", "cursed"],
+        ["normal", "cursed", "dull", "warped", "warped", "dull", "cursed", "normal"],
+        ["normal", "normal", "cursed", "dull", "dull", "cursed", "normal", "normal"],
+        ["normal", "normal", "normal", "cursed", "cursed", "normal", "normal", "normal"]
+      ],
+     
+    },
+     {
+      id: 89,
+      name: "Level 89",
+      objective: { type: 'score', objGoal: 14000 },
+      
+      moves: 30,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 14,
+      cursedTurns: 12,
+      dullTurns: 10,
+      warpTurns: 8,
+      allowBulbTiles: false,
+      board: [
+        ["dull", "removed", "dull", "removed", "dull", "dull", "removed", "dull"],
+        ["normal", "removed", "normal", "removed", "normal", "normal", "removed", "normal"],
+        ["locked", "normal", "normal", "removed", "normal", "normal", "removed", "normal"],
+        ["normal", "normal", "locked", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "removed", "normal", "locked", "normal", "normal", "locked", "normal"],
+        ["normal", "removed", "normal", "removed", "normal", "locked", "normal", "normal"],
+        ["normal", "removed", "normal", "removed", "normal", "removed", "normal", "normal"],
+        ["normal", "removed", "normal", "removed", "normal", "removed", "normal", "normal"]
+      ],
+     
+    },
+     {
+      id: 90,
+      name: "Level 90",
+      objective: { type: 'defrost' , objGoal: 20, tileType: 'ice' },
+      
+      moves: 50,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 17,
+      cursedTurns: 12,
+      dullTurns: 10,
+      warpTurns: 8,
+      allowBulbTiles: false,
+      board: [
+      ["ice", "normal", "normal", "normal", "normal", "normal", "normal", "ice"],
+        ["ice", "ice", "normal", "normal", "normal", "normal", "ice", "ice"],
+        ["ice", "ice", "locked", "normal", "normal", "locked", "ice", "ice"],
+        ["ice", "ice", "locked", "removed", "removed", "locked", "ice", "ice"],
+        ["ice", "ice", "locked", "removed", "removed", "locked", "ice", "ice"],
+        ["ice", "ice", "locked", "normal", "normal", "locked", "ice", "ice"],
+        ["ice", "ice", "locked", "locked", "locked", "locked", "ice", "ice"],
+        ["ice", "ice", "ice", "ice", "ice", "ice", "ice", "ice"]
+      ],
+     
+    },
+    {
+      id: 91,
+      name: "Level 91",
+      objective: { type: 'destroy' , objGoal: 6, tileType: 'dull' },
+      
+      moves: 30,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 17,
+      cursedTurns: 12,
+      dullTurns: 13,
+      warpTurns: 8,
+      allowBulbTiles: false,
+      board: [
+        ["removed", "removed", "fire", "removed", "removed", "fire", "removed", "removed"],
+        ["normal", "normal", "dull", "normal", "normal", "dull", "normal", "normal"],
+        ["normal", "normal", "dull", "normal", "normal", "dull", "normal", "normal"],
+        ["normal", "normal", "dull", "normal", "normal", "dull", "normal", "normal"],
+        ["normal", "normal", "dull", "normal", "normal", "dull", "normal", "normal"],
+        ["normal", "normal", "dull", "normal", "normal", "dull", "normal", "normal"],
+        ["normal", "normal", "dull", "normal", "normal", "dull", "normal", "normal"],
+        ["removed", "removed", "dull", "removed", "removed", "dull", "removed", "removed"]
+      ],
+      tutorialTileType: 'Burning Tiles',
+       tutorialMessage: "Burning tiles are destructive tiles that burns a tile below it every move, When it reaches the bottom if not used , you lose the game!",
+       tutorial: {}
+    },
+     {
+      id: 92,
+      name: "Level 92",
+      objective: { type: 'defrost' , objGoal: 10, tileType: 'ice' },
+      
+      moves: 40,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 17,
+      cursedTurns: 12,
+      dullTurns: 13,
+      warpTurns: 8,
+      allowBulbTiles: false,
+      board: [
+        ["ice", "ice", "fire", "removed", "removed", "normal", "normal", "normal"],
+        ["ice", "fire", "ice", "removed", "normal", "normal", "normal", "normal"],
+        ["fire", "ice", "ice", "removed", "normal", "normal", "normal", "normal"],
+        ["ice", "ice", "ice", "ice", "normal", "normal", "normal", "normal"],
+        ["ice", "ice", "ice", "ice", "normal", "normal", "normal", "normal"],
+        ["ice", "ice", "ice", "ice", "removed", "normal", "normal", "normal"],
+        ["ice", "ice", "ice", "ice", "removed", "normal", "normal", "normal"],
+        ["ice", "ice", "ice", "removed", "removed", "normal", "normal", "normal"]
+      ],
+     
+    },
   ];
 
