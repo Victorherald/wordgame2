@@ -6,7 +6,7 @@ export type Difficulty = "Hard Level" | "demon";
 
 export type GemTiles = "purple"
 
-export type TutorialTypes = "Locked Tiles" | "Fire Tiles" | "Warped Tiles" |"Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" ;
+export type TutorialTypes = "Locked Tiles" | "Burning Tiles" | "Warped Tiles" |"Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" ;
 
 
 export type Objective =
@@ -1878,7 +1878,7 @@ export const levels: LevelData[] = [
      {
       id: 86,
       name: "Level 86",
-      objective: { type: 'lightsUp', objGoal: 3, tileType: 'dull'},
+      objective: { type: 'lightsUp', objGoal: 3, tileType: 'bulb'},
       
       moves: 10,
       allowHardLetters: false,
