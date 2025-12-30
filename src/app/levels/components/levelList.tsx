@@ -4,10 +4,15 @@ import { loadProgress, saveProgress } from "@/utils/storage";
 import { useRouter } from "next/navigation";
 import { Lock, Play } from "lucide-react";
 import { LevelData } from "@/lib/server/levels";
+import { motion } from "framer-motion";
+import { Search } from "lucide-react";
+
 
 export default function LevelList() {
   const [levels, setLevels] = useState<LevelData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [levelFilter, setLevelFilter] = useState<number | "">("");
+
   const router = useRouter();
 
   useEffect(() => {
@@ -40,6 +45,12 @@ export default function LevelList() {
     fetchLevels();
   }, []);
 
+  const filteredLevels =
+  levelFilter === ""
+    ? levels
+    : levels.filter((lvl) => lvl.id === levelFilter);
+
+
   const handlePlay = (lvlId: number) => {
     const level = levels.find((l) => l.id === lvlId);
     if (!level || level.locked) return;
@@ -57,8 +68,54 @@ export default function LevelList() {
 
   return (
     <div className="w-full flex flex-col gap-6 items-center">
+
+{/* Sticky Level Filter */}
+<div
+  className="
+    sticky top-0 z-30
+    w-full
+    bg-neutral-950/90 backdrop-blur
+    border-b border-neutral-800
+    px-4 py-3
+    flex justify-center
+  "
+>
+  <div className="w-full max-w-sm flex items-center gap-3">
+    <label className="text-sm text-gray-400 whitespace-nowrap">
+      Type a level number:
+    </label>
+
+    <input
+      type="number"
+      min={1}
+      placeholder=""
+      value={levelFilter}
+      onChange={(e) => {
+        const val = e.target.value;
+        setLevelFilter(val === "" ? "" : Number(val));
+      }}
+      className="
+        w-24 rounded-md
+        bg-neutral-900 border border-neutral-700
+        px-2 py-1 text-sm text-white
+        focus:outline-none focus:border-green-500
+      "
+    />
+  </div>
+</div>
+
+{filteredLevels.length === 0 && (
+  <p className="text-sm text-gray-500 text-center mt-4">
+    No level found.
+  </p>
+)}
+
+
+<div className="h-4" />
+
+
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-        {levels.map((lvl) => (
+        {filteredLevels.map((lvl) => (
           <div
             key={lvl.id}
             className={`

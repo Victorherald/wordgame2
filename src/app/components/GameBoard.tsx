@@ -519,7 +519,18 @@ async function validateWord(word: string): Promise<boolean> {
   }
 }
 
+useEffect(() => {
+  const word = getSelectedWord();
 
+  if (word.length < 3) {
+    setIsWordValid(false);
+    return;
+  }
+
+  validateWord(word).then((valid) => {
+    setIsWordValid(valid);
+  });
+}, [selected]);
 
 
 
