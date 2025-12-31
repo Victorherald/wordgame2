@@ -63,7 +63,21 @@ const SantaHat = ({ className }: { className?: string }) => (
     return month === 11 || (month === 0 && day <= 5);
   };
 
+  // 🎆 New Year check (Dec 31 → Jan 3)
+const isNewYearSeason = () => {
+  const now = new Date();
+  const month = now.getMonth(); // 0 = Jan
+  const day = now.getDate();
+
+  return (
+   
+    (month === 0 && day === 1)       // Jan 1–3
+  );
+};
+
   const christmas = isChristmasSeason();
+  const newYear = isNewYearSeason();
+const currentYear = new Date().getFullYear();
 
   return (
     
@@ -81,13 +95,16 @@ const SantaHat = ({ className }: { className?: string }) => (
   animate={{ scale: 1, opacity: 1 }}
   transition={{ duration: 0.6 }}
   className={`
-    relative flex items-center text-5xl md:text-7xl font-bold mb-12
-    ${
-      isChristmasSeason()
-        ? "text-sky-200 drop-shadow-[0_0_20px_rgba(200,230,255,0.9)]"
-        : "text-amber-400 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
-    }
-  `}
+  relative flex items-center text-5xl md:text-7xl font-bold mb-4
+  ${
+    christmas
+      ? "text-sky-200 drop-shadow-[0_0_20px_rgba(200,230,255,0.9)]"
+      : newYear
+      ? "bg-gradient-to-r from-yellow-300 via-amber-400 to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(255,215,0,0.9)] animate-pulse"
+      : "text-amber-400 drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]"
+  }
+`}
+
 >
   {/* W + Santa Hat */}
   <span className="relative inline-block">
@@ -124,6 +141,23 @@ const SantaHat = ({ className }: { className?: string }) => (
     </div>
   )}
 </motion.h1>
+
+{newYear ? (
+  <motion.p
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.3 }}
+    className="
+      text-lg md:text-2xl font-semibold
+      text-amber-300
+      drop-shadow-[0_0_15px_rgba(255,215,0,0.8)]
+      mb-10
+    "
+  >
+     Happy New Year {currentYear}!
+  </motion.p>
+) : ""}
+
 
 
         {/* Menu Buttons */}

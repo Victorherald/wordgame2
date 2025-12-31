@@ -1552,7 +1552,7 @@ const handleScramble = () => {
               <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
               {tile.dullTurns}
             </div>
-            ): tile.isLocked ? (
+            ): tile?.isLocked ? (
             <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-700 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
             {tile.lockTurns}
             </div>       
