@@ -60,7 +60,7 @@ const SantaHat = ({ className }: { className?: string }) => (
     const now = new Date();
     const month = now.getMonth(); // 0 = Jan, 11 = Dec
     const day = now.getDate();
-    return month === 11 || (month === 0 && day <= 5);
+    return month === 11 || (month === 0 && day <= 1);
   };
 
   // 🎆 New Year check (Dec 31 → Jan 3)
@@ -71,7 +71,7 @@ const isNewYearSeason = () => {
 
   return (
    
-    (month === 0 && day === 1)       // Jan 1–3
+    (month === 0 && day <= 3)       // Jan 1–3
   );
 };
 
@@ -82,6 +82,8 @@ const currentYear = new Date().getFullYear();
   return (
     
     <div className="relative min-h-screen overflow-hidden bg-neutral-950 text-white">
+
+     <span className="absolute top-5 ">v 1.1.0</span>
       
       {/* ❄️ Snow Particles */}
       {christmas && <SnowEffect />}
@@ -108,13 +110,13 @@ const currentYear = new Date().getFullYear();
 >
   {/* W + Santa Hat */}
   <span className="relative inline-block">
-    W
-    {isChristmasSeason() && (
+    
+    {/*isChristmasSeason() && (
       <SantaHat className="absolute -top-6 -left-4 w-10 rotate-[-20deg]" />
-    )}
+    ) */}
   </span>
 
-  orzzle
+  Worzzle
 
   {/* Snowflakes */}
   {isChristmasSeason() && (

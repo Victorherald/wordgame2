@@ -1952,6 +1952,7 @@ export const levels: LevelData[] = [
       objective: { type: 'score', objGoal: 14000 },
       
       moves: 30,
+      difficulty: 'Hard Level',
       allowHardLetters: false,
       locked: false,
       lockTurns: 14,
