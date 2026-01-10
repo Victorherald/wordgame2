@@ -10,6 +10,7 @@ import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
 import { useRouter } from 'next/navigation';
 import IceBreakParticles from "@/app/particles/iceBreakParticles";
+import { Spectral } from 'next/font/google';
 
 
 
@@ -25,6 +26,7 @@ type Tile = {
   isFire?: boolean;
   iceHealth?: number;
   isCursed?: boolean;
+  isInfected?: boolean;
   curseTurns?: number;
   presets?: boolean;
   isWarped?: boolean;
@@ -50,11 +52,11 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice")[][];
+  layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected")[][];
   objective?: {
   type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost';
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone" | "bulb" | "ice";
+  tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone" | "bulb" | "ice" | "infected";
   minLength?: number;
 
 };
@@ -72,7 +74,9 @@ const specialTileSettings = {
   allowRandomCursedTiles: false,
   allowRandomWarpedTiles: false,
   allowRandomBulbTiles: false,
+  allowRandomInfectTiles: false,
   allowWarpedTiles: true,
+  allowInfectTiles: true,
   allowPresetTiles: true,
   allowFireTiles: true,
   allowCursedTiles: true,
@@ -92,7 +96,7 @@ const specialTileSettings = {
   justBrokeIce: false
 };
 
-export function LetterBoard({ level,   objective,  levelName, layout, moves = 15, onNextLevel}: LetterBoardProps) {
+export function LetterBoard({ level,   objective,  levelName, layout, moves = 15}: LetterBoardProps) {
   const [grid, setGrid] = useState<Tile[][]>([]);
   const [selected, setSelected] = useState<Position[]>([]);
   const [newTiles, setNewTiles] = useState<Position[]>([]);
@@ -265,6 +269,11 @@ const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)]
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pBone;
 
+  const shouldBeInfected = 
+  specialTileSettings.allowInfectTiles &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < 0.7;
+
   const shouldBeWarped =
     specialTileSettings.allowWarpedTiles &&
     specialTileSettings.allowRandomSpecialTiles &&
@@ -306,6 +315,10 @@ if (shouldBeLocked) {
 
 if (shouldBeIced) {
   return { letter, isFrozen: true, iceHealth: 1, rarity ,  isStationary: true};
+}
+
+if (shouldBeInfected){
+  return {letter, isInfected: true , rarity: 'none'};
 }
 
 if (shouldBeBulb){
@@ -402,6 +415,13 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             isLightBulb: true,
             isBulbOn: false,
             presets: true,
+          });
+        }
+                    else if (presetType === "infected" && specialTileSettings.allowInfectTiles) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+        
+            isInfected: true
           });
 
         // 🦴 Bone tile (unripe by default)
@@ -618,7 +638,7 @@ const handleSubmit = () => {
 
     function applyIceDamage(grid: Tile[][], selected: Position[]) {
 
-      let scoreThisTurn = 0;
+    
 
 
       
@@ -828,15 +848,16 @@ function NegativeTile(tile: Tile) {
 
     // score system
 
-    const validTiles = selected.filter(({ row, col }) => !grid[row][col]?.isDull);
+    const validTiles = selected.filter(({ row, col }) => !grid[row][col]?.isDull && !grid[row][col]?.isInfected);
 
-
-    
-    
-    let points = validTiles.length * 40;
 
     
    
+
+    const wordsIncludesInfected = selected.some(({ row, col }) => grid[row][col]?.isInfected);
+
+     let points = validTiles.length * 40;
+  
 
     
     selected.forEach(({ row, col }) => {
@@ -844,6 +865,10 @@ function NegativeTile(tile: Tile) {
 if (tile.isDull) return;
 
       if (tile?.isCursed && tile.curseTurns && tile.curseTurns > 0) points -= 100;
+
+      if(wordsIncludesInfected) return;
+  
+
 
       if(tile.letter.includes("QU")) points += 300;
 
@@ -861,6 +886,8 @@ if (tile.isDull) return;
        if (tile.gem?.includes("blue")) points += 6000;
     })
     setScore((p) => p + points);
+
+    
 
     
 let label = "Progress";
@@ -886,48 +913,51 @@ if (objective?.type === 'defrost') {
   updatedObjMet += iceResult.brokenIce;
 }
 
-  // Word-based objective (e.g., make 5 words of 3+ letters)
-  if (objective.type === 'words') {
-    if (selected.length >= (objective.minLength ?? 3)) {
-      updatedObjMet += 1;
-    }
+ // Word-based objective (e.g., make 5 words of 3+ letters)
+if (objective.type === "words") {
+  if (
+    !wordsIncludesInfected &&
+    selected.length >= (objective.minLength ?? 3)
+  ) {
+    updatedObjMet += 1;
   }
+}
 
-  // Score-based objective (e.g., reach 500 points)
-  else if (objective.type === 'score') {
+// Score-based objective (e.g., reach 500 points)
+else if (objective.type === "score") {
+  if (!wordsIncludesInfected) {
     updatedObjMet += points;
-
-    
   }
+}
 
+// Lights up mode
+else if (objective.type === "lightsUp") {
+  if (wordsIncludesInfected) return; // ❌ cancel entire word
 
-  // lights up mode
-  else if (objective?.type === "lightsUp") {
   selected.forEach(({ row, col }) => {
     const tile = grid[row][col];
     if (!tile?.isLightBulb) return;
 
     const wasOn = tile.isBulbOn;
-    const isNowOn = !wasOn; // because toggle happens this turn
+    const isNowOn = !wasOn;
 
-    // If turning ON  +1
-    // If turning OFF  -1
     updatedObjMet += isNowOn ? +1 : -1;
   });
 }
 
-// break the ice 
-else if (objective.type === 'defrost'){
+// Break the ice
+else if (objective.type === "defrost") {
+  if (wordsIncludesInfected) return; // ❌ no credit
+
   const iceBroken = selected.filter(({ row, col }) => {
-      const tiles = grid[row][col];
-      if (!tiles) return false;
+    const tile = grid[row][col];
+    if (!tile) return false;
+    return objective.tileType === "ice" && tile.isFrozen;
+  }).length;
 
-      if (objective.tileType === 'ice') return tiles.isFrozen;
-}).length;
-
-updatedObjMet  += iceBroken
-
+  updatedObjMet += iceBroken;
 }
+
 
 
 
@@ -1047,6 +1077,63 @@ if (boneUsed) {
   }
 }
 
+// 🦠 Spread infection from unused infected tiles
+const infectedSources = [] as { row: number; col: number }[];
+
+// Find infected tiles NOT used in the word
+for (let r = 0; r < grid.length; r++) {
+  for (let c = 0; c < grid[r].length; c++) {
+    if (!grid[r][c]?.isInfected) continue;
+
+    const wasUsed = selected.some(
+      (s) => s.row === r && s.col === c
+    );
+
+    if (!wasUsed) {
+      infectedSources.push({ row: r, col: c });
+    }
+  }
+}
+
+if (infectedSources.length > 0) {
+  // Pick ONE infected tile to spread
+  const source =
+    infectedSources[Math.floor(Math.random() * infectedSources.length)];
+
+  const { row, col } = source;
+
+  const directions = [
+    [1, 0],
+    [-1, 0],
+    [0, 1],
+    [0, -1],
+  ];
+
+  const validNeighbors = directions
+    .map(([dr, dc]) => ({ r: row + dr, c: col + dc }))
+    .filter(({ r, c }) => {
+      const t = grid[r]?.[c];
+      return (
+        t &&
+        !t.isRemoved &&
+        !t.isInfected &&   // don't infect infected
+        !t.isFire &&       // fire blocks infection
+        !t.isDull          // dull tiles immune
+      );
+    });
+
+  if (validNeighbors.length > 0) {
+    const chosen =
+      validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
+
+    const target = grid[chosen.r][chosen.c];
+
+    updatedGrid[chosen.r][chosen.c] = {
+      ...target,
+      isInfected: true,
+    };
+  }
+}
 
 
      
@@ -1473,6 +1560,8 @@ const handleScramble = () => {
       const fire = tile?.isFire
         ? 'animate-fire-tile bg-orange-700 text-white shadow-lg shadow-orange-500/30 fire-particles'
         : '';
+        const plague = tile?.isInfected 
+        ?  'tile infected' : '';
       const cursed = tile?.isCursed
         ? 'tile cursed-tile shadow-red-500/40 cursed-particles'
         : '';
@@ -1523,7 +1612,7 @@ const handleScramble = () => {
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${plague} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
           `}
         >
           {tile?.gem && (
@@ -1549,15 +1638,15 @@ const handleScramble = () => {
               {tile.curseTurns}
             </div>
           ) : tile?.isDull ? (
-              <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+              <div className="absolute  bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
               {tile.dullTurns}
             </div>
             ): tile?.isLocked ? (
-            <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-700 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+            <div className="absolute bottom-1  right-1 w-2 h-2 sm:w-5 sm:h-5 sm:text-red-800 rounded-full bg-gray-700 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
             {tile.lockTurns}
             </div>       
           ) : tile?.isWarped ? (
-            <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-yellow-400 text-black text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md shadow-yellow-300/50 animate-pulse">
+            <div className="absolute bottom-1  right-1 w-2 h-2 sm:w-5 sm:h-5  rounded-full bg-yellow-400 text-black text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md shadow-yellow-300/50 animate-pulse">
               {tile.warpTurns}
             </div>
           )  : tile?.isBone ? (
