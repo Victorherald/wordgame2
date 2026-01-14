@@ -19,6 +19,7 @@ import { Spectral } from 'next/font/google';
 type Rarity = 'bronze' | 'silver' | 'gold' | 'none';
 type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'whiteDiamond' | 'bone';
 
+
 type Tile = {
   letter: string;
   rarity: Rarity;
@@ -54,7 +55,7 @@ type LetterBoardProps = {
   level?: LevelData;
   layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected")[][];
   objective?: {
-  type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost';
+  type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet';
   objGoal: number;
   tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone" | "bulb" | "ice" | "infected";
   minLength?: number;
@@ -572,7 +573,7 @@ const handleSubmit = () => {
 
   //  warped effect helper
   function getNewWarpedLetter(current: string) {
-    const available = HARD_LETTERS.filter((l) => l !== current);
+    const available = letters.filter((l) => l !== current);
     return available[Math.floor(Math.random() * available.length)];
   }
 
@@ -748,12 +749,12 @@ if (fireReachedBottom && !isGameOver) {
 
 
 
-
+const wordsIncludesInfected = selected.some(({ row, col }) => grid[row][col]?.isInfected);
 
 
 //  BULB TOGGLING
 let usedBulbThisMatch = false;
-
+if (!wordsIncludesInfected){
 selected.forEach(({ row, col }) => {
   const tile = updatedGrid[row][col];
   if (!tile?.isLightBulb) return;
@@ -774,7 +775,7 @@ selected.forEach(({ row, col }) => {
       setObjMet(prev => prev + 1);
   }
 });
-
+}
 
 // Check if all bulbs are lit
 function allBulbsLit(grid: Tile[][]) {
@@ -824,13 +825,13 @@ if (usedBulbThisMatch && allBulbsAreLit) {
 
  // gem color logic
     function getGemByLength(l: number): GemColor | null {
-      if (l === 5) return 'purple';
-      if (l === 6) return 'green';
-      if (l === 7) return 'orange';
-      if (l === 8) return 'blue';
-      if (l === 9) return 'red';
-      if (l === 10) return 'pink';
-      if (l >= 11) return 'whiteDiamond';
+      if (l === 5 ) return 'purple';
+      if (l === 6 ) return 'green';
+      if (l === 7  ) return 'orange';
+      if (l === 8  ) return 'blue';
+      if (l === 9 ) return 'red';
+      if (l === 10  ) return 'pink';
+      if (l >= 11 ) return 'whiteDiamond';
       return null;
     }
 
@@ -840,7 +841,10 @@ function NegativeTile(tile: Tile) {
     tile.isWarped ||
     tile.isFire ||
     tile.isDull ||
-    tile.isLocked
+    tile.isLocked ||
+    tile.isInfected ||
+    tile.isLightBulb ||
+    tile.isBulbOn
   );
 }
 
@@ -854,17 +858,17 @@ function NegativeTile(tile: Tile) {
     
    
 
-    const wordsIncludesInfected = selected.some(({ row, col }) => grid[row][col]?.isInfected);
+    
 
      let points = validTiles.length * 40;
   
-
+   
     
     selected.forEach(({ row, col }) => {
       const tile = grid[row][col];
 if (tile.isDull) return;
 
-      if (tile?.isCursed && tile.curseTurns && tile.curseTurns > 0) points -= 100;
+      if (tile?.isCursed && tile.curseTurns && tile.curseTurns > 0) points -= 200;
 
       if(wordsIncludesInfected) return;
   
@@ -883,7 +887,7 @@ if (tile.isDull) return;
        if (tile.gem?.includes("orange")) points += 770;
         if (tile.gem?.includes("red")) points += 850;
          if (tile.gem?.includes("pink")) points += 3000;
-       if (tile.gem?.includes("blue")) points += 6000;
+       if (tile.gem?.includes("blue")) points += 10000;
     })
     setScore((p) => p + points);
 
@@ -913,6 +917,11 @@ if (objective?.type === 'defrost') {
   updatedObjMet += iceResult.brokenIce;
 }
 
+//alphabet levels
+if (objective.type === "alphabet"){
+  
+}
+
  // Word-based objective (e.g., make 5 words of 3+ letters)
 if (objective.type === "words") {
   if (
@@ -932,7 +941,7 @@ else if (objective.type === "score") {
 
 // Lights up mode
 else if (objective.type === "lightsUp") {
-  if (wordsIncludesInfected) return; // ❌ cancel entire word
+  if (!wordsIncludesInfected){
 
   selected.forEach(({ row, col }) => {
     const tile = grid[row][col];
@@ -944,7 +953,7 @@ else if (objective.type === "lightsUp") {
     updatedObjMet += isNowOn ? +1 : -1;
   });
 }
-
+}
 // Break the ice
 else if (objective.type === "defrost") {
   if (wordsIncludesInfected) return; // ❌ no credit
@@ -1118,7 +1127,8 @@ if (infectedSources.length > 0) {
         !t.isRemoved &&
         !t.isInfected &&   // don't infect infected
         !t.isFire &&       // fire blocks infection
-        !t.isDull          // dull tiles immune
+        !t.isDull  &&
+        !t.isWarped       // dull tiles immune
       );
     });
 
@@ -1642,7 +1652,7 @@ const handleScramble = () => {
               {tile.dullTurns}
             </div>
             ): tile?.isLocked ? (
-            <div className="absolute bottom-1  right-1 w-2 h-2 sm:w-5 sm:h-5 sm:text-red-800 rounded-full bg-gray-700 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+            <div className="absolute bottom-1  right-1 w-2 h-2 sm:w-5 sm:h-5 sm:text-red-500 rounded-full bg-gray-700 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
             {tile.lockTurns}
             </div>       
           ) : tile?.isWarped ? (
