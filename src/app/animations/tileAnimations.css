@@ -19,7 +19,7 @@
   }
   
   .tile-drop {
-    animation: drop 0.3s ease-in;
+    animation: drop 0.3s ease-out;
   }
   
 

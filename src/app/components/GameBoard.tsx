@@ -59,12 +59,18 @@ type LetterBoardProps = {
   objGoal: number;
   tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone" | "bulb" | "ice" | "infected";
   minLength?: number;
-
+  groundLayout?: ('none' | 'cleanse')[][];
 };
+
+
 
   moves: number;
     onNextLevel?: () => void;
    levelName: string;
+};
+
+type GroundCell = {
+  type: 'cleanse' | 'none';
 };
 
 
@@ -110,6 +116,7 @@ const [isGameOver, setIsGameOver] = useState(false);
 const [gameResult, setGameResult] = useState<'win' | 'fire' | 'fail' | 'lowScore' | null>(null);
 const [tutorialActive, setTutorialActive] = useState(false);
 const [showTutorialPopup, setShowTutorialPopup] = useState(false);
+const [ground, setGround] = useState<GroundCell[][]>([]);
 
 
 
@@ -350,6 +357,32 @@ if (shouldBeBulb){
   return { letter, rarity };
 }
 
+const initializeGround = (rows: number, cols: number): GroundCell[][] => {
+  const g: GroundCell[][] = [];
+
+  for (let r = 0; r < rows; r++) {
+    const row: GroundCell[] = [];
+    for (let c = 0; c < cols; c++) {
+      const type = level?.groundLayout?.[r]?.[c] ?? 'none';
+      row.push({ type });
+    }
+    g.push(row);
+  }
+
+  return g;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
  // board setup
 const initializeBoard = ( rows: number, cols: number): Tile[][] => {
@@ -461,6 +494,7 @@ const canSubmit = letterCount >= 3 && isWordValid;
   
 
   useEffect(() => setGrid(initializeBoard(8, 8)), []);
+  useEffect(() => setGround(initializeGround(8, 8)), []);
   useEffect(() => {
     if (newTiles.length > 0) {
       const t = setTimeout(() => setNewTiles([]), 500);
@@ -1130,7 +1164,8 @@ if (infectedSources.length > 0) {
         !t.isDull  &&
         !t.isWarped       // dull tiles immune
         && !t.isLightBulb
-        &&  !t.isBulbOn
+        &&  !t.isBulbOn &&
+        !t.isCursed
       );
     });
 
@@ -1264,6 +1299,32 @@ for (let c = 0; c < cols; c++) {
     updatedGrid[r][c] = newCol[r]!;
   }
 }
+
+function applyCleanseGround(
+  grid: Tile[][],
+  ground: GroundCell[][]
+): Tile[][] {
+  const newGrid = grid.map(row =>
+    row.map(tile => (tile ? { ...tile } : tile))
+  );
+
+  for (let r = 0; r < newGrid.length; r++) {
+    for (let c = 0; c < newGrid[r].length; c++) {
+      const tile = newGrid[r][c];
+      const groundCell = ground?.[r]?.[c];
+
+      if (!tile || !groundCell) continue;
+
+      if (groundCell.type === 'cleanse' && tile.isInfected) {
+        tile.isInfected = false;
+   
+      }
+    }
+  }
+
+  return newGrid;
+}
+
 
 // ✅ Apply updates
 setGrid(updatedGrid);
@@ -1555,6 +1616,8 @@ const handleScramble = () => {
       "
     >
       {/* Tile Grid */}
+
+
 <div
   className="
     grid grid-cols-8
@@ -1562,11 +1625,12 @@ const handleScramble = () => {
           justify-center
   "
 >
+  
   {grid.map((row, r) =>
     row.map((tile, c) => {
       const sel = isSelected(r, c);
       const isNew = newTiles.some((p) => p.row === r && p.col === c);
-      const anim = isNew ? 'tile-drop' : '';
+      const anim = isNew || !ground ? 'tile-drop' : '';
 
       // effects
       const fire = tile?.isFire
@@ -1607,7 +1671,11 @@ const handleScramble = () => {
       );
     }
 
+ 
+
       return (
+
+      
         <div
           key={`${r}-${c}`}
           onClick={() => handleTileClick(r, c)}
@@ -1627,6 +1695,26 @@ const handleScramble = () => {
             ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${plague} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
           `}
         >
+
+   
+
+     {/* Ground overlay (BEHIND tile) */}
+{
+
+ground?.[r]?.[c]?.type === 'cleanse' && (
+  <div
+    className="
+      absolute
+      inset-[-4px]
+      rounded-[8px]
+      bg-sky-300/40
+      shadow-[0_0_12px_rgba(56,189,248,0.6)]
+      z-0
+      pointer-events-none
+    "
+  />
+)}
+      
           {tile?.gem && (
             <div
               className={`absolute inset-0 z-0 rounded-[6px] animate-pulse ${getGemBackground(tile.gem)}`}

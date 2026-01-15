@@ -83,7 +83,7 @@ const currentYear = new Date().getFullYear();
     
     <div className="relative min-h-screen overflow-hidden bg-neutral-950 text-white">
 
-     <span className="absolute top-5 ">v 1.1.0.2</span>
+     <span className="absolute top-5 ">v 1.1.0.3</span>
       
       {/* ❄️ Snow Particles */}
       {christmas && <SnowEffect />}
