@@ -11,8 +11,8 @@ import { MovesDisplay } from './MoveCount';
 import { useRouter } from 'next/navigation';
 import IceBreakParticles from "@/app/particles/iceBreakParticles";
 import { Spectral } from 'next/font/google';
-
-
+import { Sparkles } from 'lucide-react';
+import { CleanseRain } from '../components/CleanseRain';
 
 
 
@@ -21,6 +21,8 @@ type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'white
 
 
 type Tile = {
+  isCleansed?: boolean;
+isSpreading?: boolean;
   letter: string;
   rarity: Rarity;
   gem?: GemColor;
@@ -1178,6 +1180,7 @@ if (infectedSources.length > 0) {
     updatedGrid[chosen.r][chosen.c] = {
       ...target,
       isInfected: true,
+      isSpreading: true,
     };
   }
 }
@@ -1224,7 +1227,38 @@ for (let r = 0; r < rows; r++) {
   }
 }
 
+ function applyCleanseGround(
+  grid: Tile[][],
+  ground: GroundCell[][]
+): Tile[][] {
+  return grid.map((row, r) =>
+    row.map((tile, c) => {
+      if (!tile) return tile;
 
+      const groundCell = ground?.[r]?.[c];
+
+      if (
+        groundCell?.type === "cleanse" &&
+        tile.isInfected || groundCell?.type === "cleanse" 
+        && tile.isCursed
+      ) {
+        return {
+          ...tile,
+          isInfected: false,
+          isCursed: false,
+          rarity: getRarityByLetter(tile.letter),
+          isCleansed: true,
+          
+        };
+        
+      }
+
+      return tile;
+    })
+   
+  );
+  
+}
 
 
 for (let c = 0; c < cols; c++) {
@@ -1277,8 +1311,16 @@ for (let c = 0; c < cols; c++) {
       }
     }
 
+
+   updatedGrid = applyCleanseGround(updatedGrid, ground)
+
+
     // Find the nearest empty cell above any stationary blockers
     while (insertRow >= 0 && newCol[insertRow] !== null) insertRow--;
+
+
+
+
 
     if (insertRow >= 0) {
       newCol[insertRow] = { ...t };
@@ -1291,45 +1333,28 @@ for (let c = 0; c < cols; c++) {
     if (!newCol[r]) {
       newCol[r] = generateRandomTile(level?.allowHardLetters ?? level?.shouldCursedSpawn ?? level?.shouldDullSpawn ?? true);
       newGenerated.push({ row: r, col: c });
+      
     }
   }
+
+
 
   // New tiles dropping
   for (let r = 0; r < rows; r++) {
     updatedGrid[r][c] = newCol[r]!;
+    
   }
 }
 
-function applyCleanseGround(
-  grid: Tile[][],
-  ground: GroundCell[][]
-): Tile[][] {
-  const newGrid = grid.map(row =>
-    row.map(tile => (tile ? { ...tile } : tile))
-  );
-
-  for (let r = 0; r < newGrid.length; r++) {
-    for (let c = 0; c < newGrid[r].length; c++) {
-      const tile = newGrid[r][c];
-      const groundCell = ground?.[r]?.[c];
-
-      if (!tile || !groundCell) continue;
-
-      if (groundCell.type === 'cleanse' && tile.isInfected) {
-        tile.isInfected = false;
-   
-      }
-    }
-  }
-
-  return newGrid;
-}
 
 
 // ✅ Apply updates
 setGrid(updatedGrid);
 setNewTiles(newGenerated);
 setSelected([]);
+
+
+
   }
 
   const getGemGlow = (gem: string) =>
@@ -1674,9 +1699,69 @@ const handleScramble = () => {
  
 
       return (
-
-      
+ /* ================= CELL (STATIC) ================= */
         <div
+          key={`${r}-${c}`}
+          className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14"
+        >
+          {/* ===== GROUND (STATIC, BEHIND TILE) ===== */}
+          {ground?.[r]?.[c]?.type === "cleanse" && (
+            <div
+              className="
+                absolute inset-[-6px]
+      rounded-[10px]
+
+      bg-gradient-to-br
+      from-sky-300/70
+      via-cyan-200/80
+      to-blue-300/70
+
+      shadow-[0_0_20px_rgba(56,189,248,0.9),0_0_40px_rgba(34,211,238,0.6)]
+      animate-pulse
+
+      z-0
+      pointer-events-none
+              "
+            />
+          )}
+      {/* Cleansing effect */}
+{tile?.isCleansed && (
+  <>
+    {/* Cleanse glow */}
+    <div
+      className="
+        absolute inset-0
+        rounded-[6px]
+        bg-sky-400/30
+        animate-cleanse
+        z-30
+        pointer-events-none
+      "
+    />
+
+    {/* Holy rain */}
+    <CleanseRain />
+  </>
+)}
+
+
+
+
+   {tile?.isSpreading && (
+  <div
+    className="
+      absolute inset-0
+      rounded-[6px]
+      bg-yellow-800/40
+      animate-cleanse
+      z-30
+      pointer-events-none
+    "
+  />
+)}   
+
+
+  <div
           key={`${r}-${c}`}
           onClick={() => handleTileClick(r, c)}
           onContextMenu={(e) => {
@@ -1698,22 +1783,7 @@ const handleScramble = () => {
 
    
 
-     {/* Ground overlay (BEHIND tile) */}
-{
-
-ground?.[r]?.[c]?.type === 'cleanse' && (
-  <div
-    className="
-      absolute
-      inset-[-4px]
-      rounded-[8px]
-      bg-sky-300/40
-      shadow-[0_0_12px_rgba(56,189,248,0.6)]
-      z-0
-      pointer-events-none
-    "
-  />
-)}
+  
       
           {tile?.gem && (
             <div
@@ -1778,6 +1848,7 @@ ground?.[r]?.[c]?.type === 'cleanse' && (
               `}
             />
           )}
+        </div>
         </div>
       );
     })

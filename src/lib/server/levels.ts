@@ -78,7 +78,17 @@ export const levels: LevelData[] = [
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
       ],
-    
+    groundLayout: [
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+],
+
     },
     {
       id: 2,
@@ -1415,7 +1425,7 @@ export const levels: LevelData[] = [
      {
       id: 66,
       name: "Level 66",
-      objective: { type: 'score' , objGoal: 13000},
+      objective: { type: 'score' , objGoal: 4000},
       moves: 38,
      warpTurns: 8,
       allowHardLetters: false, 
@@ -2845,6 +2855,397 @@ export const levels: LevelData[] = [
         ["removed", "removed", "dull", "removed", "removed", "removed", "removed", "removed"]
       ],
      
+    },
+     {
+      id: 126,
+      name: "Level 126",
+      objective: { type: 'score', objGoal: 7000},
+   
+      moves: 20,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 8,
+      cursedTurns: 20,
+      warpTurns: 17,
+      allowBulbTiles: true,
+      board: [
+        ["cursed", "removed", "cursed", "normal", "normal", "cursed", "removed", "cursed"],
+        ["normal", "removed", "normal", "removed", "removed", "normal", "removed", "normal"],
+        ["normal", "cursed", "normal", "normal", "normal", "normal", "cursed", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "cursed", "normal", "normal", "normal", "normal", "cursed", "normal"],
+        ["normal", "removed", "normal", "removed", "removed", "normal", "removed", "normal"],
+        ["cursed", "removed", "cursed", "normal", "normal", "cursed", "removed", "cursed"]
+      ],
+     
+    },
+     {
+      id: 127,
+      name: "Level 127",
+      objective: { type: 'destroy', tileType: 'warped', objGoal: 8},
+   
+      moves: 12,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 8,
+      dullTurns: 11,
+      warpTurns: 6,
+      allowBulbTiles: true,
+      board: [
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "dull", "dull", "normal", "dull", "dull", "dull", "normal"],
+        ["normal", "dull", "warped", "normal", "warped", "warped", "dull", "normal"],
+        ["normal", "dull", "warped", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "warped", "dull", "normal"],
+        ["normal", "dull", "warped", "warped", "normal", "warped", "dull", "normal"],
+        ["normal", "dull", "dull", "dull", "normal", "dull", "dull", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+      ],
+     
+    },
+     {
+      id: 128,
+      name: "Level 128",
+      objective: { type: 'destroy', tileType: 'dull', objGoal: 27},
+   
+      moves: 42,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 8,
+      dullTurns: 21,
+      warpTurns: 6,
+      allowBulbTiles: true,
+      board: [
+        ["dull", "dull", "removed", "dull", "dull", "dull", "dull", "removed"],
+        ["dull", "dull", "removed", "removed", "removed", "removed", "dull", "normal"],
+        ["dull", "normal", "normal", "normal", "normal", "removed", "dull", "normal"],
+        ["dull", "normal", "normal", "normal", "normal", "removed", "dull", "normal"],
+        ["dull", "dull", "dull", "normal", "normal", "dull", "dull", "normal"],
+        ["normal", "removed", "dull", "normal", "normal", "dull", "removed", "normal"],
+        ["normal", "removed", "dull", "normal", "normal", "dull", "removed", "normal"],
+        ["normal", "removed", "dull", "dull", "dull", "dull", "removed", "normal"]
+      ],
+     
+    },
+{
+      id: 129,
+      name: "Level 129",
+      objective: { type: 'score', objGoal: 4500},
+   
+      moves: 30,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 8,
+      dullTurns: 21,
+      warpTurns: 6,
+      allowBulbTiles: true,
+      board: [
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "normal", "normal", "ice", "ice", "normal", "normal", "removed"],
+        ["normal", "normal", "locked", "normal", "normal", "locked", "normal", "normal"],
+        ["normal", "locked", "ice", "locked", "locked", "ice", "locked", "normal"],
+        ["locked", "ice", "locked", "ice", "ice", "locked", "ice", "locked"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
+      ],
+     
+    },
+    {
+      id: 130,
+      name: "Level 130",
+      objective: { type: 'score', objGoal: 700},
+   
+      moves: 15,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 8,
+      dullTurns: 21,
+      warpTurns: 6,
+      allowBulbTiles: true,
+      board: [
+        ["removed", "removed", "removed", "normal", "normal", "removed", "removed", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+      ],
+     
+    },
+      {
+      id: 131,
+      name: "Level 131",
+      objective: { type: 'score', objGoal: 6000},
+   
+      moves: 35,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 8,
+      dullTurns: 21,
+      warpTurns: 6,
+      allowBulbTiles: true,
+      board: [
+        ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["infected", "normal", "infected", "normal", "infected", "normal", "infected", "normal"],
+        ["normal", "infected", "normal", "infected", "normal", "infected", "normal", "infected"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "removed", "removed", "removed"]
+      ],
+      groundLayout: [
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse'],
+  ['cleanse', 'cleanse', 'none', 'none', 'none', 'none', 'cleanse', 'cleanse'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ]
+    },
+      {
+      id: 132,
+      name: "Level 132",
+      objective: { type: 'lightsUp', tileType: 'bulb' , objGoal: 7},
+   
+      moves: 35,
+      allowHardLetters: false,
+      locked: false,
+      lockTurns: 8,
+      dullTurns: 21,
+      warpTurns: 6,
+      allowBulbTiles: true,
+      board: [
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "infected", "infected", "infected", "infected", "normal", "normal"],
+        ["normal", "normal", "removed", "normal", "normal", "removed", "normal", "normal"],
+        ["normal", "normal", "removed", "normal", "normal", "removed", "bulb", "normal"],
+        ["normal", "infected", "bulb", "normal", "normal", "bulb", "infected", "normal"],
+        ["normal", "removed", "bulb", "normal", "normal", "bulb", "removed", "normal"],
+        ["normal", "removed", "bulb", "normal", "normal", "bulb", "removed", "normal"]
+      ],
+      groundLayout: [
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'cleanse', 'cleanse', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'cleanse', 'cleanse', 'none', 'none', 'none'],
+  ['none', 'none', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'none', 'none'],
+  ['none', 'none', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'none', 'none'],
+      ]
+    },
+     {
+      id:133,
+      name: "Level 133",
+      objective: { type: 'destroy', objGoal: 12, tileType: 'warped'},
+      moves: 35,
+      allowHardLetters: true,
+      difficulty: 'Hard Level',
+      cursedTurns: 8,
+      locked: false,
+      warpTurns: 11,
+      board: [
+        ["normal", "removed", "normal", "removed", "normal", "removed", "normal", "removed"],
+        ["removed", "cursed", "normal", "warped", "warped", "normal", "cursed", "normal"],
+        ["normal", "normal", "cursed", "normal", "normal", "cursed", "normal", "removed"],
+        ["removed", "warped", "normal", "warped", "warped", "normal", "warped", "normal"],
+        ["normal", "warped", "normal", "warped", "warped", "normal", "warped", "removed"],
+        ["removed", "normal", "cursed", "normal", "normal", "cursed", "normal", "normal"],
+        ["normal", "cursed", "normal", "warped", "warped", "normal", "cursed", "removed"],
+        ["removed", "normal", "removed", "normal", "removed", "normal", "removed", "normal"]
+      ],
+    }, 
+     {
+      id:134,
+      name: "Level 134",
+      objective: { type: 'destroy', objGoal: 10, tileType: 'dull'},
+      moves: 45,
+      allowHardLetters: false,
+
+      dullTurns: 10,
+      locked: false,
+      warpTurns: 11,
+      board: [
+        ["normal", "normal", "removed", "removed", "removed", "removed", "normal", "normal"],
+        ["normal", "normal", "removed", "dull", "dull", "removed", "normal", "normal"],
+        ["removed", "removed", "bulb", "normal", "normal", "bulb", "removed", "removed"],
+        ["removed", "bulb", "dull", "dull", "dull", "dull", "bulb", "removed"],
+        ["removed", "normal", "dull", "infected", "infected", "dull", "normal", "removed"],
+        ["removed", "removed", "dull", "bulb", "bulb", "dull", "removed", "removed"],
+        ["normal", "normal", "bulb", "normal", "normal", "bulb", "normal", "normal"],
+        ["normal", "normal", "removed", "normal", "normal", "removed", "normal", "normal"]
+      ],
+    }, 
+     {
+      id:135,
+      name: "Level 135",
+      objective: { type: 'words', minLength: 4, objGoal: 7},
+      moves: 45,
+      allowHardLetters: false,
+
+      cursedTurns: 40,
+      locked: false,
+      warpTurns: 11,
+      board: [
+        ["removed", "removed", "removed", "cursed", "cursed", "removed", "removed", "removed"],
+        ["removed", "removed", "cursed", "normal", "normal", "cursed", "removed", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"]
+      ],
+
+       groundLayout: [
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'none', 'none'],
+  ['none', 'none', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'none', 'none'],
+  ['none', 'none', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'none', 'none'],
+  ['none', 'none', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'none', 'none'],
+      ]
+    }, 
+     {
+      id:136,
+      name: "Level 136",
+      objective: { type: 'lightsUp', objGoal: 14, tileType: 'bulb'},
+      moves: 40,
+      allowHardLetters: false,
+
+      dullTurns: 10,
+      locked: false,
+      warpTurns: 11,
+      board: [
+        ["removed", "removed", "removed", "removed", "removed", "bulb", "normal", "bulb"],
+        ["removed", "bulb", "normal", "bulb", "removed", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "bulb", "normal", "bulb"],
+        ["removed", "normal", "normal", "bulb", "normal", "normal", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "bulb", "normal", "normal", "removed"],
+        ["bulb", "normal", "bulb", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "removed", "bulb", "normal", "bulb", "removed"],
+        ["bulb", "normal", "bulb", "removed", "removed", "removed", "removed", "removed"]
+      ],
+    },
+       {
+      id:137,
+      name: "Level 137",
+      objective: { type: 'score', objGoal: 7200},
+      moves: 45,
+      allowHardLetters: true,
+      
+      cursedTurns: 8,
+      locked: false,
+      warpTurns: 21,
+      dullTurns: 15,
+      board: [
+        ["dull", "removed", "removed", "normal", "normal", "removed", "removed", "dull"],
+        ["removed", "dull", "dull", "normal", "normal", "normal", "dull", "dull"],
+        ["removed", "normal", "normal", "warped", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "warped", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "warped", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "warped", "normal", "normal", "removed"],
+        ["normal", "dull", "dull", "normal", "normal", "dull", "dull", "removed"],
+        ["dull", "removed", "removed", "normal", "normal", "removed", "removed", "dull"]
+      ],
+    },
+
+      {
+      id: 138,
+      name: "Level 138",
+      objective: { type: 'score', objGoal: 6000},
+      moves: 55,
+      allowHardLetters: false,
+      
+      cursedTurns: 17,
+      locked: false,
+      warpTurns: 21,
+      dullTurns: 15,
+      board: [
+        ["infected", "normal", "infected", "removed", "removed", "cursed", "normal", "cursed"],
+        ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+        ["infected", "normal", "infected", "removed", "removed", "cursed", "normal", "cursed"]
+      ],
+         groundLayout: [
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['cleanse', 'none', 'none', 'none', 'none', 'none', 'none', 'cleanse'],
+  ['none', 'cleanse', 'none', 'none', 'none', 'none', 'cleanse', 'none'],
+  ['none', 'none', 'cleanse', 'none', 'none', 'cleanse', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ]
+    },
+     {
+      id: 139,
+      name: "Level 139",
+      objective: { type: 'destroy' , objGoal: 5, tileType: 'warped'},
+      moves: 30,
+      allowHardLetters: false,
+      
+      lockTurns: 9,
+      locked: false,
+      warpTurns: 20,
+      dullTurns: 15,
+      board: [
+        ["normal", "normal", "locked", "warped", "locked", "normal", "normal", "normal"],
+        ["normal", "normal", "locked", "locked", "locked", "normal", "locked", "locked"],
+        ["locked", "locked", "normal", "normal", "normal", "normal", "locked", "warped"],
+        ["warped", "locked", "normal", "normal", "normal", "normal", "locked", "locked"],
+        ["locked", "locked", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "dull", "dull", "dull", "dull", "dull", "dull", "normal"],
+        ["normal", "dull", "dull", "dull", "dull", "dull", "dull", "normal"],
+        ["normal", "dull", "dull", "warped", "warped", "dull", "dull", "normal"]
+      ],
+         
+    },
+       {
+      id: 140,
+      name: "Level 140",
+      objective: { type: 'destroy' , objGoal: 8, tileType: 'cursed'},
+      moves: 40,
+      allowHardLetters: false,
+      
+      lockTurns: 9,
+      locked: false,
+      cursedTurns: 10,
+      dullTurns: 15,
+      board: [
+         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["cursed", "removed", "cursed", "removed", "cursed", "removed", "cursed", "removed"],
+        ["normal", "cursed", "normal", "cursed", "normal", "cursed", "normal", "cursed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["cursed", "normal", "cursed", "normal", "cursed", "normal", "cursed", "normal"],
+        ["removed", "cursed", "removed", "cursed", "removed", "cursed", "removed", "cursed"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
+      ],
+        groundLayout: [
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['cleanse', 'none', 'cleanse', 'none', 'cleanse', 'none', 'cleanse', 'none'],
+  ['none', 'cleanse', 'none', 'cleanse', 'none', 'cleanse', 'none', 'cleanse'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ]  
     },
   ];
 
