@@ -15,13 +15,23 @@ import { Sparkles } from 'lucide-react';
 import { CleanseRain } from '../components/CleanseRain';
 import { AlertCircle } from "lucide-react";
 import { FridgeSVG } from './fridgeSVG';
+import { ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react";
+
 
 
 type Rarity = 'bronze' | 'silver' | 'gold' | 'none';
 type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'whiteDiamond' | 'bone';
 
 
+type LineBlasterDirection = "row" | "col";
+
+
+
+
+
 type Tile = {
+   isLineBlaster?: boolean;
+  blastDirection?: LineBlasterDirection;
   isFridge?: boolean;
 fridgeCharge?: number; // 0 → 3
 fridgeHP?: number;
@@ -63,7 +73,7 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "exclamator" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge")[][];
+  layout?: ("normal"| "lineBlasterRow" | "lineBlasterColumn" | "exclamator" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge")[][];
   objective?: {
   type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet';
   objGoal: number;
@@ -477,6 +487,24 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             presets: true,
           });
         }
+        else if (presetType === "lineBlasterRow") {
+  rowTiles.push({
+    ...generateRandomTile(level?.allowHardLetters ?? true),
+    isLineBlaster: true,
+    blastDirection: "row",
+    presets: true,
+  });
+}
+
+else if (presetType === "lineBlasterColumn") {
+  rowTiles.push({
+    ...generateRandomTile(level?.allowHardLetters ?? true),
+    isLineBlaster: true,
+    blastDirection: "col",
+    presets: true,
+  });
+}
+
                     else if (presetType === "infected" && specialTileSettings.allowInfectTiles) {
           rowTiles.push({
             ...generateRandomTile(level?.allowHardLetters ?? true),
@@ -1875,7 +1903,48 @@ const fridge = tile?.isFridge
   </>
 )}
 
+{tile?.isLineBlaster && tile.blastDirection === "row" && (
+  <>
+    <ChevronLeft
+      className="
+        absolute left-[2px] top-1/2 -translate-y-1/2
+        w-5 h-5 sm:w-4 sm:h-4
+        text-orange-600
+        z-20
+      "
+    />
+    <ChevronRight
+      className="
+        absolute right-[2px] top-1/2 -translate-y-1/2
+        w-5 h-5 sm:w-4 sm:h-4
+        text-orange-600
+        z-20
+      "
+    />
+  </>
+)}
 
+{/* line blaster tile rendering */}
+{tile?.isLineBlaster && tile.blastDirection === "col" && (
+  <>
+    <ChevronUp
+      className="
+        absolute top-[2px] left-1/2 -translate-x-1/2
+        w-3 h-3 sm:w-4 sm:h-4
+        text-orange-600
+        z-20
+      "
+    />
+    <ChevronDown
+      className="
+        absolute bottom-[2px] left-1/2 -translate-x-1/2
+        w-3 h-3 sm:w-4 sm:h-4
+        text-orange-600
+        z-20
+      "
+    />
+  </>
+)}
 
 
 

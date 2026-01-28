@@ -2,7 +2,7 @@
 
 import { object } from "framer-motion/m";
 
-export type TileType = "normal" | "locked"| "fire" | "cursed" | "warped" | "removed" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge";
+export type TileType = "normal" | "locked"| "lineBlasterRow" | "lineBlasterColumn" | "fire" | "cursed" | "warped" | "removed" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge";
 
 export type Difficulty = "Hard Level" | "demon";
 
@@ -72,7 +72,7 @@ export const levels: LevelData[] = [
       board: [
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
-        ["normal", "exclamator", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
@@ -3642,6 +3642,32 @@ export const levels: LevelData[] = [
         ["removed", "ice", "warped", "ice", "warped", "ice", "warped", "ice"],
         ["removed", "ice", "warped", "ice", "warped", "ice", "warped", "ice"],
         ["removed", "ice", "warped", "ice", "warped", "ice", "warped", "ice"]
+      ],
+      
+    },
+     {
+      id: 157,
+      name: "Level 157",
+      objective: { type: 'lightsUp' , tileType: 'bulb', objGoal: 16 },
+      moves: 40,
+      allowHardLetters: false,
+      cursedTurns: 8,
+      lockTurns: 8,
+      boneTurns: 2,
+      boneRipeTurns: 3,
+      locked: false,
+      shouldFireSpawn: true,
+      warpTurns: 15,
+      dullTurns: 16,
+      board: [
+        ["bulb", "ice", "ice", "normal", "normal", "ice", "ice", "bulb"],
+        ["removed", "bulb", "ice", "ice", "ice", "ice", "bulb", "removed"],
+        ["removed", "removed", "bulb", "ice", "ice", "bulb", "removed", "removed"],
+        ["removed", "bulb", "normal", "normal", "normal", "normal", "bulb", "removed"],
+        ["removed", "bulb", "normal", "normal", "normal", "normal", "bulb", "removed"],
+        ["removed", "removed", "bulb", "ice", "ice", "bulb", "removed", "removed"],
+        ["removed", "bulb", "ice", "ice", "ice", "ice", "bulb", "removed"],
+        ["bulb", "ice", "ice", "normal", "normal", "ice", "ice", "bulb"]
       ],
       
     },
