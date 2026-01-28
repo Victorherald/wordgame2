@@ -13,7 +13,8 @@ import IceBreakParticles from "@/app/particles/iceBreakParticles";
 import { Spectral } from 'next/font/google';
 import { Sparkles } from 'lucide-react';
 import { CleanseRain } from '../components/CleanseRain';
-
+import { AlertCircle } from "lucide-react";
+import { FridgeSVG } from './fridgeSVG';
 
 
 type Rarity = 'bronze' | 'silver' | 'gold' | 'none';
@@ -21,6 +22,10 @@ type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'white
 
 
 type Tile = {
+  isFridge?: boolean;
+fridgeCharge?: number; // 0 → 3
+fridgeHP?: number;
+fridgeMaxHp?: number;
   isCleansed?: boolean;
 isSpreading?: boolean;
   letter: string;
@@ -28,6 +33,7 @@ isSpreading?: boolean;
   gem?: GemColor;
   isFire?: boolean;
   iceHealth?: number;
+  isExclamator?: boolean;
   isCursed?: boolean;
   isInfected?: boolean;
   curseTurns?: number;
@@ -41,6 +47,8 @@ isSpreading?: boolean;
   isRemoved?: boolean;
    dullTurns?: number;
    isLocked?: boolean;
+isOverheating?: boolean;
+
    isFrozen?: boolean;
 lockTurns?: number;
 isBone?: boolean;        // identifies it's a bone tile
@@ -55,11 +63,11 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected")[][];
+  layout?: ("normal"| "exclamator" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge")[][];
   objective?: {
   type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet';
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'warped' | "dull" | "locked" | "bone" | "bulb" | "ice" | "infected";
+  tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" | "bone" | "bulb" | "ice" | "infected";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse')[][];
 };
@@ -84,11 +92,13 @@ const specialTileSettings = {
   allowRandomWarpedTiles: false,
   allowRandomBulbTiles: false,
   allowRandomInfectTiles: false,
+  allowExclamators: true,
   allowWarpedTiles: true,
   allowInfectTiles: true,
   allowPresetTiles: true,
   allowFireTiles: true,
   allowCursedTiles: true,
+  allowFridges: true,
   allowDullTiles: true,
   allowRandomSpecialTiles: false,
    allowLockedTiles: true,
@@ -304,6 +314,11 @@ const shouldBeLocked =
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pLocked;
 
+  const shouldBeExclamated =
+  specialTileSettings.allowExclamators &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < pLocked;
+
   const shouldBeIced = specialTileSettings.allowIceTiles
   && specialTileSettings.allowRandomSpecialTiles ;
 
@@ -313,7 +328,7 @@ if (shouldBeBone) {
     isRipe: false,
     isStationary: true,
     boneTurns: level?.boneTurns ?? 3,
-    letter: "", 
+    letter, 
     rarity: "none" //when its unripe
 } 
 }
@@ -329,6 +344,11 @@ if (shouldBeIced) {
 
 if (shouldBeInfected){
   return {letter, isInfected: true , rarity: 'none'};
+}
+
+
+if (shouldBeExclamated){
+  return {letter, isExclamator: true , rarity: 'none'};
 }
 
 if (shouldBeBulb){
@@ -415,6 +435,7 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             presets: true,
           });
         } 
+    
         else if (presetType === "ice" && specialTileSettings.allowIceTiles) {
           rowTiles.push({
             ...generateRandomTile(level?.allowHardLetters ?? true),
@@ -422,8 +443,11 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             isStationary: true,
             presets: true,
             iceHealth: 1
-          });
-        } else if (presetType === "warped" && specialTileSettings.allowWarpedTiles) {
+          });}
+          
+        
+
+         else if (presetType === "warped" && specialTileSettings.allowWarpedTiles) {
           rowTiles.push({
             ...generateRandomTile(level?.allowHardLetters ?? true),
             isWarped: true,
@@ -459,9 +483,27 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
         
             isInfected: true
           });
+        }
+              else if (presetType === "exclamator" && specialTileSettings.allowExclamators) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isExclamator: true,
+            
+            presets: true,
+          });
+        }
+
+           else if (presetType === "fridge" && specialTileSettings.allowFridges) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isFridge: true,
+            
+            presets: true,
+          });
+        }
 
         // 🦴 Bone tile (unripe by default)
-        } else if (presetType === "bone" && specialTileSettings.allowBoneTiles) {
+         else if (presetType === "bone" && specialTileSettings.allowBoneTiles) {
           rowTiles.push({
             isBone: true,
             isRipe: false,
@@ -530,6 +572,13 @@ const canSubmit = letterCount >= 3 && isWordValid;
   const last = selected[selected.length - 1];
   const current = { row, col };
 
+const lastTile =
+  selected.length > 0
+    ? grid[selected[selected.length - 1].row][selected[selected.length - 1].col]
+    : null;
+
+
+
   if (selected.length === 0 || isAdjacent(last, current)) {
     if (!isSelected(row, col)) {
       const newSelected = [...selected, current];
@@ -551,15 +600,51 @@ const canSubmit = letterCount >= 3 && isWordValid;
         .map(({ row, col }) => grid[row]?.[col]?.letter ?? "")
         .join("");
 
-      if (letterCount < 3) {
-        setIsWordValid(false);
-      } else {
-        const valid = await validateWord(word);
-        setIsWordValid(valid);
-      }
+     const passesExclamator = validateExclamatorRule(newSelected, grid);
+
+if (word.length < 3 || !passesExclamator) {
+  setIsWordValid(false);
+} else {
+  const dictionaryValid = await validateWord(word);
+  setIsWordValid(dictionaryValid);
+}
+
     }
   }
 };
+
+function validateExclamatorRule(
+  selected: { row: number; col: number }[],
+  grid: Tile[][]
+): boolean {
+  for (let i = 0; i < selected.length; i++) {
+    const { row, col } = selected[i];
+    const tile = grid[row]?.[col];
+
+    if (tile?.isExclamator && i !== selected.length - 1) {
+      return false; // ❌ exclamator not last
+    }
+  }
+  return true;
+}
+
+const hasImproperExclamator = (() => {
+  if (selected.length === 0) return false;
+
+  // exclamator tiles in the selection
+  const exclamatorIndexes = selected
+    .map((pos, i) => (grid[pos.row]?.[pos.col]?.isExclamator ? i : -1))
+    .filter(i => i !== -1);
+
+  if (exclamatorIndexes.length === 0) return false;
+
+  const lastIndex = selected.length - 1;
+
+  // ❗ any exclamator NOT at the end is illegal
+  return exclamatorIndexes.some(i => i !== lastIndex);
+})();
+
+
 
 async function validateWord(word: string): Promise<boolean> {
   try {
@@ -584,9 +669,19 @@ useEffect(() => {
     return;
   }
 
-  validateWord(word).then((valid) => {
-    setIsWordValid(valid);
-  });
+  
+
+  const passesExclamator = validateExclamatorRule(selected, grid);
+
+if (!passesExclamator) {
+  setIsWordValid(false);
+  return;
+}
+
+validateWord(word).then((valid) => {
+  setIsWordValid(valid);
+});
+
 }, [selected]);
 
 
@@ -667,8 +762,35 @@ const handleSubmit = () => {
     updatedGrid = applyWarpedEffect(updatedGrid);
  
 
+function triggerFridgeOverheat(
+  grid: Tile[][],
+  r: number,
+  c: number
+) {
+  const tile = grid[r][c];
+  if (!tile || !tile.isFrozen) return;
 
-    
+  tile.isOverheating = true;
+
+  // auto cool down
+  setTimeout(() => {
+    tile.isOverheating = false;
+  }, 1000);
+}
+
+    function advanceFridgeCharge(grid: Tile[][]): Tile[][] {
+  return grid.map(row =>
+    row.map(tile => {
+      if (!tile || !tile.isFridge) return tile;
+
+      return {
+        ...tile,
+        fridgeCharge: Math.min((tile.fridgeCharge ?? 0) + 1, 3),
+      };
+    })
+  );
+}
+
 
 
     // Frozen tile mechanics
@@ -880,7 +1002,8 @@ function NegativeTile(tile: Tile) {
     tile.isLocked ||
     tile.isInfected ||
     tile.isLightBulb ||
-    tile.isBulbOn
+    tile.isBulbOn ||
+    tile.isExclamator
   );
 }
 
@@ -910,12 +1033,13 @@ if (tile.isDull) return;
   
 
 
-      if(tile.letter.includes("QU")) points += 300;
+      if(tile.letter?.includes("QU")) points += 300;
 
-    
+     
 
 
-      if(tile.rarity.includes('gold')) points += 150;
+      if(tile.rarity?.includes('gold')) points += 350;
+      if(tile.rarity?.includes('silver')) points += 170;
       
       if (tile.gem?.includes("purple")) points += 300;
       if (tile.gem?.includes("green")) points += 450;
@@ -1600,10 +1724,10 @@ const handleScramble = () => {
   className={`px-4 py-2 rounded transition ${
     isWordValid && movesLeft > 0 && !isGameOver
       ? "bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse z-20"
-      : "bg-gray-200 text-white z-20 cursor-not-allowed opacity-60"
-  }`}
+      : hasImproperExclamator ? "bg-red-800 cursor-not-allowed" : "bg-gray-200 text-white z-20 cursor-not-allowed opacity-60"
+  } `}
 >
-  Submit Word
+ {hasImproperExclamator ? 'Exclamator used wrongly!' : 'Submit Word'}
 </button>
   <button
   onClick={handleScramble}
@@ -1622,6 +1746,8 @@ const handleScramble = () => {
         {/* Current word (desktop only) */}
         <div className="hidden md:block flex-1 overflow-auto mt-2">
           <WordDisplay word={getSelectedWord()} />
+
+         
         </div>
 
 
@@ -1669,9 +1795,14 @@ const handleScramble = () => {
         const ice = tile?.isFrozen
   ? 'ice-tile animate-ice-block bg-blue-300/40 text-white shadow-lg shadow-blue-300/40 backdrop-blur-sanimate-ice-block bg-blue-200/60 text-white shadow-xl shadow-blue-400/40 border-2 border-blue-300/70 ice-particles backdrop-blur-sm saturate-150 z-50'
   : '';
-
+const exclamated = tile?.isExclamator
+  ? "border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.8)]"
+  : "";
+const fridge = tile?.isFridge
+  ? <FridgeSVG/>
+  : "";
       const warped = tile?.isWarped
-        ? 'tile animate-warped warp-tile'
+        ? 'tile animate-warped warp-tile cursor-pointer'
         : '';
         const dull = tile?.isDull 
         ? 'bg-gradient-to-br from-neutral-700 to-neutral-700 text-gray-100 border border-neutral-500  brightness-85'
@@ -1747,6 +1878,8 @@ const handleScramble = () => {
 
 
 
+
+
    {tile?.isSpreading && (
   <div
     className="
@@ -1777,7 +1910,7 @@ const handleScramble = () => {
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${plague} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${fridge} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
           `}
         >
 
@@ -1798,6 +1931,24 @@ const handleScramble = () => {
     <div className="w-3/4 h-3/4 border-4 border-gray-600 rounded-lg rotate-45 opacity-70" />
   </div>
 )}
+{tile?.isExclamator && (
+  <AlertCircle
+    className="
+      absolute
+      left-[2px] top-[2px]
+      text-red-600
+      drop-shadow-[0_0_6px_rgba(255,0,0,0.8)]
+      z-30
+      pointer-events-none
+
+      w-3 h-3
+      sm:w-4 sm:h-4
+      md:w-5 md:h-5
+    "
+    strokeWidth={3}
+  />
+)}
+
 
           {/* Letter */}
           <span className="z-10 font-bold">{tile?.letter}</span>
@@ -1843,6 +1994,8 @@ const handleScramble = () => {
                 absolute inset-0 rounded-[6px]
                 ${isWordValid
                   ? 'shadow-[0_0_16px_4px_rgba(34,197,94,0.8)]'
+                   : hasImproperExclamator
+    ? 'shadow-[0_0_18px_4px_rgba(239,68,68,0.9)]'
                   : 'shadow-[0_0_12px_2px_rgba(255,255,255,0.5)]'}
                 z-20 pointer-events-none
               `}
@@ -1875,10 +2028,11 @@ const handleScramble = () => {
   className={`px-4 py-2 rounded transition ${
     isWordValid && movesLeft > 0 && !isGameOver
       ? "bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse z-20"
+      : hasImproperExclamator ? "bg-red-800 cursor-not-allowed"
       : "bg-gray-200 text-white z-20 cursor-not-allowed opacity-60"
   }`}
 >
-  Submit
+  {hasImproperExclamator ? 'Error' : 'Submit'}
 </button>
 
         <div className="bg-orange-700 rounded text-white cursor-not-allowed opacity-60">
