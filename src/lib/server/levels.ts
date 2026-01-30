@@ -8,7 +8,7 @@ export type Difficulty = "Hard Level" | "demon";
 
 export type GemTiles = "purple"
 
-export type TutorialTypes = "Locked Tiles" | "Exclaimer" | "Burning Tiles" | "Poisoned Tile" | "Warped Tiles" |"Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" ;
+export type TutorialTypes = "Locked Tiles" | "Exclaimer" | "Purifiers" | "Burning Tiles" | "Poisoned Tile" | "Warped Tiles" |"Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" ;
 
 
 export type Objective =
@@ -72,7 +72,7 @@ export const levels: LevelData[] = [
       board: [
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
-        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "lineBlasterRow", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
@@ -3009,6 +3009,11 @@ export const levels: LevelData[] = [
   ['cleanse', 'cleanse', 'none', 'none', 'none', 'none', 'cleanse', 'cleanse'],
   ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
       ]
+,
+
+       tutorialTileType: 'Purifiers',
+       tutorialMessage: "Purifiers cleanse infected and cursed tiles when it lands on the glowing overlay grounds!",
+       tutorial: {}
     },
       {
       id: 132,
@@ -3668,6 +3673,106 @@ export const levels: LevelData[] = [
         ["removed", "removed", "bulb", "ice", "ice", "bulb", "removed", "removed"],
         ["removed", "bulb", "ice", "ice", "ice", "ice", "bulb", "removed"],
         ["bulb", "ice", "ice", "normal", "normal", "ice", "ice", "bulb"]
+      ],
+      
+    },
+     {
+      id: 158,
+      name: "Level 158",
+      objective: { type: 'destroy' , tileType: 'dull', objGoal: 22 },
+      moves: 40,
+      allowHardLetters: false,
+      cursedTurns: 8,
+      lockTurns: 8,
+      boneTurns: 2,
+      boneRipeTurns: 3,
+      locked: false,
+      shouldFireSpawn: true,
+      warpTurns: 15,
+      dullTurns: 25,
+      board: [
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "dull", "dull", "dull", "dull", "dull", "dull", "removed"],
+        ["dull", "removed", "normal", "normal", "normal", "removed", "dull", "removed"],
+        ["dull", "removed", "removed", "normal", "normal", "removed", "dull", "dull"],
+        ["dull", "dull", "removed", "normal", "normal", "removed", "removed", "dull"],
+        ["removed", "dull", "removed", "normal", "normal", "normal", "removed", "dull"],
+        ["removed", "dull", "dull", "dull", "dull", "dull", "dull", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+      ],
+      
+    },
+     {
+      id: 159,
+      name: "Level 159",
+      objective: { type: 'destroy' , tileType: 'fire', objGoal: 10 },
+      moves: 40,
+      allowHardLetters: false,
+      cursedTurns: 8,
+      lockTurns: 8,
+      boneTurns: 2,
+      boneRipeTurns: 3,
+      locked: false,
+      shouldFireSpawn: true,
+      warpTurns: 15,
+      dullTurns: 25,
+      board: [
+       ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["fire", "fire", "fire", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "fire", "fire", "fire"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["fire", "fire", "fire", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "fire", "fire", "fire"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+      ],
+      
+    },
+     {
+      id: 159,
+      name: "Level 159",
+      objective: { type: 'destroy' , tileType: 'fire', objGoal: 10 },
+      moves: 40,
+      allowHardLetters: false,
+      cursedTurns: 8,
+      lockTurns: 8,
+      boneTurns: 2,
+      boneRipeTurns: 3,
+      locked: false,
+      shouldFireSpawn: true,
+      warpTurns: 15,
+      dullTurns: 25,
+      board: [
+       ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["fire", "fire", "fire", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "fire", "fire", "fire"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["fire", "fire", "fire", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "fire", "fire", "fire"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+      ],
+      
+    },
+     {
+      id: 160,
+      name: "Level 160",
+      objective: { type: 'score' , objGoal: 8000},
+      moves: 45,
+      allowHardLetters: false,     
+      locked: false,
+      dullTurns: 30,
+      board: [
+        ["normal", "removed", "removed", "removed", "removed", "removed", "removed", "normal"],
+        ["normal", "normal", "normal", "dull", "dull", "dull", "dull", "normal"],
+        ["normal", "removed", "normal", "normal", "normal", "removed", "removed", "normal"],
+        ["normal", "dull", "normal", "normal", "normal", "normal", "dull", "normal"],
+        ["normal", "dull", "normal", "normal", "normal", "normal", "dull", "normal"],
+        ["normal", "removed", "removed", "normal", "normal", "normal", "removed", "normal"],
+        ["normal", "dull", "dull", "dull", "dull", "normal", "normal", "normal"],
+        ["normal", "removed", "removed", "removed", "removed", "removed", "removed", "normal"]
       ],
       
     },

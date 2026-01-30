@@ -724,6 +724,7 @@ const handleSubmit = () => {
   setSelected([]);
   setIsWordValid(false);
 
+
   // apply the match logic NEXT
   applyWordMatch();
 };
@@ -960,6 +961,8 @@ selected.forEach(({ row, col }) => {
   if (objective?.type === "lightsUp" && isNowOn){
       setObjMet(prev => prev + 1);
   }
+
+  
 });
 }
 
@@ -998,10 +1001,7 @@ if (usedBulbThisMatch && allBulbsAreLit) {
     setObjMet((prev) => prev + bulbsCleared);
   }
 
-  // reward points
-  if (objective?.type === 'score'){
-      setScore(prev => prev + bulbsCleared * 1000);
-  }
+ 
 
 }
 
@@ -1125,6 +1125,7 @@ else if (objective.type === "score") {
   if (!wordsIncludesInfected) {
     updatedObjMet += points;
   }
+
 }
 
 // Lights up mode
@@ -1238,7 +1239,39 @@ applyIceDamage(grid, selected);
 
 
 
+function applyLineBlasts(
+  grid: Tile[][],
+  blasters: { row: number; col: number }[]
+): Tile[][] {
+  const newGrid = grid.map(row => row.map(tile => ({ ...tile })));
 
+  for (const { row, col } of blasters) {
+    const tile = newGrid[row][col];
+    if (!tile?.isLineBlaster) continue;
+
+    if (tile.blastDirection === "row") {
+      for (let c = 0; c < newGrid[row].length; c++) {
+        if (!newGrid[row][c]?.isRemoved) {
+          newGrid[row][c].isRemoved = true;
+        }
+      }
+    }
+
+    if (tile.blastDirection === "col") {
+      for (let r = 0; r < newGrid.length; r++) {
+        if (!newGrid[r][col]?.isRemoved) {
+          newGrid[r][col].isRemoved = true;
+        }
+      }
+    }
+  }
+
+  return newGrid;
+}
+
+const blastersUsed = selected.filter(
+  ({ row, col }) => grid[row][col]?.isLineBlaster
+);
 
 // Find if the word used a ripe bone
 const boneUsed = selected.find(({ row, col }) => grid[row][col]?.isBone && grid[row][col]?.isRipe);
@@ -1379,6 +1412,22 @@ for (let r = 0; r < rows; r++) {
   }
 }
 
+const lineBlastersToTrigger: { row: number; col: number }[] = [];
+
+for (const { row, col } of selected) {
+  const tile = updatedGrid[row][col];
+  if (tile?.isLineBlaster) {
+    lineBlastersToTrigger.push({ row, col });
+  }
+}
+
+ // 2️⃣ Apply blasts
+if (lineBlastersToTrigger.length > 0) {
+  updatedGrid = applyLineBlasts(updatedGrid, blastersUsed);
+}
+
+
+
  function applyCleanseGround(
   grid: Tile[][],
   ground: GroundCell[][]
@@ -1465,8 +1514,8 @@ for (let c = 0; c < cols; c++) {
 
 
    updatedGrid = applyCleanseGround(updatedGrid, ground)
-
-
+ 
+applyLineBlasts(updatedGrid, lineBlastersToTrigger);
     // Find the nearest empty cell above any stationary blockers
     while (insertRow >= 0 && newCol[insertRow] !== null) insertRow--;
 
