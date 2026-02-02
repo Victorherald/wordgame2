@@ -1515,7 +1515,7 @@ for (let c = 0; c < cols; c++) {
 
    updatedGrid = applyCleanseGround(updatedGrid, ground)
  
-applyLineBlasts(updatedGrid, lineBlastersToTrigger);
+applyLineBlasts(updatedGrid, blastersUsed);
     // Find the nearest empty cell above any stationary blockers
     while (insertRow >= 0 && newCol[insertRow] !== null) insertRow--;
 

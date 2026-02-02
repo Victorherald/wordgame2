@@ -83,7 +83,7 @@ const currentYear = new Date().getFullYear();
     
     <div className="relative min-h-screen overflow-hidden bg-neutral-950 text-white">
 
-     <span className="absolute top-5 ">v 1.1.0.4</span>
+     <span className="absolute top-5 ">v 1.1.0.5</span>
       
       {/* ❄️ Snow Particles */}
       {christmas && <SnowEffect />}
@@ -173,21 +173,16 @@ const currentYear = new Date().getFullYear();
 
           <button
             onClick={() => openPopup("help")}
-            className="w-48 py-3 text-lg font-semibold bg-blue-600 rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-500/30"
+            className="w-48 py-3 text-lg font-semibold bg-green-600 rounded-lg hover:bg-green-700 transition shadow-lg shadow-green-500/30"
           >
             Help
           </button>
 
-          <button
-            onClick={() => openPopup("options")}
-            className="w-48 py-3 text-lg font-semibold bg-purple-600 rounded-lg hover:bg-purple-700 transition shadow-lg shadow-purple-500/30"
-          >
-            Options
-          </button>
+         
 
           <button
             onClick={() => openPopup("about")}
-            className="w-48 py-3 text-lg font-semibold bg-amber-600 rounded-lg hover:bg-amber-700 transition shadow-lg shadow-amber-500/30"
+            className="w-48 py-3 text-lg font-semibold bg-green-600 rounded-lg hover:bg-green-700 transition shadow-lg shadow-green-500/30"
           >
             About
           </button>
