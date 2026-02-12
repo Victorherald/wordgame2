@@ -20,7 +20,7 @@ import { ChevronLeft, ChevronRight, ChevronUp, ChevronDown } from "lucide-react"
 
 
 type Rarity = 'bronze' | 'silver' | 'gold' | 'none';
-type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'whiteDiamond' | 'bone';
+type GemColor = 'purple' | 'green' | 'orange' | 'blue' | 'red' | 'pink' | 'whiteDiamond' | 'bone' | 'velvet' ;
 
 
 type LineBlasterDirection = "row" | "col";
@@ -44,6 +44,7 @@ isSpreading?: boolean;
   isFire?: boolean;
   iceHealth?: number;
   isExclamator?: boolean;
+  isVelvet?: boolean;
   isCursed?: boolean;
   isInfected?: boolean;
   curseTurns?: number;
@@ -58,7 +59,7 @@ isSpreading?: boolean;
    dullTurns?: number;
    isLocked?: boolean;
 isOverheating?: boolean;
-
+  velvetTurns?: number;
    isFrozen?: boolean;
 lockTurns?: number;
 isBone?: boolean;        // identifies it's a bone tile
@@ -73,11 +74,11 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow" | "lineBlasterColumn" | "exclamator" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge")[][];
+  layout?: ("normal"| "lineBlasterRow" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge")[][];
   objective?: {
   type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet';
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" | "bone" | "bulb" | "ice" | "infected";
+  tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse')[][];
 };
@@ -104,6 +105,7 @@ const specialTileSettings = {
   allowRandomInfectTiles: false,
   allowExclamators: true,
   allowWarpedTiles: true,
+  allowVelvets: true,
   allowInfectTiles: true,
   allowPresetTiles: true,
   allowFireTiles: true,
@@ -122,7 +124,9 @@ const specialTileSettings = {
   warpedTurns: 6,
   fireTurns: 5,
   dullTurns: 3,
-  justBrokeIce: false
+  justBrokeIce: false,
+  velvetTurns: 3,
+  
 };
 
 export function LetterBoard({ level,   objective,  levelName, layout, moves = 15}: LetterBoardProps) {
@@ -304,6 +308,11 @@ const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)]
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < 0.7;
 
+   const shouldBeVelvet = 
+  specialTileSettings.allowVelvets &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < 0.7;
+
   const shouldBeWarped =
     specialTileSettings.allowWarpedTiles &&
     specialTileSettings.allowRandomSpecialTiles &&
@@ -370,7 +379,9 @@ if (shouldBeBulb){
     rarity: rarity
   }
 }
-
+if (shouldBeVelvet) {
+    return { letter, isVelvet: true, velvetTurns: specialTileSettings.warpedTurns, rarity: 'gold' };
+  }
 
    if (shouldBeWarped) {
     return { letter, isWarped: true, warpTurns: specialTileSettings.warpedTurns, rarity: 'bronze' };
@@ -453,6 +464,14 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             isStationary: true,
             presets: true,
             iceHealth: 1
+          });}
+
+           else if (presetType === "velvet" && specialTileSettings.allowVelvets) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? false),            
+            isStationary: false,
+            presets: true,
+            isVelvet: true
           });}
           
         
@@ -820,6 +839,16 @@ function triggerFridgeOverheat(
   );
 }
 
+//Apply lie blast
+
+function getLineBlastersUsed(
+  grid: Tile[][],
+  selected: { row: number; col: number }[]
+): { row: number; col: number }[] {
+  return selected.filter(
+    ({ row, col }) => grid[row][col]?.isLineBlaster
+  );
+}
 
 
     // Frozen tile mechanics
@@ -868,6 +897,65 @@ function triggerFridgeOverheat(
   
     return { grid: newGrid, brokenIce };
 }
+
+function applyLineBlasts(
+  grid: Tile[][],
+  blasters: { row: number; col: number }[]
+): { grid: Tile[][]; destroyed: Position[] } {
+
+  const destroyed: Position[] = [];
+
+  const newGrid = grid.map(row =>
+    row.map(tile => (tile ? { ...tile } : tile))
+  );
+
+  for (const { row, col } of blasters) {
+
+    const blaster = newGrid[row][col];
+    if (!blaster?.isLineBlaster) continue;
+
+    if (blaster.blastDirection === "row") {
+      for (let c = 0; c < newGrid[row].length; c++) {
+
+        const target = newGrid[row][c];
+
+        if (!target || target.isRemoved) continue;
+
+        if (target.isLightBulb) {
+          newGrid[row][c] = { ...target, isBulbOn: !target.isBulbOn };
+          continue;
+        }
+
+        destroyed.push({ row, col: c });
+        newGrid[row][c] = null as any;
+      }
+    }
+
+    if (blaster.blastDirection === "col") {
+      for (let r = 0; r < newGrid.length; r++) {
+
+        const target = newGrid[r][col];
+
+        if (!target || target.isRemoved) continue;
+
+        if (target.isLightBulb) {
+          newGrid[r][col] = { ...target, isBulbOn: !target.isBulbOn };
+          continue;
+        }
+
+        destroyed.push({ row: r, col });
+        newGrid[r][col] = null as any;
+      }
+    }
+
+    destroyed.push({ row, col });
+    newGrid[row][col] = null as any;
+  }
+
+  return { grid: newGrid, destroyed };
+}
+
+
 
 
 
@@ -933,7 +1021,7 @@ if (fireReachedBottom && !isGameOver) {
 
   return;
 }
-
+const destroyedThisMove: Position[] = [];
 
 
 const wordsIncludesInfected = selected.some(({ row, col }) => grid[row][col]?.isInfected);
@@ -1035,6 +1123,19 @@ function NegativeTile(tile: Tile) {
   );
 }
 
+// Detect line blasters BEFORE deletion
+const lineBlastersUsed = getLineBlastersUsed(updatedGrid, selected);
+
+// Apply their effects
+if (lineBlastersUsed.length > 0) {
+  const blastResult = applyLineBlasts(updatedGrid, lineBlastersUsed);
+
+  updatedGrid = blastResult.grid;
+  destroyedThisMove.push(...blastResult.destroyed);
+}
+
+
+
 
 
     // score system
@@ -1051,7 +1152,7 @@ function NegativeTile(tile: Tile) {
   
    
     
-    selected.forEach(({ row, col }) => {
+    destroyedThisMove.forEach(({ row, col }) => {
       const tile = grid[row][col];
 if (tile.isDull) return;
 
@@ -1081,6 +1182,7 @@ if (tile.isDull) return;
 
     
 
+
     
 let label = "Progress";
 
@@ -1096,6 +1198,18 @@ else if (objective?.type === "defrost")
 if (objective) {
   let updatedObjMet = objMet;
   setMovesLeft(prev => prev- 1);
+
+  const allDestroyedPositions = [
+  ...selected,
+  ...destroyedThisMove
+];
+
+
+const uniqueDestroyed = Array.from(
+  new Map(
+    allDestroyedPositions.map(p => [`${p.row}-${p.col}`, p])
+  ).values()
+);
 
 
   const iceResult = applyIceDamage(updatedGrid, selected);
@@ -1132,7 +1246,7 @@ else if (objective.type === "score") {
 else if (objective.type === "lightsUp") {
   if (!wordsIncludesInfected){
 
-  selected.forEach(({ row, col }) => {
+  uniqueDestroyed.forEach(({ row, col }) => {
     const tile = grid[row][col];
     if (!tile?.isLightBulb) return;
 
@@ -1147,7 +1261,7 @@ else if (objective.type === "lightsUp") {
 else if (objective.type === "defrost") {
   if (wordsIncludesInfected) return; // ❌ no credit
 
-  const iceBroken = selected.filter(({ row, col }) => {
+  const iceBroken = uniqueDestroyed.filter(({ row, col }) => {
     const tile = grid[row][col];
     if (!tile) return false;
     return objective.tileType === "ice" && tile.isFrozen;
@@ -1159,23 +1273,27 @@ else if (objective.type === "defrost") {
 
 
 
-  // Destroy-based objective (e.g., destroy fire or cursed tiles)
   else if (objective.type === 'destroy') {
-    const destroyed = selected.filter(({ row, col }) => {
-      const t = grid[row][col];
-      if (!t) return false;
+  const destroyed = uniqueDestroyed.filter(({ row, col }) => {
+    const t = grid[row][col];
+    if (!t) return false;
 
-      if (objective.tileType === 'fire') return t.isFire;
-       if (objective.tileType === 'dull') return t.isDull;
-      if (objective.tileType === 'cursed') return t.isCursed;
-      if (objective.tileType === 'warped') return t.isWarped;
-      if (objective.tileType === 'bone') return t.isBone;
-      if (objective.tileType === 'bulb') return t.isLightBulb;
-      return false;
-    }).length;
+    if (objective.tileType === 'fire') return t.isFire;
+    if (objective.tileType === 'dull') return t.isDull;
+    if (objective.tileType === 'cursed') return t.isCursed;
+    if (objective.tileType === 'warped') return t.isWarped;
+    if (objective.tileType === 'bone') return t.isBone;
+    if (objective.tileType === 'bulb') return t.isLightBulb;
 
-    updatedObjMet += destroyed;
-  }
+    return false;
+  }).length;
+
+  updatedObjMet += destroyed;
+}
+
+
+
+
 
   setObjMet(updatedObjMet);
 
@@ -1217,6 +1335,7 @@ if (gem) {
  selected.slice(0, -1).forEach(({ row, col }) => {
   const t = updatedGrid[row][col];
   if (!t?.isLightBulb) {
+    destroyedThisMove.push ({row  , col})
     updatedGrid[row][col] = null as any;
   }
 
@@ -1227,9 +1346,11 @@ if (gem) {
   // Normal clearing if no gem created
   selected.forEach(({ row, col }) => {
   const t = updatedGrid[row][col];
+  if (!t) return;
   if (!t?.isLightBulb) {       // ⬅️ Do NOT clear bulbs
+    destroyedThisMove.push({row, col})
     updatedGrid[row][col] = null as any;
-    newGenerated.push({ row, col });
+   
   }
 });
 
@@ -1239,39 +1360,6 @@ applyIceDamage(grid, selected);
 
 
 
-function applyLineBlasts(
-  grid: Tile[][],
-  blasters: { row: number; col: number }[]
-): Tile[][] {
-  const newGrid = grid.map(row => row.map(tile => ({ ...tile })));
-
-  for (const { row, col } of blasters) {
-    const tile = newGrid[row][col];
-    if (!tile?.isLineBlaster) continue;
-
-    if (tile.blastDirection === "row") {
-      for (let c = 0; c < newGrid[row].length; c++) {
-        if (!newGrid[row][c]?.isRemoved) {
-          newGrid[row][c].isRemoved = true;
-        }
-      }
-    }
-
-    if (tile.blastDirection === "col") {
-      for (let r = 0; r < newGrid.length; r++) {
-        if (!newGrid[r][col]?.isRemoved) {
-          newGrid[r][col].isRemoved = true;
-        }
-      }
-    }
-  }
-
-  return newGrid;
-}
-
-const blastersUsed = selected.filter(
-  ({ row, col }) => grid[row][col]?.isLineBlaster
-);
 
 // Find if the word used a ripe bone
 const boneUsed = selected.find(({ row, col }) => grid[row][col]?.isBone && grid[row][col]?.isRipe);
@@ -1412,19 +1500,6 @@ for (let r = 0; r < rows; r++) {
   }
 }
 
-const lineBlastersToTrigger: { row: number; col: number }[] = [];
-
-for (const { row, col } of selected) {
-  const tile = updatedGrid[row][col];
-  if (tile?.isLineBlaster) {
-    lineBlastersToTrigger.push({ row, col });
-  }
-}
-
- // 2️⃣ Apply blasts
-if (lineBlastersToTrigger.length > 0) {
-  updatedGrid = applyLineBlasts(updatedGrid, blastersUsed);
-}
 
 
 
@@ -1515,7 +1590,7 @@ for (let c = 0; c < cols; c++) {
 
    updatedGrid = applyCleanseGround(updatedGrid, ground)
  
-applyLineBlasts(updatedGrid, blastersUsed);
+
     // Find the nearest empty cell above any stationary blockers
     while (insertRow >= 0 && newCol[insertRow] !== null) insertRow--;
 
@@ -1557,6 +1632,8 @@ setSelected([]);
 
 
   }
+
+  
 
   const getGemGlow = (gem: string) =>
     ({
