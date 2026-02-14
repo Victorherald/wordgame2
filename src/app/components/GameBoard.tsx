@@ -76,7 +76,7 @@ type LetterBoardProps = {
   level?: LevelData;
   layout?: ("normal"| "lineBlasterRow" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge")[][];
   objective?: {
-  type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet';
+  type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
   tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected";
   minLength?: number;
@@ -126,7 +126,8 @@ const specialTileSettings = {
   dullTurns: 3,
   justBrokeIce: false,
   velvetTurns: 3,
-  
+   allowVelvetTiles: true,
+  velvetSpawnChance: 0.12 // 12% chance
 };
 
 export function LetterBoard({ level,   objective,  levelName, layout, moves = 15}: LetterBoardProps) {
@@ -265,6 +266,13 @@ const goal = objective?.objGoal ?? 5;
 
 function generateRandomTile(includeHardLetters = true): Tile {
 
+  function shouldSpawnVelvet(): boolean {
+  if (specialTileSettings.allowVelvetTiles) return false;
+
+  return Math.random() < (specialTileSettings.velvetSpawnChance ?? 0.1);
+}
+
+
   // pick allowed letters based on toggle
   const allowedLetters = includeHardLetters && Math.random() 
     ? letters
@@ -351,6 +359,15 @@ if (shouldBeBone) {
     rarity: "none" //when its unripe
 } 
 }
+
+// 🍷 Velvet spawn override
+  if (shouldSpawnVelvet()) {
+    return {
+      letter,
+      rarity: rarity,
+      isVelvet: true
+    };
+  }
 
   
 if (shouldBeLocked) {
@@ -898,6 +915,12 @@ function getLineBlastersUsed(
     return { grid: newGrid, brokenIce };
 }
 
+const usedVelvetThisMatch = selected.some(({ row, col }) =>
+  grid[row][col]?.isVelvet
+);
+
+
+
 function applyLineBlasts(
   grid: Tile[][],
   blasters: { row: number; col: number }[]
@@ -1046,9 +1069,7 @@ selected.forEach(({ row, col }) => {
     isBulbOn: isNowOn
   };
 
-  if (objective?.type === "lightsUp" && isNowOn){
-      setObjMet(prev => prev + 1);
-  }
+ 
 
   
 });
@@ -1188,6 +1209,7 @@ let label = "Progress";
 
 if (objective?.type === "words") label = "Words Found";
 else if (objective?.type === "score") label = "Score";
+else if (objective?.type === "collectVelvet") label = "Velvets Crushed";
 else if (objective?.type === "destroy")
   label = `Destroy ${objective.tileType} tiles!`;
 else if (objective?.type === "lightsUp")
@@ -1224,6 +1246,8 @@ if (objective.type === "alphabet"){
   
 }
 
+
+
  // Word-based objective (e.g., make 5 words of 3+ letters)
 if (objective.type === "words") {
   if (
@@ -1245,7 +1269,7 @@ else if (objective.type === "score") {
 // Lights up mode
 else if (objective.type === "lightsUp") {
   if (!wordsIncludesInfected){
-
+  const bulbsOn =
   uniqueDestroyed.forEach(({ row, col }) => {
     const tile = grid[row][col];
     if (!tile?.isLightBulb) return;
@@ -1253,7 +1277,7 @@ else if (objective.type === "lightsUp") {
     const wasOn = tile.isBulbOn;
     const isNowOn = !wasOn;
 
-    updatedObjMet += isNowOn ? +1 : -1;
+    updatedObjMet += uniqueDestroyed ? +1 : -1;
   });
 }
 }
@@ -1270,6 +1294,11 @@ else if (objective.type === "defrost") {
   updatedObjMet += iceBroken;
 }
 
+else if (objective.type === "collectVelvet") {
+  if (usedVelvetThisMatch) {
+    updatedObjMet += 1;
+  }
+}
 
 
 
@@ -1774,7 +1803,9 @@ const handleScramble = () => {
           : objective.type ===  'defrost'
           ? ' Defrost'
           : objective.type === 'score'
-          ? 'Score'
+           ? 'Score'
+          : objective.type === 'collectVelvet'
+          ? 'Velvets Crushed'
           : `Destroy ${objective.tileType} tiles`
         }: ${objMet}/${objective.objGoal}`
       : 'No objective'}
@@ -1837,9 +1868,11 @@ const handleScramble = () => {
           : objective.type === 'score'
           ? 'Score'
            : objective.type === 'lightsUp' 
+ ? 'Lights turned on'
+           : objective.type === 'collectVelvet' 
           
 
-          ? `Lights turned on `
+          ? `Velvets Squashed`
 
           : objective.type === 'defrost'
           ? 'Ice cleared'
@@ -1958,6 +1991,10 @@ const fridge = tile?.isFridge
       const warped = tile?.isWarped
         ? 'tile animate-warped warp-tile cursor-pointer'
         : '';
+        const velvet = tile?.isVelvet
+  ? 'velvet-tile animate-velvet-sheen'
+  : '';
+
         const dull = tile?.isDull 
         ? 'bg-gradient-to-br from-neutral-700 to-neutral-700 text-gray-100 border border-neutral-500  brightness-85'
         : '';
@@ -2105,7 +2142,7 @@ const fridge = tile?.isFridge
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${fridge} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${fridge} ${velvet} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
           `}
         >
 
@@ -2253,7 +2290,8 @@ const fridge = tile?.isFridge
           {objective.type === "destroy" &&
             `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
             {objective.type === "lightsUp" && `Turn on all the lights!`}
-            {objective.type === "defrost" && 'Clear all the ice'}
+              {objective.type === "collectVelvet" && `Crush the velvets!`}
+            {objective.type === "defrost" && 'Clear all the ice!'}
         </p>
       ) : (
         <p className="text-gray-500 text-xs sm:text-sm italic">No objective</p>

@@ -184,6 +184,8 @@ export default function LevelList() {
                     `Find ${lvl.objective.objGoal} words`}
                   {lvl.objective?.type === "destroy" &&
                     `Destroy ${lvl.objective.objGoal} ${lvl.objective.tileType} tiles`}
+                     {lvl.objective?.type === "collectVelvet" &&
+                    `Squash ${lvl.objective.objGoal} velvets!`}
                 </p>
 
                 <button

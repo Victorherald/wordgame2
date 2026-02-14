@@ -2,7 +2,7 @@
 
 import { object } from "framer-motion/m";
 
-export type TileType = "normal" | "locked"| "lineBlasterRow" | "lineBlasterColumn" | "fire" | "cursed" | "warped" | "removed" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge";
+export type TileType = "normal" | "locked"| "lineBlasterRow" | "lineBlasterColumn" | "fire" | "velvet" | "cursed" | "warped" | "removed" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge";
 
 export type Difficulty = "Hard Level" | "demon";
 
@@ -16,6 +16,7 @@ export type Objective =
   | { type: 'words'; objGoal: number; minLength?: number } 
   |  {type: 'lightsUp'; objGoal: number ; tileType: 'bulb'}
   | {type: 'defrost'; objGoal: number; tileType: 'ice'}
+  | {type: 'collectVelvet' ; objGoal: number; tileType: 'velvet' }
   | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' | 'bone' | "bulb"};
 
 export type LevelData = {
@@ -33,6 +34,7 @@ export type LevelData = {
   cursedTurns?: number;
   shouldLockSpawn?: boolean;
   lockTurns?: number;
+  shouldSpawnVelvet?: boolean;
   allowHardLetters?: boolean;
   allowBulbTiles?: boolean;
   warpTurns?: number;
@@ -72,7 +74,7 @@ export const levels: LevelData[] = [
       board: [
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
-        ["normal", "normal", "lineBlasterColumn", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
@@ -3999,6 +4001,147 @@ export const levels: LevelData[] = [
   ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
   ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
 ],
+    },
+
+     {
+      id: 171,
+      name: "Level 171",
+      objective: { type: 'collectVelvet', objGoal: 4, tileType: 'velvet'},
+      moves: 40,
+      
+      allowHardLetters: false,     
+      locked: false,
+      dullTurns: 20,
+      cursedTurns: 30,
+      warpTurns: 18,
+      board: [
+        ["removed", "removed", "removed", "normal", "removed", "warped", "normal", "velvet"],
+        ["removed", "normal", "normal", "normal", "removed", "normal", "warped", "normal"],
+        ["removed", "normal", "normal", "normal", "removed", "warped", "normal", "warped"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["velvet", "normal", "velvet", "removed", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "removed"],
+        ["velvet", "normal", "velvet", "removed", "normal", "removed", "removed", "removed"]
+      ],
+     
+    },
+
+    
+     {
+      id: 172,
+      name: "Level 172",
+      objective: { type: 'collectVelvet', objGoal: 14, tileType: 'velvet'},
+      moves: 20,
+      
+      allowHardLetters: false,     
+      locked: false,
+      dullTurns: 20,
+      cursedTurns: 30,
+      warpTurns: 18,
+      board: [
+        ["removed", "removed", "normal", "velvet", "velvet", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "velvet", "velvet", "normal", "velvet", "normal"],
+        ["normal", "normal", "velvet", "velvet", "velvet", "normal", "normal", "normal"],
+        ["velvet", "velvet", "velvet", "removed", "removed", "velvet", "velvet", "velvet"],
+        ["velvet", "velvet", "velvet", "removed", "removed", "velvet", "velvet", "velvet"],
+        ["normal", "normal", "normal", "velvet", "velvet", "velvet", "normal", "normal"],
+        ["normal", "velvet", "normal", "velvet", "velvet", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "velvet", "velvet", "normal", "removed", "removed"]
+      ],
+     
+    },
+    {
+      id: 173,
+      name: "Level 173",
+      objective: { type: 'collectVelvet', objGoal: 6, tileType: 'velvet'},
+      moves: 30,
+      
+      allowHardLetters: false,     
+      locked: false,
+      dullTurns: 20,
+      cursedTurns: 30,
+      warpTurns: 18,
+      board: [
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["normal", "removed", "normal", "normal", "normal", "normal", "removed", "normal"],
+        ["normal", "velvet", "ice", "exclamator", "normal", "ice", "velvet", "normal"],
+        ["normal", "removed", "ice", "normal", "normal", "ice", "removed", "normal"],
+        ["normal", "velvet", "ice", "normal", "exclamator", "ice", "velvet", "normal"],
+        ["normal", "removed", "ice", "ice", "ice", "ice", "removed", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "velvet", "velvet", "removed", "removed", "removed"]
+      ],
+     
+    },
+     {
+      id: 174,
+      name: "Level 174",
+      objective: { type: 'lightsUp', objGoal: 4, tileType: 'bulb'},
+      moves: 40,
+      difficulty: 'Hard Level',
+      allowHardLetters: false,     
+      locked: false,
+      dullTurns: 20,
+      cursedTurns: 30,
+      warpTurns: 18,
+      board: [
+       ["normal", "normal", "normal", "lineBlasterColumn", "normal", "normal", "normal", "normal"],
+        ["normal", "exclamator", "normal", "normal", "normal", "normal", "exclamator", "normal"],
+        ["normal", "normal", "exclamator", "exclamator", "exclamator", "exclamator", "normal", "normal"],
+        ["normal", "normal", "exclamator", "bulb", "bulb", "exclamator", "normal", "normal"],
+        ["normal", "normal", "exclamator", "bulb", "bulb", "exclamator", "normal", "normal"],
+        ["normal", "normal", "exclamator", "exclamator", "exclamator", "exclamator", "normal", "normal"],
+        ["normal", "exclamator", "normal", "exclamator", "exclamator", "normal", "exclamator", "normal"],
+        ["exclamator", "normal", "normal", "exclamator", "exclamator", "normal", "normal", "exclamator"]
+      ],
+     
+    },
+     {
+      id: 175,
+      name: "Level 175",
+      objective: { type: 'score', objGoal: 6650},
+      moves: 40,
+      
+      allowHardLetters: true,     
+      locked: false,
+      dullTurns: 20,
+      cursedTurns: 30,
+      warpTurns: 18,
+      board: [
+        ["normal", "normal", "removed", "removed", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "removed", "normal", "normal", "normal", "infected", "normal"],
+        ["normal", "infected", "removed", "normal", "normal", "infected", "normal", "normal"],
+        ["removed", "normal", "infected", "normal", "infected", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "infected", "normal", "infected", "normal", "removed"],
+        ["normal", "normal", "infected", "normal", "removed", "normal", "infected", "normal"],
+        ["normal", "infected", "normal", "normal", "removed", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"]
+      ],
+     
+    },
+     {
+      id: 176,
+      name: "Level 176",
+      objective: { type: 'collectVelvet', objGoal: 10, tileType: 'velvet'},
+      moves: 30,
+      
+      allowHardLetters: false,     
+      locked: false,
+      dullTurns: 20,
+      cursedTurns: 30,
+      warpTurns: 18,
+      board: [
+        ["normal", "normal", "removed", "removed", "removed", "removed", "normal", "normal"],
+        ["normal", "normal", "removed", "velvet", "velvet", "removed", "normal", "normal"],
+        ["normal", "normal", "removed", "velvet", "velvet", "removed", "normal", "normal"],
+        ["velvet", "velvet", "ice", "normal", "normal", "ice", "velvet", "velvet"],
+        ["velvet", "velvet", "ice", "normal", "normal", "ice", "velvet", "velvet"],
+        ["ice", "ice", "removed", "removed", "removed", "removed", "ice", "ice"],
+        ["ice", "velvet", "velvet", "removed", "removed", "velvet", "velvet", "normal"],
+        ["ice", "velvet", "velvet", "removed", "removed", "velvet", "velvet", "normal"]
+      ],
+     
     },
   ];
 
