@@ -121,7 +121,7 @@ export default function LevelList() {
             className={`
               rounded-lg border p-4 flex flex-col items-center justify-between text-center transition
 
-              ${lvl.locked ? "bg-neutral-800 text-gray-500 border-neutral-700" : ""}
+              ${lvl.locked ? "bg-neutral-800 text-gray-500 border-neutral-500" : ""}
          
              
               ${lvl.difficulty === "Hard Level" ? "bg-orange-900/40 text-white border-orange-600 hover:border-orange-500" : ""}
@@ -137,7 +137,7 @@ export default function LevelList() {
     relative
     overflow-hidden
   `
-  : ""
+  : "text-green-300"
 }
 
 
