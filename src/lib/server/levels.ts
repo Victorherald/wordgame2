@@ -1,6 +1,6 @@
 // src/data/levelData.ts
 
-import { object } from "framer-motion/m";
+
 
 export type TileType = "normal" | "locked"| "lineBlasterRow" | "lineBlasterColumn" | "fire" | "velvet" | "cursed" | "warped" | "removed" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge";
 
@@ -4455,6 +4455,98 @@ export const levels: LevelData[] = [
         ["bulb", "locked", "bulb", "removed", "removed", "bulb", "locked", "bulb"],
         ["locked", "normal", "removed", "locked", "normal", "removed", "normal", "locked"],
         ["bulb", "removed", "locked", "bulb", "normal", "normal", "removed", "bulb"]
+      ],
+     
+    },
+     {
+      id: 191,
+      name: "Level 191",
+      objective: { type: 'lightsUp', objGoal: 10, tileType: 'bulb'},
+      moves: 30,
+    
+      allowHardLetters: false,     
+      locked: false,
+      lockTurns: 15,
+      cursedTurns: 30,
+      warpTurns: 18,
+      board: [
+        ["normal", "normal", "removed", "removed", "removed", "removed", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "bulb"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "bulb", "removed"],
+        ["normal", "normal", "normal", "infected", "infected", "bulb", "removed", "removed"],
+        ["normal", "normal", "infected", "normal", "normal", "infected", "bulb", "removed"],
+        ["normal", "infected", "bulb", "normal", "normal", "normal", "infected", "bulb"],
+        ["infected", "bulb", "removed", "bulb", "normal", "normal", "normal", "infected"],
+        ["bulb", "removed", "removed", "removed", "bulb", "normal", "normal", "normal"]
+      ],
+     
+    },
+    {
+      id: 192,
+      name: "Level 192",
+      objective: { type: 'destroy', objGoal: 10, tileType: 'dull'},
+      moves: 30,
+    
+      allowHardLetters: false,     
+      locked: false,
+      lockTurns: 8,
+      cursedTurns: 30,
+      dullTurns: 35,
+      board: [
+        ["locked", "dull", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["dull", "removed", "removed", "normal", "normal", "normal", "normal", "dull"],
+        ["normal", "removed", "removed", "normal", "normal", "removed", "removed", "normal"],
+        ["normal", "dull", "dull", "locked", "locked", "removed", "removed", "normal"],
+        ["normal", "removed", "removed", "locked", "locked", "dull", "dull", "normal"],
+        ["dull", "removed", "removed", "normal", "normal", "removed", "removed", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "removed", "removed", "dull"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "dull", "normal"]
+      ],
+     
+    },
+    {
+      id: 193,
+      name: "Level 193",
+      objective: { type: 'defrost', objGoal: 30, tileType: 'ice'},
+      moves: 30,
+    
+      allowHardLetters: false,     
+      locked: false,
+      lockTurns: 8,
+      cursedTurns: 30,
+      dullTurns: 35,
+      board: [
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["ice", "ice", "normal", "normal", "normal", "normal", "ice", "ice"],
+        ["ice", "ice", "ice", "ice", "ice", "ice", "ice", "ice"],
+        ["ice", "ice", "ice", "ice", "ice", "ice", "ice", "ice"],
+        ["ice", "ice", "ice", "ice", "ice", "ice", "ice", "ice"],
+        ["ice", "ice", "ice", "ice", "ice", "ice", "ice", "ice"],
+        ["ice", "removed", "removed", "normal", "normal", "removed", "removed", "ice"]
+      ],
+     
+    },
+    {
+      id: 194,
+      name: "Level 194",
+      objective: { type: 'collectVelvet', objGoal: 10, tileType: 'velvet'},
+      moves: 25,
+    
+      allowHardLetters: false,     
+      locked: false,
+      lockTurns: 8,
+      cursedTurns: 30,
+      dullTurns: 35,
+      board: [
+        ["removed", "removed", "removed", "normal", "velvet", "normal", "velvet", "normal"],
+        ["removed", "removed", "normal", "normal", "exclamator", "normal", "exclamator", "normal"],
+        ["removed", "normal", "normal", "normal", "velvet", "normal", "velvet", "normal"],
+        ["normal", "normal", "normal", "normal", "exclamator", "velvet", "exclamator", "normal"],
+        ["normal", "exclamator", "velvet", "exclamator", "removed", "removed", "removed", "removed"],
+        ["normal", "velvet", "normal", "velvet", "normal", "removed", "removed", "removed"],
+        ["normal", "exclamator", "normal", "exclamator", "removed", "removed", "removed", "removed"],
+        ["normal", "velvet", "normal", "velvet", "normal", "removed", "removed", "removed"]
       ],
      
     },
