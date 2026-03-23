@@ -4550,5 +4550,52 @@ export const levels: LevelData[] = [
       ],
      
     },
+    {
+      id: 195,
+      name: "Level 195",
+      objective: { type: 'lightsUp', objGoal: 12, tileType: 'bulb'},
+      moves: 45,
+    
+      allowHardLetters: false,     
+      locked: false,
+      warpTurns: 17,
+      cursedTurns: 30,
+      dullTurns: 35,
+      board: [
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "exclamator", "exclamator", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "bulb", "bulb", "removed", "removed", "removed"],
+        ["removed", "removed", "bulb", "warped", "warped", "bulb", "removed", "removed"],
+        ["removed", "bulb", "warped", "bulb", "bulb", "warped", "bulb", "removed"],
+        ["bulb", "warped", "bulb", "normal", "normal", "bulb", "warped", "bulb"]
+      ],
+     
+    },
+    {
+      id: 196,
+      name: "Level 196",
+      objective: { type: 'destroy', objGoal: 18, tileType: 'dull'},
+      moves: 30,
+    
+      allowHardLetters: false,     
+      locked: false,
+      dullTurns: 20,
+      cursedTurns: 30,
+     
+      board: [
+        ["dull", "normal", "normal", "normal", "dull", "removed", "removed", "removed"],
+        ["normal", "dull", "normal", "dull", "normal", "dull", "removed", "removed"],
+        ["normal", "normal", "dull", "normal", "normal", "normal", "dull", "removed"],
+        ["normal", "dull", "normal", "normal", "normal", "normal", "normal", "dull"],
+        ["dull", "normal", "normal", "normal", "normal", "normal", "dull", "normal"],
+        ["removed", "dull", "normal", "normal", "normal", "dull", "normal", "normal"],
+        ["removed", "removed", "dull", "normal", "dull", "normal", "dull", "normal"],
+        ["removed", "removed", "removed", "dull", "normal", "normal", "normal", "dull"]
+      ],
+     
+    },
   ];
+
 
