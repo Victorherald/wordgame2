@@ -17,7 +17,7 @@ export type Objective =
   |  {type: 'lightsUp'; objGoal: number ; tileType: 'bulb'}
   | {type: 'defrost'; objGoal: number; tileType: 'ice'}
   | {type: 'collectVelvet' ; objGoal: number; tileType: 'velvet' }
-  | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' | 'bone' | "bulb"};
+  | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' | 'bone' | "bulb" | "exclamator" };
 
 export type LevelData = {
   id: number;
@@ -4596,6 +4596,99 @@ export const levels: LevelData[] = [
       ],
      
     },
+    {
+      id: 197,
+      name: "Level 197",
+      objective: { type: 'score', objGoal: 6500},
+      moves: 65,
+      difficulty: 'Hard Level',
+      allowHardLetters: false,     
+      locked: false,
+      lockTurns: 8,
+   
+      dullTurns: 50,
+      board: [
+        ["normal", "normal", "removed", "normal", "infected", "removed", "infected", "normal"],
+        ["normal", "normal", "normal", "normal", "infected", "removed", "infected", "normal"],
+        ["dull", "dull", "dull", "dull", "infected", "infected", "infected", "normal"],
+        ["removed", "removed", "removed", "dull", "normal", "normal", "normal", "normal"],
+        ["dull", "dull", "dull", "dull", "dull", "dull", "dull", "dull"],
+        ["normal", "infected", "infected", "infected", "dull", "removed", "removed", "removed"],
+        ["normal", "infected", "removed", "infected", "dull", "dull", "dull", "dull"],
+        ["normal", "infected", "removed", "infected", "normal", "removed", "normal", "normal"]
+      ],
+     
+    },
+    {
+      id: 198,
+      name: "Level 198",
+      objective: { type: 'collectVelvet' , objGoal: 12 , tileType: 'velvet'},
+      moves: 35,
+    
+      allowHardLetters: false,     
+      locked: false,
+      warpTurns: 10,
+   
+      cursedTurns: 7,
+      board: [
+        ["velvet", "normal", "infected", "warped", "warped", "infected", "normal", "velvet"],
+        ["normal", "velvet", "normal", "normal", "normal", "normal", "velvet", "normal"],
+        ["infected", "normal", "velvet", "cursed", "cursed", "velvet", "normal", "infected"],
+        ["warped", "normal", "cursed", "normal", "normal", "cursed", "normal", "warped"],
+        ["warped", "normal", "cursed", "normal", "normal", "cursed", "normal", "warped"],
+        ["infected", "normal", "velvet", "cursed", "cursed", "velvet", "normal", "infected"],
+        ["normal", "velvet", "normal", "normal", "normal", "normal", "velvet", "normal"],
+        ["velvet", "normal", "infected", "warped", "warped", "infected", "normal", "velvet"]
+      ],
+     
+    },
+    {
+      id: 199,
+      name: "Level 199",
+      objective: { type: 'words' , objGoal: 4 , minLength: 5},
+      moves: 45,
+    
+      allowHardLetters: false,     
+      locked: false,
+      lockTurns: 10,
+   
+      cursedTurns: 7,
+      board: [
+        ["ice", "normal", "removed", "infected", "normal", "normal", "normal", "locked"],
+        ["normal", "ice", "removed", "normal", "infected", "removed", "locked", "normal"],
+        ["ice", "normal", "removed", "infected", "normal", "removed", "normal", "normal"],
+        ["normal", "ice", "removed", "normal", "infected", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "infected", "normal", "removed", "ice", "normal"],
+        ["normal", "normal", "removed", "normal", "infected", "removed", "normal", "ice"],
+        ["normal", "locked", "removed", "infected", "normal", "removed", "ice", "normal"],
+        ["locked", "normal", "normal", "normal", "infected", "removed", "normal", "ice"]
+      ],
+     
+    },
+    {
+      id: 200,
+      name: "Level 200",
+      objective: { type: 'destroy' , objGoal: 12 , tileType: 'exclamator'},
+      moves: 60,
+      difficulty: 'demon',
+      allowHardLetters: false,     
+      locked: false,
+      lockTurns: 20,
+   
+      cursedTurns: 7,
+      board: [
+        ["exclamator", "normal", "normal", "normal", "normal", "normal", "normal", "exclamator"],
+        ["removed", "exclamator", "normal", "normal", "normal", "normal", "exclamator", "removed"],
+        ["removed", "ice", "exclamator", "normal", "normal", "exclamator", "ice", "removed"],
+        ["removed", "ice", "ice", "ice", "ice", "ice", "ice", "removed"],
+        ["normal", "locked", "normal", "locked", "locked", "normal", "locked", "normal"],
+        ["locked", "exclamator", "ice", "ice", "ice", "ice", "exclamator", "locked"],
+        ["normal", "exclamator", "ice", "ice", "ice", "ice", "exclamator", "normal"],
+        ["locked", "exclamator", "ice", "ice", "ice", "ice", "exclamator", "locked"]
+      ],
+     
+    },
+    
   ];
 
 

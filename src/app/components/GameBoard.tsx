@@ -5,6 +5,8 @@ import { ScoreCounter } from '../components/ScoreCounter';
 import { WordDisplay } from '../components/WordDisp';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
+import { AnimatePresence, motion} from "framer-motion";
+
 import { LevelData } from '@/lib/server/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
@@ -1048,7 +1050,7 @@ const destroyedThisMove: Position[] = [];
 
 
 const wordsIncludesInfected = selected.some(({ row, col }) => grid[row][col]?.isInfected);
-
+const wordsIncludesCursed = selected.some(({ row, col }) => grid[row][col]?.isCursed);
 
 //  BULB TOGGLING
 let usedBulbThisMatch = false;
@@ -1169,7 +1171,7 @@ if (lineBlastersUsed.length > 0) {
 
     
 
-     let points = validTiles.length * 40;
+     let points = validTiles.length * 100;
   
    
     
@@ -1177,16 +1179,16 @@ if (lineBlastersUsed.length > 0) {
       const tile = grid[row][col];
 if (tile.isDull) return;
 
-      if (tile?.isCursed && tile.curseTurns && tile.curseTurns > 0) points -= 200;
+     
 
-      if(wordsIncludesInfected) return;
+      
   
-
+ if (wordsIncludesCursed) points -= 300;
 
       if(tile.letter?.includes("QU")) points += 300;
 
      
-
+if(wordsIncludesInfected ) return;
 
       if(tile.rarity?.includes('gold')) points += 350;
       if(tile.rarity?.includes('silver')) points += 170;
@@ -1308,6 +1310,7 @@ else if (objective.type === "collectVelvet") {
     if (!t) return false;
 
     if (objective.tileType === 'fire') return t.isFire;
+    if (objective.tileType === 'exclamator') return t.isExclamator;
     if (objective.tileType === 'dull') return t.isDull;
     if (objective.tileType === 'cursed') return t.isCursed;
     if (objective.tileType === 'warped') return t.isWarped;
@@ -2219,20 +2222,21 @@ const fridge = tile?.isFridge
             />
           )}
 
-          {/*Selection glow (no border, full glow layer) */}
-          {sel && (
-            <div
-              className={`
-                absolute inset-0 rounded-[6px]
-                ${isWordValid
-                  ? 'shadow-[0_0_16px_4px_rgba(34,197,94,0.8)]'
-                   : hasImproperExclamator
-    ? 'shadow-[0_0_18px_4px_rgba(239,68,68,0.9)]'
-                  : 'shadow-[0_0_12px_2px_rgba(255,255,255,0.5)]'}
-                z-20 pointer-events-none
-              `}
-            />
-          )}
+        {/* Selection glow + bold border */}
+{sel && (
+  <div
+    className={`
+      absolute inset-0 rounded-[6px]
+      border-2
+      ${isWordValid
+        ? 'border-green-500 shadow-[0_0_16px_4px_rgba(34,197,94,0.8)]'
+        : hasImproperExclamator
+        ? 'border-red-500 shadow-[0_0_18px_4px_rgba(239,68,68,0.9)]'
+        : 'border-yellow shadow-[0_0_12px_2px_rgba(255,250,255,0.5)]'}
+      z-20 pointer-events-none
+    `}
+  />
+)}
         </div>
         </div>
       );
@@ -2277,35 +2281,77 @@ const fridge = tile?.isFridge
   </div>
 
 {/* --- Objective Popup (Fixed & Responsive) --- */}
-{showObjectivePopup && (
-  <div className={`${level.difficulty === 'Hard Level' ? 'fixed inset-0 bg-red/70 flex justify-center items-center z-50 overflow-hidden' : 'fixed inset-0 bg-black/70 flex justify-center items-center z-50 overflow-hidden'}`}>
-    <div className={`${level.difficulty === 'Hard Level' ? 'bg-neutral-900 border border-red-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in' : 'bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in'} ${level.difficulty === 'demon' ? 'bg-neutral-900 border border-orange-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in' : 'bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in'}`}>
-
-      <h2 className="text-lg sm:text-xl font-semibold text-white">Objective</h2>
-       <p className='text-red-900'>{`${level.difficulty === 'Hard Level' ? 'Hard Level' :  ''} ${level.difficulty === 'demon' ? 'Demon Level' :  ''}`}</p>
-      {objective ? (
-        <p className="text-gray-300 text-xs sm:text-sm leading-snug">
-          {objective.type === "score" && `Reach ${objective.objGoal} points`}
-          {objective.type === "words" && `Find ${objective.objGoal} words of ${objective.minLength} letters`}
-          {objective.type === "destroy" &&
-            `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
-            {objective.type === "lightsUp" && `Turn on all the lights!`}
-              {objective.type === "collectVelvet" && `Crush the velvets!`}
-            {objective.type === "defrost" && 'Clear all the ice!'}
-        </p>
-      ) : (
-        <p className="text-gray-500 text-xs sm:text-sm italic">No objective</p>
-      )}
-
-      <button
-        onClick={() => setShowObjectivePopup(false)}
-        className="mt-3 sm:mt-4 bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base"
+<AnimatePresence>
+  {showObjectivePopup && (
+    <motion.div
+      className={`${
+        level.difficulty === "Hard Level"
+          ? "fixed inset-0 bg-red/70"
+          : "fixed inset-0 bg-black/70"
+      } flex justify-center items-center z-50 overflow-hidden`}
+      
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      
+      transition={{ duration: 0.3, ease: "easeOut" }}
+    >
+      <motion.div
+        className={`${
+          level.difficulty === "Hard Level"
+            ? "bg-neutral-900 border border-red-700"
+            : level.difficulty === "demon"
+            ? "bg-neutral-900 border border-orange-700"
+            : "bg-neutral-900 border border-neutral-700"
+        } rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl`}
+        
+        initial={{ opacity: 0, scale: 0.8, y: 40 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.8, y: 40 }}
+        
+        transition={{
+          duration: 0.4,
+          ease: [0.22, 1, 0.36, 1], // smooth "game-like" easing
+        }}
       >
-        Ok
-      </button>
-    </div>
-  </div>
-)}
+        <h2 className="text-lg sm:text-xl font-semibold text-white">
+          Objective
+        </h2>
+
+        <p className="text-red-900">
+          {`${level.difficulty === "Hard Level" ? "Hard Level" : ""} ${
+            level.difficulty === "demon" ? "Demon Level" : ""
+          }`}
+        </p>
+
+        {objective ? (
+          <p className="text-gray-300 text-xs sm:text-sm leading-snug">
+            {objective.type === "score" &&
+              `Reach ${objective.objGoal} points`}
+            {objective.type === "words" &&
+              `Find ${objective.objGoal} words of ${objective.minLength} letters`}
+            {objective.type === "destroy" &&
+              `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
+            {objective.type === "lightsUp" && `Turn on all the lights!`}
+            {objective.type === "collectVelvet" && `Crush the velvets!`}
+            {objective.type === "defrost" && "Clear all the ice!"}
+          </p>
+        ) : (
+          <p className="text-gray-500 text-xs sm:text-sm italic">
+            No objective
+          </p>
+        )}
+
+        <button
+          onClick={() => setShowObjectivePopup(false)}
+          className="mt-3 sm:mt-4 bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base"
+        >
+          Ok
+        </button>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
 
 {/* --- Tutorial Side Panel --- */}
 {showTutorialPopup && (
