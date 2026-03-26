@@ -2,7 +2,7 @@
 
 
 
-export type TileType = "normal" | "locked"| "lineBlasterRow" | "lineBlasterColumn" | "fire" | "velvet" | "cursed" | "warped" | "removed" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge";
+export type TileType = "normal" | "locked"| "lineBlasterRow" | "lineBlasterColumn" | "fire" | "velvet" | "cursed" | "warped" | "removed" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge" | "bookOpen" | "bookClosed";
 
 export type Difficulty = "Hard Level" | "demon";
 
@@ -3358,23 +3358,23 @@ export const levels: LevelData[] = [
       id: 145,
       name: "Level 145",
       objective: { type: 'lightsUp' , objGoal: 6, tileType: 'bulb'},
-      moves: 30,
+      moves: 50,
       allowHardLetters: false,
       
       lockTurns: 8,
       locked: false,
       shouldFireSpawn: true,
-      warpTurns: 20,
+      warpTurns: 17,
       cursedTurns: 10,
       board: [
-        ["normal", "removed", "normal", "removed", "removed", "normal", "removed", "normal"],
-        ["normal", "removed", "ice", "bulb", "normal", "ice", "removed", "normal"],
-        ["normal", "normal", "ice", "removed", "bulb", "ice", "normal", "normal"],
-        ["normal", "normal", "ice", "bulb", "removed", "ice", "normal", "normal"],
-        ["removed", "normal", "ice", "removed", "bulb", "ice", "normal", "removed"],
-        ["normal", "normal", "ice", "bulb", "removed", "ice", "normal", "normal"],
-        ["normal", "removed", "ice", "normal", "bulb", "ice", "removed", "normal"],
-        ["normal", "removed", "normal", "removed", "removed", "normal", "removed", "normal"]
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["bulb", "warped", "normal", "normal", "normal", "normal", "warped", "bulb"],
+        ["warped", "normal", "normal", "normal", "normal", "normal", "normal", "warped"],
+        ["warped", "normal", "removed", "normal", "normal", "removed", "normal", "warped"],
+        ["bulb", "warped", "ice", "normal", "normal", "ice", "warped", "bulb"],
+        ["removed", "normal", "warped", "ice", "ice", "warped", "normal", "removed"],
+        ["removed", "warped", "bulb", "removed", "removed", "bulb", "warped", "removed"]
       ],
          
     },
@@ -4353,16 +4353,23 @@ export const levels: LevelData[] = [
        {
       id: 186,
       name: "Level 186",
-      objective: { type: 'lightsUp', objGoal: 16, tileType: 'bulb'},
+      objective: { type: 'score' , objGoal: 4000},
       moves: 45,
     
       allowHardLetters: false,     
       locked: false,
-      dullTurns: 45,
-      cursedTurns: 30,
+      dullTurns: 30,
+      cursedTurns: 20,
       warpTurns: 18,
       board: [
-        
+        ["dull", "normal", "dull", "normal", "dull", "normal", "dull", "normal"],
+        ["normal", "dull", "normal", "dull", "normal", "dull", "normal", "dull"],
+        ["dull", "normal", "dull", "normal", "dull", "normal", "dull", "normal"],
+        ["normal", "dull", "normal", "dull", "normal", "dull", "normal", "dull"],
+        ["cursed", "normal", "cursed", "normal", "cursed", "normal", "cursed", "normal"],
+        ["normal", "dull", "normal", "dull", "normal", "dull", "normal", "dull"],
+        ["dull", "normal", "dull", "normal", "dull", "normal", "dull", "normal"],
+        ["normal", "dull", "normal", "dull", "normal", "dull", "normal", "dull"]
       ],
      
     },
