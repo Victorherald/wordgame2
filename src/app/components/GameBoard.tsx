@@ -149,7 +149,7 @@ const [gameResult, setGameResult] = useState<'win' | 'fire' | 'fail' | 'lowScore
 const [tutorialActive, setTutorialActive] = useState(false);
 const [showTutorialPopup, setShowTutorialPopup] = useState(false);
 const [ground, setGround] = useState<GroundCell[][]>([]);
-const [booksOpen, setBooksOpen] = useState(true);
+
 
 
 
@@ -1667,7 +1667,7 @@ for (let c = 0; c < cols; c++) {
         delete t.lockTurns;
       }
     }
-    updatedGrid = toggleBooks(updatedGrid);
+ 
 
    updatedGrid = applyCleanseGround(updatedGrid, ground)
  
