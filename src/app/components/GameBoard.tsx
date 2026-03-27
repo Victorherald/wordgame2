@@ -1667,7 +1667,7 @@ for (let c = 0; c < cols; c++) {
         delete t.lockTurns;
       }
     }
- 
+  
 
    updatedGrid = applyCleanseGround(updatedGrid, ground)
  
@@ -2534,6 +2534,66 @@ const fridge = tile?.isFridge
     </div>
   )}
 </AnimatePresence>
+
+{isGameOver && (
+  <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
+    
+    {/* Popup */}
+    <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-11/12 max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in mb-32 sm:mb-16">
+      
+      <h2 className="text-lg sm:text-xl font-semibold text-white">
+        {gameResult === "win"
+          ? "Level Complete!"
+          : gameResult === "fail" || gameResult === "fire"
+          ? "Game Over"
+          : ""}
+      </h2>
+
+      <p className="text-gray-300 text-xs sm:text-sm">
+        {gameResult === "win"
+          ? "You successfully completed the objective!"
+          : gameResult === "fire"
+          ? "Tiles are ignited!"
+          : gameResult === "fail"
+          ? "You ran out of moves!"
+          : ""}
+      </p>
+
+      <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mt-4">
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base"
+        >
+          Retry
+        </button>
+
+        {gameResult === "win" && (
+          <button
+            onClick={async () => {
+              const nextLevel = levelId + 1;
+              const res = await fetch(`/api/levels/exists?id=${nextLevel}`);
+              const { exists } = await res.json();
+
+              if (!exists) {
+                router.push("/levels");
+                return;
+              }
+
+              localStorage.setItem("currentLevel", nextLevel.toString());
+              router.push(`/levels`);
+            }}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+          >
+            Back
+          </button>
+        )}
+      </div>
+
+    </div>
+  </div>
+)}
+
+
 </div>
 
 
