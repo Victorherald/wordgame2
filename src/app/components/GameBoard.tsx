@@ -6,7 +6,7 @@ import { WordDisplay } from '../components/WordDisp';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { AnimatePresence, motion} from "framer-motion";
-
+import { BookTile } from "../components/Books";
 import { LevelData } from '@/lib/server/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
@@ -48,6 +48,8 @@ isSpreading?: boolean;
   isExclamator?: boolean;
   isVelvet?: boolean;
   isCursed?: boolean;
+  isBook?: boolean;
+  isBookOpen?: boolean;
   isInfected?: boolean;
   curseTurns?: number;
   presets?: boolean;
@@ -76,11 +78,11 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge")[][];
+  layout?: ("normal"| "lineBlasterRow" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed")[][];
   objective?: {
   type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected";
+  tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "bookOpen" | "bookClosed";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse')[][];
 };
@@ -108,6 +110,7 @@ const specialTileSettings = {
   allowExclamators: true,
   allowWarpedTiles: true,
   allowVelvets: true,
+  allowBooks: true,
   allowInfectTiles: true,
   allowPresetTiles: true,
   allowFireTiles: true,
@@ -146,7 +149,7 @@ const [gameResult, setGameResult] = useState<'win' | 'fire' | 'fail' | 'lowScore
 const [tutorialActive, setTutorialActive] = useState(false);
 const [showTutorialPopup, setShowTutorialPopup] = useState(false);
 const [ground, setGround] = useState<GroundCell[][]>([]);
-
+const [booksOpen, setBooksOpen] = useState(true);
 
 
 
@@ -308,6 +311,11 @@ const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)]
     specialTileSettings.allowRandomSpecialTiles &&
     Math.random() < pBulb;
 
+    const shouldBeBook =
+    specialTileSettings.allowBooks &&
+    specialTileSettings.allowRandomSpecialTiles &&
+    Math.random() < pBulb;
+
   const shouldBeBone = 
   specialTileSettings.allowBoneTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
@@ -362,7 +370,7 @@ if (shouldBeBone) {
 } 
 }
 
-// 🍷 Velvet spawn override
+//  Velvet spawn override
   if (shouldSpawnVelvet()) {
     return {
       letter,
@@ -398,6 +406,10 @@ if (shouldBeBulb){
     rarity: rarity
   }
 }
+
+
+
+
 if (shouldBeVelvet) {
     return { letter, isVelvet: true, velvetTurns: specialTileSettings.warpedTurns, rarity: 'gold' };
   }
@@ -475,6 +487,26 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             presets: true,
           });
         } 
+
+        else if (presetType === "bookOpen" && specialTileSettings.allowBooks) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isBook: true,
+      
+            isBookOpen: true,
+            presets: true,
+          });
+        }
+        
+        else if (presetType === "bookClosed" && specialTileSettings.allowBooks) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isBook: true,
+        
+            isBookOpen: false,
+            presets: true,
+          });
+        }
     
         else if (presetType === "ice" && specialTileSettings.allowIceTiles) {
           rowTiles.push({
@@ -618,7 +650,7 @@ const canSubmit = letterCount >= 3 && isWordValid;
   const clearSelection = () => setSelected([]);
   const handleRightClick = (r: number, c: number) => {
      const tile = grid[r][c];
-  if (!tile || tile.isRemoved || tile.isLocked) return;
+  if (!tile || tile.isRemoved || tile.isLocked || tile.isBook && !tile.isBookOpen) return;
     setSelected((p) => p.filter((pos) => !(pos.row === r && pos.col === c)));
     
 
@@ -632,7 +664,7 @@ const canSubmit = letterCount >= 3 && isWordValid;
 
   const handleTileClick = async (row: number, col: number) => {
   const tile = grid[row][col];
-  if (!tile || tile.isRemoved || tile.isLocked || (tile.isBone && tile.isStationary) || (tile.isFrozen && tile.isStationary))
+  if (!tile || tile.isRemoved || (tile.isBook && !tile.isBookOpen) || tile.isLocked || (tile.isBone && tile.isStationary) || (tile.isFrozen && tile.isStationary))
     return;
 
   const last = selected[selected.length - 1];
@@ -809,6 +841,8 @@ const handleSubmit = () => {
 }
 
 
+
+
 // Bone Tile mechanics
 
 
@@ -857,6 +891,21 @@ function triggerFridgeOverheat(
     })
   );
 }
+
+function toggleBooks(grid: Tile[][], open: boolean): Tile[][] {
+  return grid.map(row =>
+    row.map(tile => {
+      if (tile?.isBook) {
+        return {
+          ...tile,
+          isBookOpen: open
+        };
+      }
+      return tile;
+    })
+  );
+}
+
 
 //Apply lie blast
 
@@ -1618,7 +1667,7 @@ for (let c = 0; c < cols; c++) {
         delete t.lockTurns;
       }
     }
-
+    updatedGrid = toggleBooks(updatedGrid);
 
    updatedGrid = applyCleanseGround(updatedGrid, ground)
  
@@ -1991,6 +2040,7 @@ const exclamated = tile?.isExclamator
 const fridge = tile?.isFridge
   ? <FridgeSVG/>
   : "";
+
       const warped = tile?.isWarped
         ? 'tile animate-warped warp-tile cursor-pointer'
         : '';
@@ -2049,6 +2099,19 @@ const fridge = tile?.isFridge
               "
             />
           )}
+
+
+          {/*Book Render*/}
+          {tile?.isBook && (
+    <div className="absolute inset-0 z-10 pointer-events-none">
+      <BookTile isOpen={tile.isBookOpen ?? false} />
+    </div>
+
+    
+  )}
+
+
+
       {/* Cleansing effect */}
 {tile?.isCleansed && (
   <>
@@ -2145,7 +2208,7 @@ const fridge = tile?.isFridge
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${fridge} ${velvet} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''}  ${fridge} ${velvet} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
           `}
         >
 
@@ -2186,41 +2249,46 @@ const fridge = tile?.isFridge
 
 
           {/* Letter */}
-          <span className="z-10 font-bold">{tile?.letter}</span>
+          {(!tile?.isBook || tile?.isBookOpen) && (
+  <span className="z-30 font-bold">{tile?.letter}</span>
+)}
 
           {/* Status dots */}
-          {tile?.isCursed ? (
-            <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-red-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
-              {tile.curseTurns}
-            </div>
-          ) : tile?.isDull ? (
-              <div className="absolute  bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
-              {tile.dullTurns}
-            </div>
-            ): tile?.isLocked ? (
-            <div className="absolute bottom-1  right-1 w-2 h-2 sm:w-5 sm:h-5 sm:text-red-500 rounded-full bg-gray-700 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
-            {tile.lockTurns}
-            </div>       
-          ) : tile?.isWarped ? (
-            <div className="absolute bottom-1  right-1 w-2 h-2 sm:w-5 sm:h-5  rounded-full bg-yellow-400 text-black text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md shadow-yellow-300/50 animate-pulse">
-              {tile.warpTurns}
-            </div>
-          )  : tile?.isBone ? (
-  <div
-    className={`absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md transition-all ${
-      tile.isRipe
-        ? "bg-teal-400/80 shadow-teal-300/50 animate-pulse"
-        : "bg-[#0f3b3a]/80 text-teal-200"
-    }`}
-  >
-    {tile.boneTurns}
-  </div>
-) : 
-           (
-            <div
-              className={`absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full z-10 ${getRarityColor(tile?.rarity)}`}
-            />
-          )}
+          {(!tile?.isBook || tile?.isBookOpen) && (
+  <>
+    {tile?.isCursed ? (
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-red-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+        {tile.curseTurns}
+      </div>
+    ) : tile?.isDull ? (
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+        {tile.dullTurns}
+      </div>
+    ) : tile?.isLocked ? (
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-700 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+        {tile.lockTurns}
+      </div>
+    ) : tile?.isWarped ? (
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-yellow-400 text-black text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md animate-pulse">
+        {tile.warpTurns}
+      </div>
+    ) : tile?.isBone ? (
+      <div
+        className={`absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md ${
+          tile.isRipe
+            ? "bg-teal-400/80 animate-pulse"
+            : "bg-[#0f3b3a]/80 text-teal-200"
+        }`}
+      >
+        {tile.boneTurns}
+      </div>
+    ) : (
+      <div
+        className={`absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full z-10 ${getRarityColor(tile?.rarity)}`}
+      />
+    )}
+  </>
+)}
 
         {/* Selection glow + bold border */}
 {sel && (
@@ -2407,63 +2475,65 @@ const fridge = tile?.isFridge
 
 
 
-{/* --- End Results Popup --- */}
-{isGameOver && (
-  <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
-    <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-11/12 max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in mb-32 sm:mb-16">
-      <h2 className="text-lg sm:text-xl font-semibold text-white">
-        {gameResult === "win"
-          ? "Level Complete!"
-          : gameResult === "fail" || gameResult === "fire" 
-          ? "Game Over"
-          : ""}
-      </h2>
+{/* --- Tutorial Side Panel --- */}
+<AnimatePresence>
+  {showTutorialPopup && (
+    <div className="fixed z-40 pointer-events-none">
+      <motion.div
+        initial={{ opacity: 0, x: 100, scale: 0.95 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        exit={{ opacity: 0, x: 100, scale: 0.95 }}
+        transition={{
+          duration: 0.4,
+          ease: [0.25, 0.8, 0.25, 1],
+        }}
+        className="
+          pointer-events-auto
+          fixed
+          bottom-4
+          right-4
+          sm:bottom-auto
+          sm:top-1/2
+          sm:-translate-y-1/2
+          sm:right-6
+          w-[90vw]
+          max-w-xs
+          sm:max-w-sm
+          bg-neutral-900
+          border border-neutral-700
+          rounded-xl
+          p-4
+          shadow-2xl
+        "
+      >
+        <h2 className="text-base sm:text-lg font-bold text-white mb-2">
+          New Tile: <span className="text-green-400">{tutorialType}</span>
+        </h2>
 
-      <p className="text-gray-300 text-xs sm:text-sm">
-        {gameResult === "win"
-          ? "You successfully completed the objective!"
-          : gameResult === "fire"
-          ? "Tiles are ignited!"
-         
-          : gameResult === "fail" ?
-        "You ran out of moves!"
-          : ""}
-      </p>
+        <p className="text-sm sm:text-base text-gray-300">
+          {level.tutorialMessage}
+        </p>
 
-      <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mt-3 sm:mt-4">
         <button
-          onClick={() => window.location.reload()}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base"
+          onClick={closeTutorial || selected}
+          className="
+            mt-4
+            w-full
+            bg-green-600
+            hover:bg-green-700
+            text-white
+            py-2
+            rounded
+            transition
+            text-sm sm:text-base
+          "
         >
-          Retry
+          Got it
         </button>
-
-       {gameResult === "win" && (
-  <button
-    onClick={async () => {
-      const nextLevel = levelId + 1;
-
-      const res = await fetch(`/api/levels/exists?id=${nextLevel}`);
-      const { exists } = await res.json();
-
-      if (!exists) {
-        router.push("/levels"); // or /victory
-        return;
-      }
-
-      localStorage.setItem("currentLevel", nextLevel.toString());
-      router.push(`/levels`);
-    }}
-    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-  >
-    Back
-  </button>
-)}
-
-      </div>
+      </motion.div>
     </div>
-  </div>
-)}
+  )}
+</AnimatePresence>
 </div>
 
 
