@@ -575,3 +575,21 @@
 .animate-heat {
   animation: heatPulse 1s ease-out;
 }
+
+
+/* Book tile animation */
+.perspective {
+  perspective: 800px;
+}
+
+.transform-style {
+  transform-style: preserve-3d;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
