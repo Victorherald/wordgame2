@@ -149,7 +149,8 @@ const [gameResult, setGameResult] = useState<'win' | 'fire' | 'fail' | 'lowScore
 const [tutorialActive, setTutorialActive] = useState(false);
 const [showTutorialPopup, setShowTutorialPopup] = useState(false);
 const [ground, setGround] = useState<GroundCell[][]>([]);
-
+const [bookFlipTick, setBookFlipTick] = useState(0);
+const [bookTrigger, setBookTrigger] = useState(0);
 
 
 
@@ -784,11 +785,16 @@ validateWord(word).then((valid) => {
 
 
 
+
+
+
+
 const handleSubmit = () => {
   // ⛔ if somehow invalid don't submit
   if (!isWordValid || movesLeft <= 0 || isGameOver) return;
 
-
+  setBookFlipTick(prev => prev + 1);
+  setBookTrigger(prev => prev + 1);
 
   // 🚀 INSTANT-react disable so button stops glowing immediately
   setSelected([]);
@@ -861,6 +867,23 @@ const handleSubmit = () => {
 
     let updatedGrid = grid.map((r) => [...r]);
     updatedGrid = applyWarpedEffect(updatedGrid);
+
+
+    /* book toggle */
+
+    function toggleBooks(grid: Tile[][]): Tile[][] {
+      return grid.map(row =>
+        row.map(tile => {
+          if (!tile?.isBook) return tile;
+    
+          return {
+            ...tile,
+            isBookOpen: !tile.isBookOpen
+          
+          };
+        })
+      );
+    }
  
 
 function triggerFridgeOverheat(
@@ -892,19 +915,7 @@ function triggerFridgeOverheat(
   );
 }
 
-function toggleBooks(grid: Tile[][], open: boolean): Tile[][] {
-  return grid.map(row =>
-    row.map(tile => {
-      if (tile?.isBook) {
-        return {
-          ...tile,
-          isBookOpen: open
-        };
-      }
-      return tile;
-    })
-  );
-}
+
 
 
 //Apply lie blast
@@ -1703,6 +1714,17 @@ for (let c = 0; c < cols; c++) {
   }
 }
 
+function areBooksOpen(grid: Tile[][]): boolean {
+  for (let row of grid) {
+    for (let tile of row) {
+      if (tile?.isBook) {
+        return !!tile.isBookOpen;
+      }
+    }
+  }
+  return false;
+}
+updatedGrid = toggleBooks(updatedGrid, !areBooksOpen(updatedGrid));
 
 
 // ✅ Apply updates
@@ -2103,12 +2125,13 @@ const fridge = tile?.isFridge
 
           {/*Book Render*/}
           {tile?.isBook && (
-    <div className="absolute inset-0 z-10 pointer-events-none">
-      <BookTile isOpen={tile.isBookOpen ?? false} />
-    </div>
-
-    
-  )}
+  <div className="absolute inset-0 z-10 pointer-events-none">
+    <BookTile
+      isOpen={tile.isBookOpen ?? false}
+      trigger={bookTrigger}
+    />
+  </div>
+)}
 
 
 
@@ -2475,6 +2498,8 @@ const fridge = tile?.isFridge
 
 
 
+
+
 {/* --- Tutorial Side Panel --- */}
 <AnimatePresence>
   {showTutorialPopup && (
@@ -2535,10 +2560,10 @@ const fridge = tile?.isFridge
   )}
 </AnimatePresence>
 
+
+
 {isGameOver && (
   <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">
-    
-    {/* Popup */}
     <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-11/12 max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in mb-32 sm:mb-16">
       
       <h2 className="text-lg sm:text-xl font-semibold text-white">
@@ -2546,7 +2571,7 @@ const fridge = tile?.isFridge
           ? "Level Complete!"
           : gameResult === "fail" || gameResult === "fire"
           ? "Game Over"
-          : ""}
+          : null}
       </h2>
 
       <p className="text-gray-300 text-xs sm:text-sm">
@@ -2556,13 +2581,14 @@ const fridge = tile?.isFridge
           ? "Tiles are ignited!"
           : gameResult === "fail"
           ? "You ran out of moves!"
-          : ""}
+          : null}
       </p>
 
-      <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mt-4">
+      <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mt-3 sm:mt-4">
+        
         <button
-          onClick={() => window.location.reload()}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base"
+          onClick={() => router.refresh()}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
         >
           Retry
         </button>
@@ -2571,6 +2597,7 @@ const fridge = tile?.isFridge
           <button
             onClick={async () => {
               const nextLevel = levelId + 1;
+
               const res = await fetch(`/api/levels/exists?id=${nextLevel}`);
               const { exists } = await res.json();
 
@@ -2584,7 +2611,7 @@ const fridge = tile?.isFridge
             }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
           >
-            Back
+            Next Level
           </button>
         )}
       </div>
@@ -2592,7 +2619,6 @@ const fridge = tile?.isFridge
     </div>
   </div>
 )}
-
 
 </div>
 
