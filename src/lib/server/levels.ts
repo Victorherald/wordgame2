@@ -75,7 +75,7 @@ export const levels: LevelData[] = [
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["normal", "normal", "normal", "normal", "bookOpen", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
@@ -4249,7 +4249,7 @@ export const levels: LevelData[] = [
       board: [
         ["normal", "removed", "bulb", "removed", "removed", "bulb", "removed", "normal"],
         ["normal", "removed", "bulb", "normal", "normal", "bulb", "removed", "normal"],
-        ["normal", "normal", "lineBlasterRow", "bulb", "bulb", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "bulb", "bulb", "normal", "normal", "normal"],
         ["removed", "normal", "bulb", "normal", "normal", "bulb", "normal", "removed"],
         ["normal", "normal", "bulb", "normal", "normal", "bulb", "normal", "normal"],
         ["normal", "normal", "normal", "bulb", "bulb", "normal", "normal", "normal"],
@@ -4695,7 +4695,75 @@ export const levels: LevelData[] = [
       ],
      
     },
-    
+    {
+      id: 201,
+      name: "Level 201",
+      objective: { type: 'defrost' , objGoal: 20 , tileType: 'ice'},
+      moves: 45,
+      
+      allowHardLetters: false,     
+      locked: false,
+      lockTurns: 20,
+   
+      cursedTurns: 7,
+      board: [
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "ice", "bookClosed", "normal", "normal", "bookClosed", "ice", "normal"],
+        ["removed", "ice", "ice", "bookClosed", "bookClosed", "ice", "ice", "removed"],
+        ["removed", "ice", "ice", "ice", "ice", "ice", "ice", "removed"],
+        ["removed", "bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookClosed", "removed"],
+        ["removed", "ice", "ice", "ice", "ice", "ice", "ice", "removed"],
+        ["removed", "normal", "bookClosed", "ice", "ice", "bookClosed", "normal", "removed"]
+      ],
+     
+    },
+    {
+      id: 202,
+      name: "Level 202",
+      objective: { type: 'lightsUp' , objGoal: 6 , tileType: 'bulb'},
+      moves: 20,
+      
+      allowHardLetters: false,     
+      locked: false,
+      lockTurns: 20,
+   
+      cursedTurns: 7,
+      board: [
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["removed", "removed", "normal", "bulb", "bookClosed", "bulb", "normal", "removed"],
+        ["removed", "removed", "normal", "bookClosed", "bulb", "bookClosed", "normal", "removed"],
+        ["removed", "normal", "bookClosed", "bulb", "bookClosed", "normal", "removed", "removed"],
+        ["removed", "normal", "bulb", "bookClosed", "bulb", "normal", "removed", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
+      ],
+     
+    },
+    {
+      id: 203,
+      name: "Level 203",
+      objective: { type: 'lightsUp' , objGoal: 4 , tileType: 'bulb'},
+      moves: 20,
+      difficulty: 'Hard Level',
+      allowHardLetters: false,     
+      locked: false,
+      lockTurns: 20,
+   
+      cursedTurns: 7,
+      board: [
+        ["bulb", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bulb"],
+        ["bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen"],
+        ["bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed"],
+        ["bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen"],
+        ["bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed"],
+        ["bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen"],
+        ["bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed"],
+        ["bulb", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bookOpen", "bookClosed", "bulb"]
+      ],
+     
+    },
   ];
 
 

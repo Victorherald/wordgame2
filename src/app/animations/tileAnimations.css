@@ -593,3 +593,62 @@
 .backface-hidden {
   backface-visibility: hidden;
 }
+
+.book-tile {
+  perspective: 800px;
+}
+
+.book-inner {
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.book-open {
+  transform: rotateY(180deg);
+}
+
+.book-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+}
+
+.book-back {
+  transform: rotateY(180deg);
+}
+
+.perspective {
+  perspective: 800px;
+}
+
+.transform-style {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* 🔥 SNAP EFFECT */
+.book-snap {
+  animation: bookSnap 0.3s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+}
+
+@keyframes bookSnap {
+  0% {
+    transform: rotateY(0deg) scale(1);
+  }
+  40% {
+    transform: rotateY(90deg) scale(1.08);
+  }
+  70% {
+    transform: rotateY(200deg) scale(0.95);
+  }
+  100% {
+    transform: rotateY(180deg) scale(1);
+  }
+}
