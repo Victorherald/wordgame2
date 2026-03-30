@@ -187,7 +187,10 @@ const currentYear = new Date().getFullYear();
             About
           </button>
         </div>
+        <h1 className="absolute bottom-10 text-gray-700">Made by Yakazuba Games</h1>
       </div>
+
+      
 
       {/* Popup Modal */}
       <AnimatePresence>
@@ -217,7 +220,7 @@ const currentYear = new Date().getFullYear();
                   "Options menu will allow sound, theme, and difficulty adjustments soon."}
 
                 {activePopup === "about" &&
-                  "Worzzle is a word-forming puzzle game inspired by Bookworm Adventures and Scrabble."}
+                  "Worzzle is a word-forming puzzle game inspired by Bookworm Adventures and Scrabble "}
               </p>
 
               <button

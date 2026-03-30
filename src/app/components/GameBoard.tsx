@@ -1412,6 +1412,17 @@ if (gem) {
       rarity: "bronze",
     };
 
+    if (lastTile.isLightBulb){
+      updatedGrid[last.row][last.col] = {
+        letter: lastTile.letter,
+        isLightBulb: true,
+        isBulbOn: true,
+        rarity: "bronze",
+      };
+  }
+  
+  
+
   } else {
     // Normal gem creation
     updatedGrid[last.row][last.col] = {
@@ -2001,8 +2012,7 @@ const handleScramble = () => {
 >
   Scramble (-3)
 </button>
-   
-
+ 
 
         {/* Current word (desktop only) */}
         <div className="hidden md:block flex-1 overflow-auto mt-2">
@@ -2444,86 +2454,29 @@ const fridge = tile?.isFridge
   )}
 </AnimatePresence>
 
-{/* --- Tutorial Side Panel --- */}
-{showTutorialPopup && (
-  <div className="fixed z-40 pointer-events-none">
-    <div
-      className="
-        pointer-events-auto
-        fixed
-        bottom-4
-        right-4
-        sm:bottom-auto
-        sm:top-1/2
-        sm:-translate-y-1/2
-        sm:right-6
-        w-[90vw]
-        max-w-xs
-        sm:max-w-sm
-        bg-neutral-900
-        border border-neutral-700
-        rounded-xl
-        p-4
-        shadow-2xl
-        tutorial-slide-in
-      "
-    >
-      <h2 className="text-base sm:text-lg font-bold text-white mb-2">
-        New Tile: <span className="text-green-400">{tutorialType}</span>
-      </h2>
-
-      <p className="text-sm sm:text-base text-gray-300">
-        {level.tutorialMessage}
-      </p>
-
-      <button
-        onClick={closeTutorial}
-        className="
-          mt-4
-          w-full
-          bg-green-600
-          hover:bg-green-700
-          text-white
-          py-2
-          rounded
-          transition
-          text-sm sm:text-base
-        "
-      >
-        Got it
-      </button>
-    </div>
-  </div>
-)}
 
 
 
 
 
-{/* --- Tutorial Side Panel --- */}
+
 <AnimatePresence>
   {showTutorialPopup && (
-    <div className="fixed z-40 pointer-events-none">
+    <div className="fixed inset-0 z-40 pointer-events-none flex justify-center items-start">
       <motion.div
-        initial={{ opacity: 0, x: 100, scale: 0.95 }}
-        animate={{ opacity: 1, x: 0, scale: 1 }}
-        exit={{ opacity: 0, x: 100, scale: 0.95 }}
+        initial={{ opacity: 0, y: -120, scale: 0.95 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: -120, scale: 0.95 }}
         transition={{
-          duration: 0.4,
-          ease: [0.25, 0.8, 0.25, 1],
+          type: "spring",
+          stiffness: 300,
+          damping: 18,
         }}
         className="
           pointer-events-auto
-          fixed
-          bottom-4
-          right-4
-          sm:bottom-auto
-          sm:top-1/2
-          sm:-translate-y-1/2
-          sm:right-6
-          w-[90vw]
-          max-w-xs
-          sm:max-w-sm
+          mt-4
+          w-[92vw]
+          max-w-md
           bg-neutral-900
           border border-neutral-700
           rounded-xl
@@ -2540,7 +2493,7 @@ const fridge = tile?.isFridge
         </p>
 
         <button
-          onClick={closeTutorial || selected}
+          onClick={closeTutorial}
           className="
             mt-4
             w-full
