@@ -1672,6 +1672,8 @@ if (infectedSources.length > 0) {
         !t.isInfected &&   // don't infect infected
         !t.isFire &&       // fire blocks infection
         !t.isDull  &&
+        !t.isBook &&
+        !t.isVelvet &&
         !t.isWarped       // dull tiles immune
         && !t.isLightBulb
         &&  !t.isBulbOn &&

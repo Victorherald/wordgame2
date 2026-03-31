@@ -4,7 +4,7 @@ import { Particles } from "react-tsparticles";
 import { loadSlim } from "@tsparticles/slim";
 import { useCallback } from "react";
 
-export default function IceBreakParticles() {
+export  function IceBreakParticles() {
   const particlesInit = useCallback(async (engine: any) => {
     await loadSlim(engine);
   }, []);
