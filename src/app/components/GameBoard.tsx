@@ -7,6 +7,7 @@ import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { AnimatePresence, motion} from "framer-motion";
 import { BookTile } from "../components/Books";
+import { MysteryTile } from "../components/MysteryTiles";
 import { LevelData } from '@/lib/server/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
@@ -42,6 +43,7 @@ fridgeMaxHp?: number;
 isSpreading?: boolean;
   letter: string;
   rarity: Rarity;
+  isMysteryRevealing?: boolean;
   gem?: GemColor;
   isFire?: boolean;
   iceHealth?: number;
@@ -49,6 +51,8 @@ isSpreading?: boolean;
   isVelvet?: boolean;
   isCursed?: boolean;
   isBook?: boolean;
+  isMystery?: boolean;
+  justRevelaed?: boolean;
   isBookOpen?: boolean;
   isInfected?: boolean;
   curseTurns?: number;
@@ -78,11 +82,11 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed")[][];
+  layout?: ("normal"| "lineBlasterRow" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
   type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "bookOpen" | "bookClosed";
+  tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "bookOpen" | "bookClosed" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse')[][];
 };
@@ -114,6 +118,7 @@ const specialTileSettings = {
   allowInfectTiles: true,
   allowPresetTiles: true,
   allowFireTiles: true,
+  allowMysteryTiles: true,
   allowCursedTiles: true,
   allowFridges: true,
   allowDullTiles: true,
@@ -296,9 +301,12 @@ const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)]
   const pLocked = 0.02;
   const pBone = 0.02;
   const pBulb = 0.03;
+  const pMystery = 0.05;
 
-
-  
+  const shouldBeMystery =
+    
+    specialTileSettings.allowRandomSpecialTiles &&
+    Math.random() < pFire;
   
   
 
@@ -370,6 +378,17 @@ if (shouldBeBone) {
     rarity: "none" //when its unripe
 } 
 }
+
+if (shouldBeMystery) {
+  return {
+    letter,
+    rarity,
+    isMystery: true
+  };
+}
+
+
+
 
 //  Velvet spawn override
   if (shouldSpawnVelvet()) {
@@ -505,6 +524,15 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             isBook: true,
         
             isBookOpen: false,
+            presets: true,
+          });
+        }
+
+        else if (presetType === "mystery" && specialTileSettings.allowMysteryTiles) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isMystery: true,
+           
             presets: true,
           });
         }
@@ -869,6 +897,16 @@ const handleSubmit = () => {
     updatedGrid = applyWarpedEffect(updatedGrid);
 
 
+selected.forEach(({ row, col }) => {
+  const tile = updatedGrid[row][col];
+
+  if (tile?.isMystery) {
+    updatedGrid[row][col] = getMysteryOutcome(tile);
+
+
+  }
+});
+
     /* book toggle */
 
     function toggleBooks(grid: Tile[][]): Tile[][] {
@@ -1176,8 +1214,76 @@ if (usedBulbThisMatch && allBulbsAreLit) {
 
 }
 
+//random gem generator  
+
+function getRandomGem(): GemColor {
+  const gems: GemColor[] = [
+    "purple",
+    "green",
+    "orange",
+    "blue",
+    "red",
+    "pink",
+    "whiteDiamond",
+  ];
+
+  return gems[Math.floor(Math.random() * gems.length)];
+}
 
 
+function getMysteryOutcome(baseTile: Tile): Tile {
+  const roll = Math.random();
+  
+  
+
+  // 50% gem, 50% negative (you can tweak)
+  if (roll < 0.5) {
+    return {
+      ...baseTile,
+      gem: getRandomGem(),
+      isMystery: false,
+    };
+  }
+
+  // pick a random negative type
+  const negatives = [
+    "fire",
+    "cursed",
+    "dull",
+    "warped",
+    "locked",
+    "ice",
+    "infected"
+  ];
+
+  const choice = negatives[Math.floor(Math.random() * negatives.length)];
+
+  switch (choice) {
+    case "fire":
+      return { ...baseTile, isFire: true, isMystery: false };
+
+    case "cursed":
+      return { ...baseTile, isCursed: true, curseTurns: 3, isMystery: false };
+
+    case "dull":
+      return { ...baseTile, isDull: true, dullTurns: 3, isMystery: false };
+
+    case "warped":
+      return { ...baseTile, isWarped: true, warpTurns: 3, isMystery: false };
+
+    case "locked":
+      return { ...baseTile, isLocked: true, lockTurns: 3, isMystery: false };
+
+    case "ice":
+      return { ...baseTile, isFrozen: true, iceHealth: 1, isMystery: false };
+
+    case "infected":
+      return { ...baseTile, isInfected: true, isMystery: false };
+
+    default:
+      return baseTile;
+  }
+}
 
 
  // gem color logic
@@ -1192,11 +1298,15 @@ if (usedBulbThisMatch && allBulbsAreLit) {
       return null;
     }
 
+
+
 function NegativeTile(tile: Tile) {
   return (
     tile.isCursed ||
     tile.isWarped ||
     tile.isFire ||
+    tile.isVelvet ||
+    tile.isBook ||
     tile.isDull ||
     tile.isLocked ||
     tile.isInfected ||
@@ -1392,6 +1502,22 @@ else if (objective.type === "collectVelvet") {
 
 }
 
+function badTiles(tile: Tile | undefined){
+  if (!tile) return false;
+
+  return (
+    tile.isFrozen ||
+    tile.isLocked ||
+    tile.isCursed ||
+    tile.isDull ||
+    tile.isBurnt ||
+    tile.isInfected ||
+    tile.isBone ||
+    tile.isFridge ||
+    tile.isFire
+  );
+}
+
    
   
 
@@ -1402,7 +1528,9 @@ if (gem) {
   const last = selected[selected.length - 1];
   const lastTile = updatedGrid[last.row][last.col];
 
- 
+  if (lastTile.isMystery) {
+    updatedGrid[last.row][last.col] = getMysteryOutcome(lastTile);
+  } 
 
   // If the last tile is a negative tile, replace it fully with a gem
   if (NegativeTile(lastTile)) {
@@ -1419,8 +1547,12 @@ if (gem) {
         isBulbOn: true,
         rarity: "bronze",
       };
+      
   }
   
+  if (lastTile?.isLightBulb || lastTile?.isMystery || lastTile?.isBook) {
+    // do nothing
+  } 
   
 
   } else {
@@ -1636,6 +1768,11 @@ for (let r = 0; r < rows; r++) {
     })
    
   );
+
+
+
+
+
   
 }
 
@@ -1830,6 +1967,11 @@ const handleScramble = () => {
   setSelected([]);
   setIsWordValid(false);
 };
+
+
+//retry screen 
+
+
 
 
 
@@ -2186,6 +2328,18 @@ const fridge = tile?.isFridge
   </>
 )}
 
+{/* Mystery Tile Render */}
+{tile?.isMystery && (
+  <div className="absolute inset-0 z-20 pointer-events-none">
+    <MysteryTile
+  letter={tile.letter}
+  isRevealing={tile.isMysteryRevealing}
+>
+  <div className="w-full h-full" />
+</MysteryTile>
+  </div>
+)}
+
 {/* line blaster tile rendering */}
 {tile?.isLineBlaster && tile.blastDirection === "col" && (
   <>
@@ -2540,7 +2694,7 @@ const fridge = tile?.isFridge
       <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mt-3 sm:mt-4">
         
         <button
-          onClick={() => router.refresh()}
+          onClick={ onclick=() => window.location.reload()}
           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
         >
           Retry
