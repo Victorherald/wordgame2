@@ -12,7 +12,7 @@ import { LevelData } from '@/lib/server/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
 import { useRouter } from 'next/navigation';
-import IceBreakParticles from "@/app/particles/iceBreakParticles";
+
 import { Spectral } from 'next/font/google';
 import { Sparkles } from 'lucide-react';
 import { CleanseRain } from '../components/CleanseRain';
@@ -52,7 +52,7 @@ isSpreading?: boolean;
   isCursed?: boolean;
   isBook?: boolean;
   isMystery?: boolean;
-  justRevelaed?: boolean;
+  justRevealed?: boolean;
   isBookOpen?: boolean;
   isInfected?: boolean;
   curseTurns?: number;
@@ -897,15 +897,28 @@ const handleSubmit = () => {
     updatedGrid = applyWarpedEffect(updatedGrid);
 
 
-selected.forEach(({ row, col }) => {
-  const tile = updatedGrid[row][col];
-
-  if (tile?.isMystery) {
-    updatedGrid[row][col] = getMysteryOutcome(tile);
-
-
-  }
-});
+    selected.forEach(({ row, col }) => {
+      const tile = updatedGrid[row][col];
+    
+      if (!tile) return;
+    
+      // 🧠 MYSTERY TILE LOGIC (RUN FIRST)
+      if (tile.isMystery) {
+        const revealed = getMysteryOutcome(tile);
+    
+        updatedGrid[row][col] = {
+          ...revealed,
+          letter: tile.letter,
+          isMystery: false,
+          rarity: 'none',
+          justRevealed: true,
+        };
+    
+        return; 
+      }
+    
+      // 👇 existing logic continues...
+    });
 
     /* book toggle */
 
@@ -2330,15 +2343,29 @@ const fridge = tile?.isFridge
   </>
 )}
 
-{/* Mystery Tile Render */}
 {tile?.isMystery && (
   <div className="absolute inset-0 z-20 pointer-events-none">
     <MysteryTile
-  letter={tile.letter}
-  isRevealing={tile.isMysteryRevealing}
->
-  <div className="w-full h-full" />
-</MysteryTile>
+      letter={tile.letter}
+      isRevealing={tile.isMysteryRevealing}
+    >
+      {/* 👇 REAL TILE VISUAL AFTER REVEAL */}
+      <>
+        {tile.gem && (
+          <div
+            className={`absolute inset-0 rounded-[6px] ${getGemBackground(tile.gem)} animate-pulse`}
+          />
+        )}
+
+        {tile.isFire && <div className="fire-particles" />}
+        {tile.isCursed && <div className="cursed-particles" />}
+       
+        {tile.isInfected && <div className="infected" />}
+
+        {/* keep letter visible */}
+        <span className="z-30 font-bold">{tile.letter}</span>
+      </>
+    </MysteryTile>
   </div>
 )}
 

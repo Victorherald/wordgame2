@@ -749,3 +749,27 @@
   color: white;
   font-size: 18px;
 }
+
+.mystery-reveal {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: revealFlash 0.4s ease;
+}
+
+@keyframes revealFlash {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+    filter: brightness(2);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
