@@ -5219,29 +5219,4 @@ export const levels: LevelData[] = [
     ],
 
   },
-  {
-    id: 223,
-    name: "Level 0",
-    objective: { type: 'score', objGoal: 676767 },
-    moves: 67,
-
-    allowHardLetters: false,
-    locked: false,
-
-    dullTurns: 67,
-    cursedTurns: 67,
-    board: [
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "dull", "dull", "dull", "normal", "normal", "normal", "normal"],
-      ["normal", "dull", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "dull", "dull", "dull", "cursed", "cursed", "cursed", "normal"],
-      ["normal", "dull", "normal", "dull", "normal", "normal", "cursed", "normal"],
-      ["normal", "dull", "dull", "dull", "normal", "cursed", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "cursed", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "cursed", "normal", "normal"]
-    ],
-
-  },
 ];
-
-
