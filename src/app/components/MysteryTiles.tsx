@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 type MysteryTileProps = {
   letter: string;
   isRevealing?: boolean;
+  children?: any;
 };
 
 export function MysteryTile({ letter, isRevealing }: MysteryTileProps) {
