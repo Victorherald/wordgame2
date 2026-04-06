@@ -759,6 +759,12 @@
   animation: revealFlash 0.4s ease;
 }
 
+.mystery-container {
+  background: linear-gradient(145deg, #92400e, #78350f);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
 @keyframes revealFlash {
   0% {
     opacity: 0;

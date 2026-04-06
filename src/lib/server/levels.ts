@@ -8,7 +8,7 @@ export type Difficulty = "Hard Level" | "demon";
 
 export type GemTiles = "purple"
 
-export type TutorialTypes = "Locked Tiles" | "Exclaimer" | "Purifiers" | "Burning Tiles" | "Poisoned Tile" | "Warped Tiles" | "Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" | "Flippers";
+export type TutorialTypes = "Locked Tiles" | "Surprise Tile" | "Exclaimer" | "Purifiers" | "Burning Tiles" | "Poisoned Tile" | "Warped Tiles" | "Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" | "Flippers";
 
 
 export type Objective =
@@ -17,7 +17,7 @@ export type Objective =
   | { type: 'lightsUp'; objGoal: number; tileType: 'bulb' }
   | { type: 'defrost'; objGoal: number; tileType: 'ice' }
   | { type: 'collectVelvet'; objGoal: number; tileType: 'velvet' }
-  | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' | 'bone' | "bulb" | "exclamator" };
+  | { type: 'destroy'; objGoal: number; tileType: 'cursed'  | 'fire' | 'warped' | 'dull' | 'bone' | 'bulb' | 'exclamator' | 'flippers'};
 
 export type LevelData = {
   id: number;
@@ -68,7 +68,7 @@ export const levels: LevelData[] = [
     id: 1,
     name: "Level 1",
     objective: { type: 'words', objGoal: 5, minLength: 3 },
-    moves: 10,
+    moves: 5,
     allowHardLetters: false,
     locked: false,
     allowBulbTiles: true,
@@ -5216,6 +5216,361 @@ export const levels: LevelData[] = [
       ["removed", "removed", "removed", "removed", "removed", "removed", "normal", "normal"],
       ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+    ],
+
+  },
+  {
+    id: 223,
+    name: "Level 223",
+    objective: { type: 'score', objGoal: 6000 },
+    moves: 30,
+
+    allowHardLetters: false,
+    locked: false,
+
+    dullTurns: 33,
+    board: [
+      ["removed", "normal", "normal", "infected", "normal", "normal", "normal", "normal"],
+      ["removed", "removed", "normal", "normal", "normal", "removed", "removed", "removed"],
+      ["removed", "removed", "normal", "normal", "normal", "removed", "removed", "infected"],
+      ["normal", "normal", "infected", "normal", "normal", "normal", "infected", "normal"],
+      ["normal", "infected", "normal", "normal", "normal", "infected", "normal", "normal"],
+      ["infected", "removed", "removed", "normal", "normal", "normal", "removed", "removed"],
+      ["removed", "removed", "removed", "normal", "normal", "normal", "removed", "removed"],
+      ["normal", "normal", "normal", "normal", "infected", "normal", "normal", "removed"]
+
+    ],
+
+  },
+  {
+    id: 224,
+    name: "Level 224",
+    objective: { type: 'destroy', objGoal: 16, tileType: 'dull' },
+    moves: 50,
+
+    allowHardLetters: false,
+    locked: false,
+
+    dullTurns: 25,
+    board: [
+      ["normal", "removed", "fire", "removed", "removed", "fire", "removed", "normal"],
+      ["normal", "removed", "normal", "removed", "removed", "normal", "removed", "normal"],
+      ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+      ["dull", "dull", "dull", "normal", "normal", "dull", "dull", "dull"],
+      ["dull", "ice", "dull", "ice", "ice", "dull", "ice", "dull"],
+      ["removed", "ice", "dull", "ice", "ice", "dull", "ice", "removed"],
+      ["removed", "removed", "dull", "dull", "dull", "dull", "removed", "removed"]
+    ],
+
+  },
+  {
+    id: 225,
+    name: "Level 225",
+    objective: { type: 'collectVelvet', objGoal: 4, tileType: 'velvet' },
+    moves: 24,
+
+    allowHardLetters: false,
+    locked: false,
+
+    dullTurns: 25,
+    board: [
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["removed", "velvet", "ice", "removed", "removed", "ice", "velvet", "removed"],
+      ["removed", "ice", "ice", "normal", "normal", "ice", "ice", "removed"],
+      ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+      ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+      ["removed", "ice", "ice", "normal", "normal", "ice", "ice", "removed"],
+      ["removed", "velvet", "ice", "removed", "removed", "ice", "velvet", "removed"],
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
+    ],
+
+  },
+  {
+    id: 226,
+    name: "Level 226",
+    objective: { type: 'score', objGoal: 4300 },
+    moves: 20,
+
+    allowHardLetters: false,
+    locked: false,
+    warpTurns: 20,
+    dullTurns: 20,
+    board: [
+      ["normal", "removed", "removed", "warped", "infected", "removed", "removed", "normal"],
+      ["normal", "dull", "removed", "removed", "warped", "removed", "dull", "normal"],
+      ["normal", "dull", "removed", "warped", "infected", "removed", "dull", "normal"],
+      ["normal", "dull", "removed", "infected", "removed", "removed", "dull", "normal"],
+      ["normal", "dull", "removed", "warped", "infected", "removed", "dull", "normal"],
+      ["normal", "dull", "removed", "removed", "removed", "removed", "dull", "normal"],
+      ["normal", "dull", "dull", "dull", "dull", "dull", "dull", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+    ],
+
+  },
+  {
+    id: 227,
+    name: "Level 227",
+    objective: { type: 'destroy', objGoal: 61  , tileType:'flippers' },
+    moves: 50,
+
+    allowHardLetters: false,
+    locked: false,
+    warpTurns: 20,
+    dullTurns: 20,
+    board: [
+      ["bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookClosed"],
+      ["bookClosed", "bookClosed", "bookOpen", "bookOpen", "bookOpen", "bookOpen", "bookClosed", "bookClosed"],
+      ["bookClosed", "bookOpen", "bookOpen", "bookOpen", "bookOpen", "bookOpen", "bookOpen", "bookClosed"],
+      ["bookClosed", "bookOpen", "bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookOpen", "bookClosed"],
+      ["bookClosed", "bookOpen", "bookOpen", "bookClosed", "bookClosed", "bookOpen", "bookOpen", "bookClosed"],
+      ["bookClosed", "bookOpen", "bookOpen", "bookOpen", "bookOpen", "bookOpen", "bookOpen", "bookClosed"],
+      ["bookClosed", "bookClosed", "bookOpen", "bookOpen", "bookOpen", "bookOpen", "bookClosed", "bookClosed"],
+      ["bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookClosed", "bookClosed"]
+    ],
+
+  },
+  {
+    id: 228,
+    name: "Level 228",
+    objective: { type: 'destroy', objGoal:  16 , tileType:'dull' },
+    moves: 30,
+
+    allowHardLetters: false,
+    locked: false,
+    warpTurns: 20,
+    dullTurns: 40,
+    board: [
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["normal", "removed", "removed", "removed", "removed", "removed", "removed", "normal"],
+      ["dull", "dull", "normal", "removed", "removed", "normal", "dull", "dull"],
+      ["removed", "dull", "normal", "dull", "dull", "normal", "dull", "removed"],
+      ["removed", "dull", "normal", "dull", "dull", "normal", "dull", "removed"],
+      ["dull", "dull", "normal", "removed", "removed", "normal", "dull", "dull"],
+      ["normal", "removed", "removed", "removed", "removed", "removed", "removed", "normal"],
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
+    ],
+
+  },
+  {
+    id: 229,
+    name: "Level 229",
+    objective: { type: 'collectVelvet', objGoal:  16 , tileType:'velvet' },
+    moves: 60,
+   difficulty: 'demon',
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 40,
+    board: [
+      ["normal", "removed", "normal", "removed", "ice", "velvet", "removed", "velvet"],
+      ["normal", "removed", "normal", "removed", "ice", "ice", "removed", "normal"],
+      ["normal", "normal", "normal", "removed", "ice", "ice", "locked", "locked"],
+      ["normal", "normal", "ice", "ice", "ice", "ice", "locked", "locked"],
+      ["locked", "locked", "ice", "ice", "ice", "ice", "normal", "normal"],
+      ["locked", "locked", "ice", "ice", "removed", "normal", "normal", "normal"],
+      ["normal", "removed", "ice", "ice", "removed", "normal", "removed", "normal"],
+      ["velvet", "removed", "velvet", "ice", "removed", "normal", "removed", "normal"]
+    ],
+
+  },
+  {
+    id: 230,
+    name: "Level 230",
+    objective: { type: 'lightsUp', objGoal:  4 , tileType:'bulb' },
+    moves: 20,
+
+    allowHardLetters: true,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 40,
+    board: [
+     ["bookClosed", "bookClosed", "bookClosed", "bookClosed", "removed", "bookOpen", "bookOpen", "bookOpen"],
+        ["bookClosed", "bookClosed", "bookClosed", "bookClosed", "removed", "bookOpen", "bookOpen", "bulb"],
+        ["bookClosed", "bulb", "bookClosed", "bookClosed", "removed", "bookOpen", "bookOpen", "bookOpen"],
+        ["removed", "removed", "removed", "removed", "removed", "bookOpen", "bookOpen", "bookOpen"],
+        ["bookOpen", "bookOpen", "bookOpen", "removed", "removed", "removed", "removed", "removed"],
+        ["bookOpen", "bookOpen", "bookOpen", "removed", "bookClosed", "bookClosed", "bulb", "bookClosed"],
+        ["bulb", "bookOpen", "bookOpen", "removed", "bookClosed", "bookClosed", "bookClosed", "bookClosed"],
+        ["bookOpen", "bookOpen", "bookOpen", "removed", "bookClosed", "bookClosed", "bookClosed", "bookClosed"]
+    ],
+
+  },
+  {
+    id: 231,
+    name: "Level 231",
+    objective: { type: 'score', objGoal:  8900},
+    moves: 20,
+
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 40,
+    board: [
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["removed", "mystery", "normal", "mystery", "mystery", "normal", "mystery", "removed"],
+      ["removed", "mystery", "normal", "normal", "normal", "normal", "mystery", "removed"],
+      ["removed", "mystery", "normal", "normal", "normal", "normal", "mystery", "removed"],
+      ["removed", "removed", "removed", "mystery", "mystery", "removed", "removed", "removed"]
+    ],
+    tutorialTileType: 'Surprise Tile',
+    tutorialMessage: "Surprise tiles are mysterious tiles. When matched, it either spawns Good gems, or Evil Negative  tiles. You'll never know!",
+    tutorial: {}
+  },
+  {
+    id: 232,
+    name: "Level 232",
+    objective: { type: 'score', objGoal:  21900},
+    moves: 13,
+
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 40,
+    board: [
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "mystery", "ice", "mystery", "mystery", "ice", "mystery", "normal"],
+      ["normal", "ice", "mystery", "ice", "ice", "mystery", "ice", "normal"],
+      ["normal", "mystery", "ice", "mystery", "mystery", "ice", "mystery", "normal"],
+      ["normal", "ice", "mystery", "ice", "ice", "mystery", "ice", "normal"],
+      ["normal", "mystery", "ice", "mystery", "mystery", "ice", "mystery", "normal"],
+      ["normal", "ice", "mystery", "ice", "ice", "mystery", "ice", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+    ],
+
+  },
+  {
+    id: 233,
+    name: "Level 233",
+    objective: { type: 'lightsUp', tileType: 'bulb', objGoal: 4 },
+    moves: 13,
+    difficulty: 'Hard Level',
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 40,
+    board: [
+      ["normal", "lineBlasterColumn", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "removed", "locked", "removed", "locked", "removed", "locked", "normal"],
+      ["normal", "locked", "bulb", "ice", "ice", "bulb", "removed", "normal"],
+      ["normal", "removed", "ice", "fire", "removed", "ice", "locked", "normal"],
+      ["normal", "locked", "ice", "removed", "fire", "ice", "removed", "normal"],
+      ["normal", "removed", "bulb", "ice", "ice", "bulb", "locked", "normal"],
+      ["normal", "locked", "removed", "locked", "removed", "locked", "removed", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+    ],
+
+  },
+  {
+    id: 234,
+    name: "Level 234",
+    objective: { type: 'destroy', tileType: 'dull', objGoal: 2 },
+    moves: 45,
+   
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 35,
+    board: [
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["normal", "ice", "dull", "removed", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "removed", "removed", "normal", "normal", "normal", "normal"],
+      ["normal", "removed", "removed", "normal", "normal", "normal", "ice", "ice"],
+      ["normal", "removed", "normal", "normal", "normal", "ice", "removed", "normal"],
+      ["normal", "removed", "normal", "ice", "ice", "removed", "removed", "normal"],
+      ["normal", "normal", "ice", "removed", "removed", "removed", "normal", "normal"],
+      ["normal", "ice", "removed", "removed", "dull", "ice", "normal", "normal"]
+    ],
+
+  },
+  {
+    id: 235,
+    name: "Level 235",
+    objective: { type: 'words', minLength: 5, objGoal: 2 },
+    moves: 35,
+   
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 35,
+    board: [
+      ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["infected", "removed", "normal", "normal", "normal", "normal", "removed", "infected"],
+      ["normal", "removed", "removed", "normal", "normal", "removed", "removed", "normal"],
+      ["infected", "normal", "infected", "normal", "normal", "infected", "normal", "infected"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["removed", "normal", "infected", "normal", "normal", "infected", "normal", "removed"],
+      ["removed", "normal", "removed", "normal", "normal", "removed", "normal", "removed"]
+    ],
+
+  },
+  {
+    id: 236,
+    name: "Level 236",
+    objective: { type: 'destroy', tileType: 'dull', objGoal: 1 },
+    moves: 14,
+   
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 35,
+    board: [
+        ["removed", "removed", "removed", "normal", "normal", "removed", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["bulb", "mystery", "normal", "normal", "normal", "normal", "mystery", "bulb"],
+        ["removed", "mystery", "normal", "mystery", "mystery", "normal", "mystery", "removed"],
+        ["removed", "removed", "normal", "mystery", "mystery", "normal", "removed", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["bulb", "mystery", "removed", "mystery", "mystery", "removed", "mystery", "bulb"],
+        ["removed", "removed", "removed", "mystery", "mystery", "removed", "removed", "removed"]
+    ],
+
+  },
+  {
+    id: 237,
+    name: "Level 237",
+    objective: { type: 'collectVelvet', tileType: 'velvet', objGoal: 13 },
+    moves: 14,
+   
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 35,
+    board: [
+      ["normal", "velvet", "normal", "normal", "normal", "normal", "velvet", "normal"],
+      ["velvet", "velvet", "velvet", "velvet", "velvet", "velvet", "velvet", "velvet"],
+      ["normal", "normal", "normal", "velvet", "velvet", "normal", "normal", "normal"],
+      ["velvet", "velvet", "velvet", "velvet", "velvet", "velvet", "velvet", "velvet"],
+      ["normal", "mystery", "velvet", "normal", "normal", "velvet", "mystery", "normal"],
+      ["velvet", "velvet", "velvet", "velvet", "velvet", "velvet", "velvet", "velvet"],
+      ["mystery", "velvet", "mystery", "mystery", "mystery", "mystery", "velvet", "mystery"],
+      ["velvet", "velvet", "velvet", "mystery", "mystery", "velvet", "velvet", "velvet"]
+    ],
+
+  },
+  {
+    id: 238,
+    name: "Level 238",
+    objective: { type: 'destroy', tileType: 'dull', objGoal: 22 },
+    moves: 25,
+   
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 17,
+    board: [
+      ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+      ["normal", "normal", "dull", "removed", "removed", "dull", "normal", "normal"],
+      ["normal", "dull", "dull", "dull", "dull", "dull", "dull", "normal"],
+      ["removed", "removed", "dull", "dull", "normal", "dull", "removed", "removed"],
+      ["removed", "removed", "dull", "normal", "dull", "dull", "removed", "removed"],
+      ["normal", "dull", "dull", "dull", "dull", "dull", "dull", "normal"],
+      ["normal", "normal", "dull", "removed", "removed", "dull", "normal", "normal"],
+      ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"]
     ],
 
   },

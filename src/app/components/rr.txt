@@ -1,0 +1,762 @@
+ 
+
+  return (
+
+    
+    
+
+   
+
+   <div className="min-h-screen w-full bg-neutral-950 flex justify-center items-start py-1 sm:py-3 px-1 sm:px-5">
+  <div
+    className="
+      w-full max-w-6xl
+      flex flex-col md:grid md:grid-cols-[280px_1fr]
+      gap-4
+      bg-neutral-900
+      rounded-xl
+      shadow-inner shadow-black/30
+      overflow-hidden
+      p-2 sm:p-3
+    "
+  >
+{/* --- Top Bar (Mobile only) --- */}
+    <div className={`${level.difficulty === 'Hard Level' ? 'flex md:hidden justify-between items-center bg-red-950 border border-neutral-800 rounded-lg p-2 mb-2' : 'flex md:hidden justify-between items-center bg-neutral-950 border border-neutral-800 rounded-lg p-2 mb-2'} ${level.difficulty === 'demon'
+  ? `
+    flex md:hidden justify-between items-center
+    bg-gradient-to-r from-red-950 via-orange-950 to-red-900
+    border border-red-700
+    rounded-lg p-2 mb-2
+    text-red-100
+    shadow-lg shadow-red-900/60
+    animate-pulse
+    relative overflow-hidden
+  `
+  : `
+    flex md:hidden justify-between items-center
+    bg-neutral-950
+    border border-neutral-800
+    rounded-lg p-2 mb-2
+  `
+}
+`}>
+      <div className="text-xs sm:text-sm font-semibold text-white">
+        {levelName ? levelName : "Level"}
+      </div>
+      <div className="text-xs sm:text-sm text-white font-semibold">
+        Moves: {movesLeft}
+      </div>
+      <div   onClick={() => setShowObjectivePopup(true)} className="text-xs sm:text-sm text-yellow-400 font-semibold flex items-center gap-1">
+         {objective
+      ? `${objective.type === 'words'
+          ? 'Words Found'
+          : objective.type === 'lightsUp' 
+          ? `Lights Up`
+          : objective.type ===  'defrost'
+          ? ' Defrost'
+          : objective.type === 'score'
+           ? 'Score'
+          : objective.type === 'collectVelvet'
+          ? 'Velvets Crushed'
+          : `Destroy ${objective.tileType} tiles`
+        }: ${objMet}/${objective.objGoal}`
+      : 'No objective'}
+      
+      </div>
+      
+    </div>
+<div className="flex md:hidden w-full items-center justify-between gap-3 px-2">
+  {/* Score */}
+  <div className="flex-shrink-0">
+    <ScoreCounter score={score} />
+  </div>
+
+  {/* Scramble button */}
+  <button
+    onClick={handleScramble}
+    disabled={movesLeft < 3 || isGameOver}
+    className={`flex-shrink-0 px-3 py-2 text-sm rounded transition ${
+      movesLeft >= 3 && !isGameOver
+        ? "bg-red-600 text-white hover:bg-red-700"
+        : "bg-gray-500 text-gray-300 cursor-not-allowed"
+    }`}
+  >
+    Scramble (-3)
+  </button>
+</div>
+
+
+
+    {/*  Sidebar */}
+    <div
+      className={`${level.difficulty === 'Hard Level' ? "hidden md:flex flex-col justify-between bg-red-750 p-4 rounded-lg border border-red-700 overflow-y-auto space-y-3" : "hidden md:flex flex-col justify-between bg-neutral-950 p-4 rounded-lg border border-neutral-800 overflow-y-auto space-y-3"} ${level.difficulty === 'demon' ? "hidden md:flex flex-col justify-between bg-orange-750 p-4 rounded-lg border border-orange-700 overflow-y-auto space-y-3" : "hidden md:flex flex-col justify-between bg-neutral-950 p-4 rounded-lg border border-neutral-800 overflow-y-auto space-y-3"}`}
+      
+    >
+      <div className="flex flex-col items-start p-1">
+{levelName && (
+  <h2
+    className={`
+      text-lg sm:text-xl font-bold mb-2
+      ${
+        level.difficulty === "demon"
+          ? "text-orange-500 drop-shadow-[0_0_12px_rgba(255,80,0,0.8)] animate-pulse"
+          : level.difficulty === "Hard Level"
+          ? "text-red-600"
+          : "text-yellow-400"
+      }
+    `}
+  >
+    {levelName}
+  </h2>
+)}
+
+  </div>
+     {/* Words Left Counter + Info Icon */}
+          <div className="flex items-center justify-between bg-neutral-800/70 border border-neutral-700 rounded-lg p-3 mb-2">
+            <p className="text-white text-sm font-semibold">
+            {objective
+      ? `${objective.type === 'words'
+          ? `${objective.minLength}-letter words found`
+          : objective.type === 'score'
+          ? 'Score'
+           : objective.type === 'lightsUp' 
+ ? 'Lights turned on'
+           : objective.type === 'collectVelvet' 
+          
+
+          ? `Velvets Squashed`
+
+          : objective.type === 'defrost'
+          ? 'Ice cleared'
+          : `Destroy ${objective.tileType} tiles`
+        }: ${objMet}/${objective.objGoal}`
+
+      : 'No objective'}
+            </p>
+            
+            <button
+              onClick={() => setShowObjectivePopup(true)}
+              className="text-gray-300 hover:text-white transition"
+              title="Show Objective"
+            >
+              <Info size={18} />
+            </button>
+          </div>
+<MovesDisplay movesLeft={movesLeft} />
+         
+
+      {/* Score + Controls */}
+      <div className="flex flex-col gap-3 flex-grow overflow-hidden">
+        <ScoreCounter score={score} />
+        
+
+        <button
+          onClick={clearSelection}
+          className="px-4 py-2 bg-orange-900 text-white rounded hover:bg-orange-700 transition"
+        >
+          Clear Selection
+        </button>
+
+       <button
+  disabled={!isWordValid || movesLeft <= 0 || isGameOver}
+  onClick={handleSubmit}
+  className={`px-4 py-2 rounded transition ${
+    isWordValid && movesLeft > 0 && !isGameOver
+      ? "bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse z-20"
+      : hasImproperExclamator ? "bg-red-800 cursor-not-allowed" : "bg-gray-200 text-white z-20 cursor-not-allowed opacity-60"
+  } `}
+>
+ {hasImproperExclamator ? 'Exclamator used wrongly!' : 'Submit Word'}
+</button>
+  <button
+  onClick={handleScramble}
+  disabled={movesLeft < 3 || isGameOver}
+  className={`px-4 py-2 rounded transition ${
+    movesLeft > 3 && !isGameOver
+      ? "bg-red-600 hover:bg-red-700 text-white"
+      : "bg-gray-500 text-gray-300 cursor-not-allowed"
+  }`}
+>
+  Scramble (-3)
+</button>
+   
+
+
+        {/* Current word (desktop only) */}
+        <div className="hidden md:block flex-1 overflow-auto mt-2">
+          <WordDisplay word={getSelectedWord()} />
+
+         
+        </div>
+
+
+        <div className="hidden md:block flex-1 overflow-auto mt-2">
+          <button onClick={() => router.push("/levels")} className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-red-700 transition">Back</button>
+      </div>
+      </div>
+    </div>
+
+    {/*  Board */}
+    <div
+      className="
+        bg-neutral-950 rounded-lg p-3
+        flex flex-col justify-center items-center
+        border border-neutral-800
+        w-full
+      "
+    >
+      {/* Tile Grid */}
+
+
+<div
+  className="
+    grid grid-cols-8
+          gap-[2px] sm:gap-[4px] md:gap-[6px]
+          justify-center
+  "
+>
+  
+  {grid.map((row, r) =>
+    row.map((tile, c) => {
+      const sel = isSelected(r, c);
+      const isNew = newTiles.some((p) => p.row === r && p.col === c);
+      const anim = isNew || !ground ? 'tile-drop' : '';
+
+      // effects
+      const fire = tile?.isFire
+        ? 'animate-fire-tile bg-orange-700 text-white shadow-lg shadow-orange-500/30 fire-particles'
+        : '';
+        const plague = tile?.isInfected 
+        ?  'tile infected' : '';
+      const cursed = tile?.isCursed
+        ? 'tile cursed-tile shadow-red-500/40 cursed-particles'
+        : '';
+        const ice = tile?.isFrozen
+  ? 'ice-tile animate-ice-block bg-blue-300/40 text-white shadow-lg shadow-blue-300/40 backdrop-blur-sanimate-ice-block bg-blue-200/60 text-white shadow-xl shadow-blue-400/40 border-2 border-blue-300/70 ice-particles backdrop-blur-sm saturate-150 z-50'
+  : '';
+const exclamated = tile?.isExclamator
+  ? "border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.8)]"
+  : "";
+const fridge = tile?.isFridge
+  ? <FridgeSVG/>
+  : "";
+
+      const warped = tile?.isWarped
+        ? 'tile animate-warped warp-tile cursor-pointer'
+        : '';
+        const velvet = tile?.isVelvet
+  ? 'velvet-tile animate-velvet-sheen'
+  : '';
+
+        const dull = tile?.isDull 
+        ? 'bg-gradient-to-br from-neutral-700 to-neutral-700 text-gray-100 border border-neutral-500  brightness-85'
+        : '';
+        const locked = tile?.isLocked
+  ? 'bg-gray-800 text-gray-400 border-2 border-gray-500 relative overflow-hidden locked-chain'
+  : '';
+  const bone = tile?.isBone
+  ? tile.isRipe
+    ? 'tile-bone-ripe'
+    : 'tile-bone-unripe'
+  : '';
+   const bulb = tile?.isLightBulb ? tile.isBulbOn ? "bulb bulb-on"
+   : "bulb bulb-off" : "";
+
+      if (tile?.isRemoved) {
+      return (
+        <div
+          key={`${r}-${c}`}
+          className="w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14 bg-transparent pointer-events-none"
+        />
+      );
+    }
+
+ 
+
+      return (
+ /* ================= CELL (STATIC) ================= */
+        <div
+          key={`${r}-${c}`}
+          className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14"
+        >
+          {/* ===== GROUND (STATIC, BEHIND TILE) ===== */}
+          {ground?.[r]?.[c]?.type === "cleanse" && (
+            <div
+              className="
+                absolute inset-[-6px]
+      rounded-[10px]
+
+      bg-gradient-to-br
+      from-sky-300/70
+      via-cyan-200/80
+      to-blue-300/70
+
+      shadow-[0_0_20px_rgba(56,189,248,0.9),0_0_40px_rgba(34,211,238,0.6)]
+      animate-pulse
+
+      z-0
+      pointer-events-none
+              "
+            />
+          )}
+
+
+          {/*Book Render*/}
+          {tile?.isBook && (
+    <div className="absolute inset-0 z-10 pointer-events-none">
+      <BookTile isOpen={tile.isBookOpen ?? false} />
+    </div>
+
+    
+  )}
+
+
+
+      {/* Cleansing effect */}
+{tile?.isCleansed && (
+  <>
+    {/* Cleanse glow */}
+    <div
+      className="
+        absolute inset-0
+        rounded-[6px]
+        bg-sky-400/30
+        animate-cleanse
+        z-30
+        pointer-events-none
+      "
+    />
+
+    {/* Holy rain */}
+    <CleanseRain />
+  </>
+)}
+
+   {/* Ice Shattering effect */}
+{tile?.isShattered && (
+  <>
+    
+    <div
+      className="
+        absolute inset-0
+        rounded-[6px]
+        bg-sky-400/30
+        animate-cleanse
+        z-30
+        pointer-events-none
+      "
+    />
+
+  <IceBreakParticles/>
+  </>
+)}
+
+{tile?.isLineBlaster && tile.blastDirection === "row" && (
+  <>
+    <ChevronLeft
+      className="
+        absolute left-[2px] top-1/2 -translate-y-1/2
+        w-5 h-5 sm:w-4 sm:h-4
+        text-orange-600
+        z-20
+      "
+    />
+    <ChevronRight
+      className="
+        absolute right-[2px] top-1/2 -translate-y-1/2
+        w-5 h-5 sm:w-4 sm:h-4
+        text-orange-600
+        z-20
+      "
+    />
+  </>
+)}
+
+{/* line blaster tile rendering */}
+{tile?.isLineBlaster && tile.blastDirection === "col" && (
+  <>
+    <ChevronUp
+      className="
+        absolute top-[2px] left-1/2 -translate-x-1/2
+        w-3 h-3 sm:w-4 sm:h-4
+        text-orange-600
+        z-20
+      "
+    />
+    <ChevronDown
+      className="
+        absolute bottom-[2px] left-1/2 -translate-x-1/2
+        w-3 h-3 sm:w-4 sm:h-4
+        text-orange-600
+        z-20
+      "
+    />
+  </>
+)}
+
+
+
+
+   {tile?.isSpreading && (
+  <div
+    className="
+      absolute inset-0
+      rounded-[6px]
+      bg-yellow-800/40
+      animate-cleanse
+      z-30
+      pointer-events-none
+    "
+  />
+)}   
+
+
+  <div
+          key={`${r}-${c}`}
+          onClick={() => handleTileClick(r, c)}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            handleRightClick(r, c);
+          }}
+          className={`
+            relative
+            w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14
+            rounded-[6px] cursor-pointer
+            bg-gradient-to-br from-[#fdf5e6] to-[#f5e1b9]
+            text-black text-sm sm:text-lg md:text-xl font-serif
+            flex items-center justify-center
+            border border-[#d6c6a1] shadow-md shadow-black/10
+            transition duration-150 ease-in-out
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''}  ${fridge} ${velvet} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
+          `}
+        >
+
+   
+
+  
+      
+          {tile?.gem && (
+            <div
+              className={`absolute inset-0 z-0 rounded-[6px] animate-pulse ${getGemBackground(tile.gem)}`}
+            />
+          )}
+
+
+
+          {tile?.isLocked && (
+  <div className="absolute inset-0 z-10 flex justify-center items-center pointer-events-none">
+    <div className="w-3/4 h-3/4 border-4 border-gray-600 rounded-lg rotate-45 opacity-70" />
+  </div>
+)}
+{tile?.isExclamator && (
+  <AlertCircle
+    className="
+      absolute
+      left-[2px] top-[2px]
+      text-red-600
+      drop-shadow-[0_0_6px_rgba(255,0,0,0.8)]
+      z-30
+      pointer-events-none
+
+      w-3 h-3
+      sm:w-4 sm:h-4
+      md:w-5 md:h-5
+    "
+    strokeWidth={3}
+  />
+)}
+
+
+          {/* Letter */}
+          {(!tile?.isBook || tile?.isBookOpen) && (
+  <span className="z-30 font-bold">{tile?.letter}</span>
+)}
+
+          {/* Status dots */}
+          {(!tile?.isBook || tile?.isBookOpen) && (
+  <>
+    {tile?.isCursed ? (
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-red-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+        {tile.curseTurns}
+      </div>
+    ) : tile?.isDull ? (
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+        {tile.dullTurns}
+      </div>
+    ) : tile?.isLocked ? (
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-700 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+        {tile.lockTurns}
+      </div>
+    ) : tile?.isWarped ? (
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-yellow-400 text-black text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md animate-pulse">
+        {tile.warpTurns}
+      </div>
+    ) : tile?.isBone ? (
+      <div
+        className={`absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md ${
+          tile.isRipe
+            ? "bg-teal-400/80 animate-pulse"
+            : "bg-[#0f3b3a]/80 text-teal-200"
+        }`}
+      >
+        {tile.boneTurns}
+      </div>
+    ) : (
+      <div
+        className={`absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full z-10 ${getRarityColor(tile?.rarity)}`}
+      />
+    )}
+  </>
+)}
+
+        {/* Selection glow + bold border */}
+{sel && (
+  <div
+    className={`
+      absolute inset-0 rounded-[6px]
+      border-2
+      ${isWordValid
+        ? 'border-green-500 shadow-[0_0_16px_4px_rgba(34,197,94,0.8)]'
+        : hasImproperExclamator
+        ? 'border-red-500 shadow-[0_0_18px_4px_rgba(239,68,68,0.9)]'
+        : 'border-yellow shadow-[0_0_12px_2px_rgba(255,250,255,0.5)]'}
+      z-20 pointer-events-none
+    `}
+  />
+)}
+        </div>
+        </div>
+      );
+    })
+  )}
+</div>
+
+
+      {/*  Current Word for Mobile */}
+      <div className="block md:hidden w-full mt-2 text-center absolute top-104">
+        <WordDisplay word={getSelectedWord()} />
+      </div>
+
+ {/* --- Bottom Bar (Mobile only) --- */}
+      <div className="flex md:hidden justify-around items-center w-full mt-10 bg-neutral-900 border border-neutral-800 rounded-lg p-2">
+        <button
+          onClick={clearSelection}
+          className="px-3 py-2 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition"
+        >
+          Clear
+        </button>
+       <button
+  disabled={!isWordValid || movesLeft <= 0 || isGameOver}
+  onClick={handleSubmit}
+  className={`px-4 py-2 rounded transition ${
+    isWordValid && movesLeft > 0 && !isGameOver
+      ? "bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse z-20"
+      : hasImproperExclamator ? "bg-red-800 cursor-not-allowed"
+      : "bg-gray-200 text-white z-20 cursor-not-allowed opacity-60"
+  }`}
+>
+  {hasImproperExclamator ? 'Error' : 'Submit'}
+</button>
+
+        <div className="bg-orange-700 rounded text-white cursor-not-allowed opacity-60">
+          <button onClick={() => router.push("/levels")} className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition"></button>
+      </div>
+    
+
+      </div>
+    </div>
+  </div>
+
+{/* --- Objective Popup (Fixed & Responsive) --- */}
+<AnimatePresence>
+  {showObjectivePopup && (
+    <motion.div
+      className={`${
+        level.difficulty === "Hard Level"
+          ? "fixed inset-0 bg-red/70"
+          : "fixed inset-0 bg-black/70"
+      } flex justify-center items-center z-50 overflow-hidden`}
+      
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      
+      transition={{ duration: 0.3, ease: "easeOut" }}
+    >
+      <motion.div
+        className={`${
+          level.difficulty === "Hard Level"
+            ? "bg-neutral-900 border border-red-700"
+            : level.difficulty === "demon"
+            ? "bg-neutral-900 border border-orange-700"
+            : "bg-neutral-900 border border-neutral-700"
+        } rounded-xl p-4 sm:p-6 w-full max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl`}
+        
+        initial={{ opacity: 0, scale: 0.8, y: 40 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.8, y: 40 }}
+        
+        transition={{
+          duration: 0.4,
+          ease: [0.22, 1, 0.36, 1], // smooth "game-like" easing
+        }}
+      >
+        <h2 className="text-lg sm:text-xl font-semibold text-white">
+          Objective
+        </h2>
+
+        <p className="text-red-900">
+          {`${level.difficulty === "Hard Level" ? "Hard Level" : ""} ${
+            level.difficulty === "demon" ? "Demon Level" : ""
+          }`}
+        </p>
+
+        {objective ? (
+          <p className="text-gray-300 text-xs sm:text-sm leading-snug">
+            {objective.type === "score" &&
+              `Reach ${objective.objGoal} points`}
+            {objective.type === "words" &&
+              `Find ${objective.objGoal} words of ${objective.minLength} letters`}
+            {objective.type === "destroy" &&
+              `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
+            {objective.type === "lightsUp" && `Turn on all the lights!`}
+            {objective.type === "collectVelvet" && `Crush the velvets!`}
+            {objective.type === "defrost" && "Clear all the ice!"}
+          </p>
+        ) : (
+          <p className="text-gray-500 text-xs sm:text-sm italic">
+            No objective
+          </p>
+        )}
+
+        <button
+          onClick={() => setShowObjectivePopup(false)}
+          className="mt-3 sm:mt-4 bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:py-2 rounded transition text-sm sm:text-base"
+        >
+          Ok
+        </button>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
+
+{/* --- Tutorial Side Panel --- */}
+{showTutorialPopup && (
+  <div className="fixed z-40 pointer-events-none">
+    <div
+      className="
+        pointer-events-auto
+        fixed
+        bottom-4
+        right-4
+        sm:bottom-auto
+        sm:top-1/2
+        sm:-translate-y-1/2
+        sm:right-6
+        w-[90vw]
+        max-w-xs
+        sm:max-w-sm
+        bg-neutral-900
+        border border-neutral-700
+        rounded-xl
+        p-4
+        shadow-2xl
+        tutorial-slide-in
+      "
+    >
+      <h2 className="text-base sm:text-lg font-bold text-white mb-2">
+        New Tile: <span className="text-green-400">{tutorialType}</span>
+      </h2>
+
+      <p className="text-sm sm:text-base text-gray-300">
+        {level.tutorialMessage}
+      </p>
+
+      <button
+        onClick={closeTutorial}
+        className="
+          mt-4
+          w-full
+          bg-green-600
+          hover:bg-green-700
+          text-white
+          py-2
+          rounded
+          transition
+          text-sm sm:text-base
+        "
+      >
+        Got it
+      </button>
+    </div>
+  </div>
+)}
+
+
+{/* --- End Results Popup --- */}
+{isGameOver && (
+  <div className="fixed inset-0 bg-black/70 flex justify-center items-center z-50">     
+    <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-4 sm:p-6 w-11/
+12 max-w-xs sm:max-w-md text-center space-y-3 sm:space-y-4 shadow-xl animate-fade-in mb-
+32 sm:mb-16">
+      <h2 className="text-lg sm:text-xl font-semibold text-white">
+        {gameResult === "win"
+          ? "Level Complete!"
+          : gameResult === "fail" || gameResult === "fire"
+          ? "Game Over"
+          : ""}
+      </h2>
+
+      <p className="text-gray-300 text-xs sm:text-sm">
+        {gameResult === "win"
+          ? "You successfully completed the objective!"
+          : gameResult === "fire"
+          ? "Tiles are ignited!"
+
+          : gameResult === "fail" ?
+        "You ran out of moves!"
+          : ""}
+      </p>
+
+      <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mt-3 sm:mt
+-4">
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-1.5 sm:p
+y-2 rounded transition text-sm sm:text-base"
+        >
+          Retry
+        </button>
+
+
+        {gameResult === "win" && (
+  <button
+    onClick={async () => {
+      const nextLevel = levelId + 1;
+
+      const res = await fetch(`/api/levels/exists?id=${nextLevel}`);
+      const { exists } = await res.json();
+
+      if (!exists) {
+        router.push("/levels"); // or /victory
+        return;
+      }
+
+      localStorage.setItem("currentLevel", nextLevel.toString());
+      router.push(`/levels`);
+    }}
+    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+  >
+    Back
+  </button>
+)}
+</div>
+</div>
+
+
+</div>
+
+</div>
+
+  );
+} 

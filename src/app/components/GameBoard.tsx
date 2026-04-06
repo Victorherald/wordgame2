@@ -86,7 +86,7 @@ type LetterBoardProps = {
   objective?: {
   type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "bookOpen" | "bookClosed" | "mystery";
+  tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse')[][];
 };
@@ -214,37 +214,33 @@ function saveProgress(data: { unlockedLevel: number }) {
 const goal = objective?.objGoal ?? 5;
 
 
- useEffect(() => {
+useEffect(() => {
+  if (isGameOver) return;
 
-
-  if (objMet >= goal && !isGameOver) {
+  // ✅ WIN FIRST (no movesLeft check)
+  if (objMet >= goal) {
     setIsGameOver(true);
     setGameResult('win');
+
     setScore((prev) => prev + movesLeft * 10);
-    
 
-
-  
-
-    // Unlock next level only on wjn
-  
-  const progress = loadProgress();
+    const progress = loadProgress();
     const unlocked = progress.unlockedLevel ?? 1;
     const nextToUnlock = (levelId ?? 1) + 1;
-    
 
     if (nextToUnlock > unlocked) {
       saveProgress({ unlockedLevel: nextToUnlock });
     }
-    
+
+    return;
   }
 
-    // when move runs out without reaching the goal
-   if (movesLeft <= 0 && !isGameOver) {
+  // ❌ ONLY lose if moves are gone AND goal NOT met
+  if (movesLeft <= 0) {
     setIsGameOver(true);
     setGameResult('fail');
-    return;
-  }   
+  }
+
 }, [movesLeft, objMet, goal, isGameOver]);
 
 
@@ -901,8 +897,20 @@ const handleSubmit = () => {
       const tile = updatedGrid[row][col];
     
       if (!tile) return;
+
+      if (tile.isMystery) {
+        updatedGrid[row][col] = {
+          ...tile,
+          isMysteryRevealing: true
+        };
+      
+        setTimeout(() => {
+          updatedGrid[row][col] = getMysteryOutcome(tile);
+          setGrid([...updatedGrid]);
+        }, 300); // match animation
+      }
     
-      // 🧠 MYSTERY TILE LOGIC (RUN FIRST)
+      //  MYSTERY TILE LOGIC (RUN FIRST)
       if (tile.isMystery) {
         const revealed = getMysteryOutcome(tile);
     
@@ -917,7 +925,7 @@ const handleSubmit = () => {
         return; 
       }
     
-      // 👇 existing logic continues...
+    
     });
 
     /* book toggle */
@@ -1255,8 +1263,11 @@ function getMysteryOutcome(baseTile: Tile): Tile {
       ...baseTile,
       gem: getRandomGem(),
       isMystery: false,
+      justRevealed: false
     };
   }
+
+  
 
   // pick a random negative type
   const negatives = [
@@ -1358,7 +1369,7 @@ if (lineBlastersUsed.length > 0) {
   
    
     
-    destroyedThisMove.forEach(({ row, col }) => {
+    selected.forEach(({ row, col }) => {
       const tile = grid[row][col];
 if (tile.isDull) return;
 
@@ -1366,7 +1377,7 @@ if (tile.isDull) return;
 
       
   
- if (wordsIncludesCursed) points -= 300;
+ if (wordsIncludesCursed) points -= 100;
 
       if(tile.letter?.includes("QU")) points += 300;
 
@@ -1479,6 +1490,8 @@ else if (objective.type === "defrost") {
   updatedObjMet += iceBroken;
 }
 
+
+
 else if (objective.type === "collectVelvet") {
   if (usedVelvetThisMatch) {
     updatedObjMet += 1;
@@ -1493,6 +1506,7 @@ else if (objective.type === "collectVelvet") {
     if (!t) return false;
 
     if (objective.tileType === 'fire') return t.isFire;
+    if (objective.tileType === 'flippers') return t.isBook;
     if (objective.tileType === 'exclamator') return t.isExclamator;
     if (objective.tileType === 'dull') return t.isDull;
     if (objective.tileType === 'cursed') return t.isCursed;
@@ -1541,9 +1555,6 @@ if (gem) {
   const last = selected[selected.length - 1];
   const lastTile = updatedGrid[last.row][last.col];
 
-  if (lastTile.isMystery) {
-    updatedGrid[last.row][last.col] = getMysteryOutcome(lastTile);
-  } 
 
   // If the last tile is a negative tile, replace it fully with a gem
   if (NegativeTile(lastTile)) {
@@ -1595,7 +1606,7 @@ if (gem) {
   selected.forEach(({ row, col }) => {
   const t = updatedGrid[row][col];
   if (!t) return;
-  if (!t?.isLightBulb) {       // ⬅️ Do NOT clear bulbs
+  if (!t?.isLightBulb && !t?.isMystery) {       // ⬅️ Do NOT clear bulbs
     destroyedThisMove.push({row, col})
     updatedGrid[row][col] = null as any;
    
@@ -1691,7 +1702,8 @@ if (infectedSources.length > 0) {
         && !t.isLightBulb
         &&  !t.isBulbOn &&
         !t.isCursed
-      );
+        && !t.isMystery
+        && !gem )
     });
 
   if (validNeighbors.length > 0) {
@@ -1895,9 +1907,15 @@ setGrid(updatedGrid);
 setNewTiles(newGenerated);
 setSelected([]);
 
-
+//mystery reveal
 
   }
+
+
+
+  
+
+  
 
   
 
@@ -2343,7 +2361,7 @@ const fridge = tile?.isFridge
   </>
 )}
 
-{tile?.isMystery && (
+{tile?.isMystery && !tile?.isMysteryRevealing && (
   <div className="absolute inset-0 z-20 pointer-events-none">
     <MysteryTile
       letter={tile.letter}
@@ -2731,20 +2749,20 @@ const fridge = tile?.isFridge
 
         {gameResult === "win" && (
           <button
-            onClick={async () => {
-              const nextLevel = levelId + 1;
-
-              const res = await fetch(`/api/levels/exists?id=${nextLevel}`);
-              const { exists } = await res.json();
-
-              if (!exists) {
-                router.push("/levels");
-                return;
-              }
-
-              localStorage.setItem("currentLevel", nextLevel.toString());
-              router.push(`/levels`);
-            }}
+          onClick={async () => {
+            const nextLevel = levelId + 1;
+      
+            const res = await fetch(`/api/levels/exists?id=${nextLevel}`);
+            const { exists } = await res.json();
+      
+            if (!exists) {
+              router.push("/levels"); // or /victory
+              return;
+            }
+      
+            localStorage.setItem("currentLevel", nextLevel.toString());
+            router.push(`/levels`);
+          }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
           >
             Back to Levels Menu
