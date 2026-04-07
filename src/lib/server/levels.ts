@@ -5574,4 +5574,48 @@ export const levels: LevelData[] = [
     ],
 
   },
+  {
+    id: 239,
+    name: "Level 239",
+    objective: { type: 'lightsUp', tileType: 'bulb', objGoal: 2 },
+    moves: 15,
+   
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 20,
+    dullTurns: 17,
+    board: [
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "infected", "infected", "infected", "infected", "infected", "infected", "normal"],
+      ["normal", "infected", "infected", "infected", "infected", "infected", "infected", "normal"],
+      ["normal", "infected", "infected", "mystery", "mystery", "infected", "infected", "normal"],
+      ["normal", "infected", "mystery", "bulb", "bulb", "mystery", "infected", "normal"]
+    ],
+
+  },
+  {
+    id: 240,
+    name: "Level 240",
+    objective: { type: 'destroy', tileType: 'warped', objGoal: 3 },
+    moves: 45,
+     difficulty: 'Hard Level',
+    allowHardLetters: false,
+    locked: false,
+    warpTurns: 5,
+    dullTurns: 17,
+    board: [
+      ["normal", "normal", "normal", "mystery", "removed", "removed", "normal", "normal"],
+      ["normal", "normal", "normal", "mystery", "normal", "mystery", "normal", "normal"],
+      ["removed", "mystery", "mystery", "mystery", "mystery", "mystery", "normal", "normal"],
+      ["removed", "mystery", "warped", "mystery", "mystery", "mystery", "mystery", "removed"],
+      ["removed", "mystery", "mystery", "mystery", "mystery", "exclamator", "mystery", "removed"],
+      ["normal", "normal", "mystery", "mystery", "mystery", "mystery", "mystery", "removed"],
+      ["normal", "normal", "mystery", "normal", "mystery", "normal", "normal", "normal"],
+      ["normal", "normal", "removed", "removed", "mystery", "normal", "normal", "normal"]
+    ],
+
+  },
 ];

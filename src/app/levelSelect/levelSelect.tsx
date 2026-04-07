@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import LevelList from "./levelList";
+import LevelList from "../levels/components/levelList";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Level = {
