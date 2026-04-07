@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import '../animations/tileAnimations.css';
 import { ScoreCounter } from '../components/ScoreCounter';
 import { WordDisplay } from '../components/WordDisp';
@@ -159,7 +159,7 @@ const [bookTrigger, setBookTrigger] = useState(0);
 
 
 
-
+const validationRef = useRef(0);
 
 if (!level) return null;   // <-- prevents undefined crash
 
@@ -718,17 +718,29 @@ const lastTile =
   }
 }
 
+
+
       // 🔥 instant validation
       const word = newSelected
         .map(({ row, col }) => grid[row]?.[col]?.letter ?? "")
         .join("");
 
+       
+
+        const currentValidation = ++validationRef.current;
+
      const passesExclamator = validateExclamatorRule(newSelected, grid);
 
 if (word.length < 3 || !passesExclamator) {
   setIsWordValid(false);
+  return;
 } else {
   const dictionaryValid = await validateWord(word);
+
+  //  Ignore outdated async results
+if (currentValidation !== validationRef.current) return;
+
+
   setIsWordValid(dictionaryValid);
 }
 
@@ -787,14 +799,14 @@ async function validateWord(word: string): Promise<boolean> {
 useEffect(() => {
   const word = getSelectedWord();
 
-  if (word.length < 3) {
+  if (word.length < 3 || hasImproperExclamator)  {
     setIsWordValid(false);
     return;
   }
 
   
 
-  const passesExclamator = validateExclamatorRule(selected, grid);
+  const passesExclamator = !validateExclamatorRule(selected, grid);
 
 if (!passesExclamator) {
   setIsWordValid(false);
@@ -1258,7 +1270,7 @@ function getMysteryOutcome(baseTile: Tile): Tile {
   
 
   // 50% gem, 50% negative (you can tweak)
-  if (roll < 0.5) {
+  if (roll < 0.3) {
     return {
       ...baseTile,
       gem: getRandomGem(),
@@ -1277,7 +1289,9 @@ function getMysteryOutcome(baseTile: Tile): Tile {
     "warped",
     "locked",
     "ice",
-    "infected"
+    "infected",
+    "exclamator",
+    "bookClosed"
   ];
 
   const choice = negatives[Math.floor(Math.random() * negatives.length)];
@@ -1294,6 +1308,12 @@ function getMysteryOutcome(baseTile: Tile): Tile {
 
     case "warped":
       return { ...baseTile, isWarped: true, warpTurns: 3, isMystery: false };
+
+      case "exclamator":
+        return { ...baseTile, isExclamator: true,  isMystery: false };
+
+        case "bookClosed":
+          return { ...baseTile, isBook: true,  isMystery: false };
 
     case "locked":
       return { ...baseTile, isLocked: true, lockTurns: 3, isMystery: false };
