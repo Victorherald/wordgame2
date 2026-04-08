@@ -12,7 +12,7 @@ import { LevelData } from '@/lib/server/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
 import { useRouter } from 'next/navigation';
-
+import { BossBar } from '../bossImage/BossStats'
 import { Spectral } from 'next/font/google';
 import { Sparkles } from 'lucide-react';
 import { CleanseRain } from '../components/CleanseRain';
