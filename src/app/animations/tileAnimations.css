@@ -19,7 +19,7 @@
   }
   
   .tile-drop {
-    animation: drop 0.3s ease-out;
+    animation: drop 0.3s ease-in;
   }
   
 
@@ -777,5 +777,15 @@
   }
   100% {
     transform: scale(1);
+  }
+}
+
+/* gem shine */
+@keyframes shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(25deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(25deg);
   }
 }

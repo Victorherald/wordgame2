@@ -5618,4 +5618,26 @@ export const levels: LevelData[] = [
     ],
 
   },
+  {
+    id: 241,
+    name: "Level 241",
+    objective: { type: 'lightsUp', tileType: 'bulb', objGoal: 10 },
+    moves: 40,
+     
+    allowHardLetters: false,
+    locked: false,
+    warpTurns: 5,
+    lockTurns: 19,
+    board: [
+      ["removed", "locked", "bulb", "locked", "bulb", "locked", "removed", "removed"],
+      ["removed", "bulb", "normal", "normal", "normal", "normal", "removed", "removed"],
+      ["normal", "locked", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "bulb", "normal", "normal", "locked", "bulb", "locked", "normal"],
+      ["normal", "locked", "bulb", "locked", "ice", "ice", "bulb", "normal"],
+      ["normal", "normal", "ice", "ice", "ice", "ice", "locked", "normal"],
+      ["removed", "removed", "ice", "ice", "ice", "ice", "bulb", "removed"],
+      ["removed", "removed", "locked", "bulb", "locked", "bulb", "locked", "removed"]
+    ],
+
+  },
 ];

@@ -84,7 +84,7 @@ type LetterBoardProps = {
   level?: LevelData;
   layout?: ("normal"| "lineBlasterRow" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
-  type: 'score' | 'words' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
+  type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
   tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
@@ -158,6 +158,14 @@ const [bookFlipTick, setBookFlipTick] = useState(0);
 const [bookTrigger, setBookTrigger] = useState(0);
 
 
+//Bossfight state 
+const [bossHp, setBossHp] = useState(100);
+const [bossMaxHp] = useState(100);
+const [bossColor, setBossColor] = useState<string>("red");
+
+const isBossLevel = objective?.type === "boss";
+
+const bossDefeated = bossHp <= 0;
 
 const validationRef = useRef(0);
 
@@ -217,7 +225,19 @@ const goal = objective?.objGoal ?? 5;
 useEffect(() => {
   if (isGameOver) return;
 
+
   // ✅ WIN FIRST (no movesLeft check)
+   if (
+    (isBossLevel && bossHp <= 0) ||
+    (!isBossLevel && objMet >= goal)
+  ) {
+    setIsGameOver(true);
+    setGameResult("win");
+    return;
+  }
+
+ 
+  
   if (objMet >= goal) {
     setIsGameOver(true);
     setGameResult('win');
@@ -236,12 +256,21 @@ useEffect(() => {
   }
 
   // ❌ ONLY lose if moves are gone AND goal NOT met
-  if (movesLeft <= 0) {
-    setIsGameOver(true);
-    setGameResult('fail');
+ 
+
+   if (movesLeft <= 0) {
+    if (isBossLevel && bossHp > 0) {
+      setIsGameOver(true);
+      setGameResult("fail");
+    }
+
+    if (!isBossLevel && objMet < goal) {
+      setIsGameOver(true);
+      setGameResult("fail");
+    }
   }
 
-}, [movesLeft, objMet, goal, isGameOver]);
+}, [movesLeft, objMet, goal, bossHp, isBossLevel , isGameOver]);
 
 
 // Automatically hide the popup after 5 seconds
@@ -939,6 +968,16 @@ const handleSubmit = () => {
     
     
     });
+
+    // Opponent takes damage depending on the word strength
+    if (isBossLevel) {
+      const damage = selected.length * 5; // scale however you want
+      setBossHp((prev) => Math.max(0, prev - damage));
+    
+      // 🎨 change boss color every hit
+      const colors = ["red", "blue", "green", "purple", "orange"];
+      setBossColor(colors[Math.floor(Math.random() * colors.length)]);
+    }
 
     /* book toggle */
 
@@ -1938,28 +1977,63 @@ setSelected([]);
   
 
   
-
   const getGemGlow = (gem: string) =>
-    ({
-      purple: 'ring-2 ring-purple-500 shadow-purple-500/40',
-      green: 'ring-2 ring-green-500 shadow-green-500/40',
-      orange: 'ring-2 ring-orange-500 shadow-orange-500/40',
-      blue: 'ring-2 ring-blue-500 shadow-blue-500/40',
-      red: 'ring-2 ring-red-500 shadow-red-500/40',
-      pink: 'ring-2 ring-pink-400 shadow-pink-400/40',
-      whiteDiamond: 'ring-2 ring-white shadow-white/80 animate-pulse'
-    }[gem] || '');
+  ({
+    purple: `
+      ring-2 ring-purple-400/80
+      shadow-[0_0_10px_rgba(168,85,247,0.9),0_0_25px_rgba(168,85,247,0.7)]
+    `,
+    green: `
+      ring-2 ring-green-400/80
+      shadow-[0_0_10px_rgba(34,197,94,0.9),0_0_25px_rgba(34,197,94,0.7)]
+    `,
+    orange: `
+      ring-2 ring-orange-400/80
+      shadow-[0_0_10px_rgba(249,115,22,0.9),0_0_25px_rgba(249,115,22,0.7)]
+    `,
+    blue: `
+      ring-2 ring-blue-400/80
+      shadow-[0_0_10px_rgba(59,130,246,0.9),0_0_25px_rgba(59,130,246,0.7)]
+    `,
+    red: `
+      ring-2 ring-red-400/80
+      shadow-[0_0_12px_rgba(239,68,68,1),0_0_28px_rgba(239,68,68,0.8)]
+    `,
+    pink: `
+      ring-2 ring-pink-400/80
+      shadow-[0_0_12px_rgba(244,114,182,1),0_0_28px_rgba(244,114,182,0.8)]
+    `,
+    whiteDiamond: `
+      ring-2 ring-white/90
+      shadow-[0_0_14px_rgba(255,255,255,1),0_0_35px_rgba(200,240,255,0.9)]
+      animate-pulse
+    `,
+  }[gem] || "");
 
   const getGemBackground = (gem: string) =>
-    ({
-      purple: 'bg-purple-500/40',
-      green: 'bg-green-500/40',
-      orange: 'bg-orange-500/40',
-      blue: 'bg-blue-500/40',
-      red: 'bg-red-500/40',
-      pink: 'bg-pink-400/40',
-      whiteDiamond: 'bg-gradient-to-br from-white via-sky-100 to-white opacity-70'
-    }[gem] || '');
+  ({
+    purple: `
+      bg-[conic-gradient(from_45deg,#2e1065,#6d28d9,#c084fc,#6d28d9,#2e1065)]
+    `,
+    green: `
+      bg-[conic-gradient(from_45deg,#022c22,#16a34a,#86efac,#16a34a,#022c22)]
+    `,
+    orange: `
+      bg-[conic-gradient(from_45deg,#431407,#ea580c,#fdba74,#ea580c,#431407)]
+    `,
+    blue: `
+      bg-[conic-gradient(from_45deg,#172554,#2563eb,#93c5fd,#2563eb,#172554)]
+    `,
+    red: `
+      bg-[conic-gradient(from_45deg,#450a0a,#dc2626,#fca5a5,#dc2626,#450a0a)]
+    `,
+    pink: `
+      bg-[conic-gradient(from_45deg,#500724,#db2777,#f9a8d4,#db2777,#500724)]
+    `,
+    whiteDiamond: `
+      bg-[conic-gradient(from_45deg,#e0f2fe,#ffffff,#bae6fd,#ffffff,#e0f2fe)]
+    `,
+  }[gem] || "");
 
 function onObjectivePopupClosed() {
   if (tutorialEnabled) {
@@ -2094,6 +2168,11 @@ const handleScramble = () => {
       
     </div>
 <div className="flex md:hidden w-full items-center justify-between gap-3 px-2">
+
+{isBossLevel && (
+  <BossBar hp={bossHp} maxHp={bossMaxHp} color={bossColor} />
+)}
+
   {/* Score */}
   <div className="flex-shrink-0">
     <ScoreCounter score={score} />
@@ -2470,11 +2549,39 @@ const fridge = tile?.isFridge
 
   
       
-          {tile?.gem && (
-            <div
-              className={`absolute inset-0 z-0 rounded-[6px] animate-pulse ${getGemBackground(tile.gem)}`}
-            />
-          )}
+        {tile?.gem && (
+  <>
+    {/* 💎 Base gem */}
+    <div
+      className={`
+        absolute inset-0 rounded-[6px] animate-pulse
+        ${getGemBackground(tile.gem)}
+        z-0
+      `}
+    />
+
+    {/* ✨ Facet shine */}
+    <div
+      className="
+        absolute inset-0 rounded-[6px]
+        bg-[linear-gradient(120deg,transparent_30%,rgba(255,255,255,0.6)_50%,transparent_70%)]
+        opacity-40
+        
+        z-10
+        pointer-events-none
+      "
+    />
+
+    {/* 🔥 Inner glow core */}
+    <div
+      className="
+        absolute inset-1 rounded-[4px]
+        bg-white/10 blur-[2px]
+        z-0
+      "
+    />
+  </>
+)}
 
 
 
@@ -2646,7 +2753,10 @@ const fridge = tile?.isFridge
           }`}
         </p>
 
+        
+
         {objective ? (
+          
           <p className="text-gray-300 text-xs sm:text-sm leading-snug">
             {objective.type === "score" &&
               `Reach ${objective.objGoal} points`}
@@ -2657,6 +2767,7 @@ const fridge = tile?.isFridge
             {objective.type === "lightsUp" && `Turn on all the lights!`}
             {objective.type === "collectVelvet" && `Crush the velvets!`}
             {objective.type === "defrost" && "Clear all the ice!"}
+            {objective.type === "boss" && "Defeat the boss!"}
           </p>
         ) : (
           <p className="text-gray-500 text-xs sm:text-sm italic">

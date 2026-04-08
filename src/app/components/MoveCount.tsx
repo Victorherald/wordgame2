@@ -1,7 +1,8 @@
 // components/MovesDisplay.tsx
 import React from 'react';
 
-type MovesDisplayProps = { movesLeft: number };
+type MovesDisplayProps = { movesLeft: number , label?: string};
+
 
 export function MovesDisplay({ movesLeft }: MovesDisplayProps) {
   const isLow = movesLeft <= 5;
