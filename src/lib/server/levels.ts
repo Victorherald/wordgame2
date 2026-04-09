@@ -13,6 +13,12 @@ export type TutorialTypes = "Locked Tiles" | "Surprise Tile" | "Exclaimer" | "Pu
 
 export type Objective =
   | { type: 'score'; objGoal: number }
+
+  | { type: "boss",
+  objGoal: 1,        // dummy goal
+  bossHp: 500,
+  bossMaxHp: 500,
+  bossColor: "red" }
   | { type: 'words'; objGoal: number; minLength?: number }
   | { type: 'lightsUp'; objGoal: number; tileType: 'bulb' }
   | { type: 'defrost'; objGoal: number; tileType: 'ice' }
@@ -39,6 +45,11 @@ export type LevelData = {
   allowBulbTiles?: boolean;
   warpTurns?: number;
   moves?: number;
+  boss?: {
+    hp: number;
+    maxHp: number;
+    color?: string;
+  };
   dullTurns?: number;
   shouldDullSpawn?: boolean;
   boneTurns?: number;
@@ -5637,6 +5648,28 @@ export const levels: LevelData[] = [
       ["normal", "normal", "ice", "ice", "ice", "ice", "locked", "normal"],
       ["removed", "removed", "ice", "ice", "ice", "ice", "bulb", "removed"],
       ["removed", "removed", "locked", "bulb", "locked", "bulb", "locked", "removed"]
+    ],
+
+  },
+  {
+    id: 242,
+    name: "Level 242",
+    objective: { type: 'score',  objGoal: 8900 },
+    moves: 40,
+     
+    allowHardLetters: false,
+    locked: false,
+    warpTurns: 5,
+    dullTurns: 20,
+    board: [
+      ["infected", "removed", "dull", "normal", "dull", "removed", "removed", "removed"],
+      ["normal", "normal", "normal", "normal", "normal", "dull", "removed", "infected"],
+      ["infected", "normal", "normal", "normal", "normal", "normal", "removed", "normal"],
+      ["normal", "normal", "normal", "dull", "dull", "normal", "removed", "infected"],
+      ["infected", "normal", "normal", "dull", "dull", "normal", "normal", "normal"],
+      ["normal", "removed", "normal", "normal", "normal", "normal", "normal", "infected"],
+      ["infected", "removed", "dull", "normal", "normal", "normal", "normal", "normal"],
+      ["removed", "removed", "removed", "dull", "normal", "dull", "removed", "infected"]
     ],
 
   },

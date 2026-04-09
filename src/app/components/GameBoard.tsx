@@ -12,9 +12,9 @@ import { LevelData } from '@/lib/server/levels';
 import { Info } from 'lucide-react';
 import { MovesDisplay } from './MoveCount';
 import { useRouter } from 'next/navigation';
-import { BossBar } from '../bossImage/BossStats'
+import { BossBar } from '../bossImage/BossStats';
 import { Spectral } from 'next/font/google';
-import { Sparkles } from 'lucide-react';
+import { Sparkles , Sword, RotateCcw, Eraser } from 'lucide-react';
 import { CleanseRain } from '../components/CleanseRain';
 import { AlertCircle } from "lucide-react";
 import { FridgeSVG } from './fridgeSVG';
@@ -86,6 +86,12 @@ type LetterBoardProps = {
   objective?: {
   type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
+
+   // Boss-specific fields (optional)
+   bossHp?: number;
+   bossMaxHp?: number;
+   bossColor?: string;
+  
   tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse')[][];
@@ -158,10 +164,9 @@ const [bookFlipTick, setBookFlipTick] = useState(0);
 const [bookTrigger, setBookTrigger] = useState(0);
 
 
-//Bossfight state 
-const [bossHp, setBossHp] = useState(100);
-const [bossMaxHp] = useState(100);
-const [bossColor, setBossColor] = useState<string>("red");
+const [bossHp, setBossHp] = useState(objective?.bossHp ?? 100);
+const [bossMaxHp] = useState(objective?.bossMaxHp ?? 100);
+const [bossColor, setBossColor] = useState<string>(objective?.bossColor ?? "red");
 
 const isBossLevel = objective?.type === "boss";
 
@@ -217,62 +222,26 @@ function saveProgress(data: { unlockedLevel: number }) {
     setMovesLeft(moves); // reset moves when level changes
   }, [moves]);
 
- // Objective setup
-
 const goal = objective?.objGoal ?? 5;
-
 
 useEffect(() => {
   if (isGameOver) return;
 
-
-  // ✅ WIN FIRST (no movesLeft check)
-   if (
-    (isBossLevel && bossHp <= 0) ||
-    (!isBossLevel && objMet >= goal)
-  ) {
+  // WIN
+  if (objective?.type === 'boss' ? (bossHp <= 0) : (objMet >= goal)) {
     setIsGameOver(true);
     setGameResult("win");
     return;
   }
 
- 
-  
-  if (objMet >= goal) {
-    setIsGameOver(true);
-    setGameResult('win');
-
-    setScore((prev) => prev + movesLeft * 10);
-
-    const progress = loadProgress();
-    const unlocked = progress.unlockedLevel ?? 1;
-    const nextToUnlock = (levelId ?? 1) + 1;
-
-    if (nextToUnlock > unlocked) {
-      saveProgress({ unlockedLevel: nextToUnlock });
-    }
-
-    return;
-  }
-
-  // ❌ ONLY lose if moves are gone AND goal NOT met
- 
-
-   if (movesLeft <= 0) {
-    if (isBossLevel && bossHp > 0) {
-      setIsGameOver(true);
-      setGameResult("fail");
-    }
-
-    if (!isBossLevel && objMet < goal) {
+  // LOSS
+  if (movesLeft <= 0) {
+    if (objective?.type === 'boss' ? bossHp > 0 : objMet < goal) {
       setIsGameOver(true);
       setGameResult("fail");
     }
   }
-
-}, [movesLeft, objMet, goal, bossHp, isBossLevel , isGameOver]);
-
-
+}, [movesLeft, objMet, goal, bossHp, isGameOver, objective]);
 // Automatically hide the popup after 5 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -2123,7 +2092,7 @@ const handleScramble = () => {
     "
   >
 {/* --- Top Bar (Mobile only) --- */}
-    <div className={`${level.difficulty === 'Hard Level' ? 'flex md:hidden justify-between items-center bg-red-950 border border-neutral-800 rounded-lg p-2 mb-2' : 'flex md:hidden justify-between items-center bg-neutral-950 border border-neutral-800 rounded-lg p-2 mb-2'} ${level.difficulty === 'demon'
+<div className={`${level.difficulty === 'Hard Level' ? 'flex md:hidden justify-between items-center bg-red-950 border border-neutral-800 rounded-lg p-2 mb-2' : 'flex md:hidden justify-between items-center bg-neutral-950 border border-neutral-800 rounded-lg p-2 mb-2'} ${level.difficulty === 'demon'
   ? `
     flex md:hidden justify-between items-center
     bg-gradient-to-r from-red-950 via-orange-950 to-red-900
@@ -2196,104 +2165,220 @@ const handleScramble = () => {
 
     {/*  Sidebar */}
     <div
-      className={`${level.difficulty === 'Hard Level' ? "hidden md:flex flex-col justify-between bg-red-750 p-4 rounded-lg border border-red-700 overflow-y-auto space-y-3" : "hidden md:flex flex-col justify-between bg-neutral-950 p-4 rounded-lg border border-neutral-800 overflow-y-auto space-y-3"} ${level.difficulty === 'demon' ? "hidden md:flex flex-col justify-between bg-orange-750 p-4 rounded-lg border border-orange-700 overflow-y-auto space-y-3" : "hidden md:flex flex-col justify-between bg-neutral-950 p-4 rounded-lg border border-neutral-800 overflow-y-auto space-y-3"}`}
-      
-    >
-      <div className="flex flex-col items-start p-1">
-{levelName && (
-  <h2
-    className={`
-      text-lg sm:text-xl font-bold mb-2
-      ${
-        level.difficulty === "demon"
-          ? "text-orange-500 drop-shadow-[0_0_12px_rgba(255,80,0,0.8)] animate-pulse"
-          : level.difficulty === "Hard Level"
-          ? "text-red-600"
-          : "text-yellow-400"
-      }
-    `}
-  >
-    {levelName}
-  </h2>
-)}
-
+  className={`
+    hidden md:flex flex-col justify-between p-4 rounded-lg overflow-y-auto space-y-3
+    ${
+      isBossLevel
+        ? "bg-gradient-to-b from-red-950 via-black to-neutral-950 border border-red-700 shadow-[0_0_25px_rgba(255,0,0,0.4)]"
+        : level.difficulty === "demon"
+        ? "bg-orange-950 border border-orange-700"
+        : level.difficulty === "Hard Level"
+        ? "bg-red-950 border border-red-700"
+        : "bg-neutral-950 border border-neutral-800"
+    }
+  `}
+>
+<div className="flex flex-col items-start p-1">
+    {levelName && (
+      <h2
+        className={`
+          text-lg sm:text-xl font-bold mb-2
+          ${
+            isBossLevel
+              ? "text-red-500 animate-pulse drop-shadow-[0_0_10px_rgba(255,0,0,0.8)]"
+              : level.difficulty === "demon"
+              ? "text-orange-500"
+              : level.difficulty === "Hard Level"
+              ? "text-red-600"
+              : "text-yellow-400"
+          }
+        `}
+      >
+        {isBossLevel ? `BOSSFIGHT ${levelName}`: levelName}
+      </h2>
+    )}
   </div>
-     {/* Words Left Counter + Info Icon */}
-          <div className="flex items-center justify-between bg-neutral-800/70 border border-neutral-700 rounded-lg p-3 mb-2">
-            <p className="text-white text-sm font-semibold">
-            {objective
-      ? `${objective.type === 'words'
-          ? `${objective.minLength}-letter words found`
-          : objective.type === 'score'
-          ? 'Score'
-           : objective.type === 'lightsUp' 
- ? 'Lights turned on'
-           : objective.type === 'collectVelvet' 
-          
 
-          ? `Velvets Squashed`
+ 
+      {/* ===== OBJECTIVE / BOSS HP ===== */}
+  {isBossLevel ? (
+    <div className="bg-black/60 border border-red-800 rounded-lg p-3">
+      <p className="text-red-400 text-xs mb-1 font-semibold tracking-wide">
+        ENEMY
+      </p>
 
-          : objective.type === 'defrost'
-          ? 'Ice cleared'
-          : `Destroy ${objective.tileType} tiles`
-        }: ${objMet}/${objective.objGoal}`
+      {/* HP BAR */}
+      <div className="w-full h-4 bg-neutral-800 rounded overflow-hidden border border-red-900">
+        <div
+          className="h-full bg-gradient-to-r from-red-600 to-red-400 transition-all duration-300"
+          style={{ width: `${(bossHp / bossMaxHp) * 100}%` }}
+        />
+      </div>
 
-      : 'No objective'}
-            </p>
-            
-            <button
-              onClick={() => setShowObjectivePopup(true)}
-              className="text-gray-300 hover:text-white transition"
-              title="Show Objective"
-            >
-              <Info size={18} />
-            </button>
-          </div>
+      <p className="text-center text-xs text-red-300 mt-1 font-bold">
+        {bossHp} / {bossMaxHp} HP
+      </p>
+    </div>
+  ) : (
+    <div className="flex items-center justify-between bg-neutral-800/70 border border-neutral-700 rounded-lg p-3 mb-2">
+      <p className="text-white text-sm font-semibold">
+        {objective
+          ? `${
+              objective.type === "words"
+                ? `${objective.minLength}-letter words found`
+                : objective.type === "score"
+                ? "Score"
+                : objective.type === "lightsUp"
+                ? "Lights turned on"
+                : objective.type === "collectVelvet"
+                ? "Velvets Squashed"
+                : objective.type === "defrost"
+                ? "Ice cleared"
+                : `Destroy ${objective.tileType} tiles`
+            }: ${objMet}/${objective.objGoal}`
+          : "No objective"}
+      </p>
+
+      <button
+        onClick={() => setShowObjectivePopup(true)}
+        className="text-gray-300 hover:text-white transition"
+      >
+        <Info size={18} />
+      </button>
+    </div>
+  )}
+ {/* ===== MOVES ===== */}
 <MovesDisplay movesLeft={movesLeft} />
-         
 
-      {/* Score + Controls */}
-      <div className="flex flex-col gap-3 flex-grow overflow-hidden">
-        <ScoreCounter score={score} />
-        
+{/* ===== SCORE + CONTROLS ===== */}
+<div className="flex flex-col gap-3 flex-grow overflow-hidden">
 
+  <ScoreCounter score={score} />
+
+  {isBossLevel ? (
+    <>
+      {/* ===== BOSS CIRCLE ===== */}
+      <div className="flex justify-center mb-2">
+        <div className="relative w-24 h-24 rounded-full border-4 border-red-700 shadow-[0_0_20px_rgba(255,0,0,0.6)] overflow-hidden">
+          
+          {/* Boss Image */}
+          <img
+          
+            alt="Boss"
+            className="w-full h-full object-cover"
+          />
+
+          {/* Glow overlay */}
+          <div className="absolute inset-0 bg-red-500/10 animate-pulse" />
+        </div>
+      </div>
+
+      {/* ===== COMBAT ICON CONTROLS ===== */}
+      <div className="flex justify-between gap-2">
+
+        {/* CLEAR */}
         <button
           onClick={clearSelection}
-          className="px-4 py-2 bg-orange-900 text-white rounded hover:bg-orange-700 transition"
+          className="flex-1 flex items-center justify-center p-3 rounded-lg bg-orange-900 hover:bg-orange-700 transition shadow-md"
         >
-          Clear Selection
+          <Eraser size={20} />
         </button>
 
-       <button
-  disabled={!isWordValid || movesLeft <= 0 || isGameOver}
-  onClick={handleSubmit}
-  className={`px-4 py-2 rounded transition ${
-    isWordValid && movesLeft > 0 && !isGameOver
-      ? "bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse z-20"
-      : hasImproperExclamator ? "bg-red-800 cursor-not-allowed" : "bg-gray-200 text-white z-20 cursor-not-allowed opacity-60"
-  } `}
->
- {hasImproperExclamator ? 'Exclamator used wrongly!' : 'Submit Word'}
-</button>
-  <button
-  onClick={handleScramble}
-  disabled={movesLeft < 3 || isGameOver}
-  className={`px-4 py-2 rounded transition ${
-    movesLeft > 3 && !isGameOver
-      ? "bg-red-600 hover:bg-red-700 text-white"
-      : "bg-gray-500 text-gray-300 cursor-not-allowed"
-  }`}
->
-  Scramble (-3)
-</button>
+        {/* ATTACK (SUBMIT) */}
+        <button
+          disabled={!isWordValid || movesLeft <= 0 || isGameOver}
+          onClick={handleSubmit}
+          className={`flex-1 flex items-center justify-center p-3 rounded-lg transition ${
+            isWordValid && movesLeft > 0 && !isGameOver
+              ? "bg-red-600 shadow-lg shadow-red-500 animate-pulse"
+              : hasImproperExclamator
+              ? "bg-red-900 cursor-not-allowed"
+              : "bg-gray-600 cursor-not-allowed opacity-60"
+          }`}
+        >
+          <Sword size={22} />
+        </button>
+
+        {/* SCRAMBLE */}
+        <button
+          onClick={handleScramble}
+          disabled={movesLeft < 3 || isGameOver}
+          className={`flex-1 flex items-center justify-center p-3 rounded-lg transition ${
+            movesLeft >= 3 && !isGameOver
+              ? "bg-purple-700 hover:bg-purple-800"
+              : "bg-gray-600 cursor-not-allowed opacity-60"
+          }`}
+        >
+          <RotateCcw size={20} />
+        </button>
+
+      </div>
+
+      {/* OPTIONAL: LABELS */}
+      <div className="flex justify-between text-[10px] text-gray-400 px-1">
+        <span>Clear</span>
+        <span className="text-red-400">Attack</span>
+        <span>Reroll</span>
+      </div>
+    </>
+  ) : (
+    <>
+      {/* ===== NORMAL MODE BUTTONS ===== */}
+      <button
+        onClick={clearSelection}
+        className="px-4 py-2 bg-orange-900 text-white rounded hover:bg-orange-700 transition"
+      >
+        Clear Selection
+      </button>
+
+      <button
+        disabled={!isWordValid || movesLeft <= 0 || isGameOver}
+        onClick={handleSubmit}
+        className={`px-4 py-2 rounded transition ${
+          isWordValid && movesLeft > 0 && !isGameOver
+            ? "bg-green-600 text-white shadow-lg shadow-green-400 animate-pulse"
+            : hasImproperExclamator
+            ? "bg-red-800 cursor-not-allowed"
+            : "bg-gray-500 text-gray-300 cursor-not-allowed"
+        }`}
+      >
+        {hasImproperExclamator
+          ? "Exclamator used wrongly!"
+          : "Submit Word"}
+      </button>
+
+      <button
+        onClick={handleScramble}
+        disabled={movesLeft < 3 || isGameOver}
+        className={`px-4 py-2 rounded transition ${
+          movesLeft >= 3 && !isGameOver
+            ? "bg-red-600 hover:bg-red-700 text-white"
+            : "bg-gray-500 text-gray-300 cursor-not-allowed"
+        }`}
+      >
+        Scramble (-3)
+      </button>
+    </>
+  )}
+
  
+{/* ===== CURRENT WORD (STABLE - NO JITTER) ===== */}
+<div className="hidden md:flex flex-col mt-2">
+  <div className="text-xs text-gray-400 mb-1">Current Word</div>
 
-        {/* Current word (desktop only) */}
-        <div className="hidden md:block flex-1 overflow-auto mt-2">
-          <WordDisplay word={getSelectedWord()} />
-
-         
-        </div>
+  <div
+    className={`
+      h-[30px] w-full
+      rounded-md border border-neutral-700
+      bg-neutral-900/60
+      flex items-center justify-center
+      transition-all duration-200
+      ${getSelectedWord() ? "opacity-100" : "opacity-40"}
+    `}
+  >
+    <WordDisplay word={getSelectedWord()} />
+  </div>
+</div>
 
 
         <div className="hidden md:block flex-1 overflow-auto mt-2">
@@ -2674,10 +2759,25 @@ const fridge = tile?.isFridge
 </div>
 
 
-      {/*  Current Word for Mobile */}
-      <div className="block md:hidden w-full mt-2 text-center absolute top-104">
-        <WordDisplay word={getSelectedWord()} />
-      </div>
+  
+
+{/* ===== CURRENT WORD (STABLE - NO JITTER) ===== */}
+<div className="md:hidden flex-col mt-2">
+  <div className="text-xs text-gray-400 mb-1">Current Word</div>
+
+  <div
+    className={`
+      h-[30px] w-full
+      rounded-md border border-neutral-700
+      bg-neutral-900/60
+      flex items-center justify-center
+      transition-all duration-200
+      ${getSelectedWord() ? "opacity-100" : "opacity-40"}
+    `}
+  >
+    <WordDisplay word={getSelectedWord()} />
+  </div>
+</div>
 
  {/* --- Bottom Bar (Mobile only) --- */}
       <div className="flex md:hidden justify-around items-center w-full mt-10 bg-neutral-900 border border-neutral-800 rounded-lg p-2">

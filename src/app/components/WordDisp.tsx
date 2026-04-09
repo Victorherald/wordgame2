@@ -12,8 +12,8 @@ export function WordDisplay({ word }: WordDisplayProps) {
 
 
   return (
-    <div className="text-white mb-2 text-xl font-bold">
-      Current Word: <span className="text-green-400">{word}</span>
+    <div className="text-white text-xl font-bold">
+    <span className="text-green-400">{word}</span>
     </div>
   );
 }
