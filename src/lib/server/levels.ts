@@ -6027,4 +6027,57 @@ export const levels: LevelData[] = [
     ],
 
   },
+  {
+    id: 259,
+    name: "Level 259",
+    objective: { type: 'score',  objGoal: 8000},
+    moves: 35,
+
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 9,
+    cursedTurns: 50,
+    board: [
+      ["removed", "cursed", "cursed", "cursed", "cursed", "cursed", "cursed", "removed"],
+      ["removed", "cursed", "cursed", "cursed", "cursed", "cursed", "cursed", "removed"],
+      ["removed", "cursed", "cursed", "cursed", "cursed", "cursed", "cursed", "removed"],
+      ["removed", "cursed", "removed", "cursed", "removed", "cursed", "removed", "removed"],
+      ["removed", "removed", "normal", "removed", "normal", "removed", "normal", "removed"],
+      ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+      ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+      ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"]
+    ],
+    groundLayout: [
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'cleanse', 'none', 'cleanse', 'none', 'none', 'none'],
+      ['none', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'none'],
+      ['none', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'none'],
+      ['none', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'none'],
+    ],
+  },
+  {
+    id: 260,
+    name: "Level 260",
+    objective: { type: 'collectVelvet',  objGoal: 4, tileType: 'velvet'},
+    moves: 40,
+
+    allowHardLetters: true,
+    locked: false,
+    lockTurns: 9,
+    cursedTurns: 20,
+    board: [
+      ["velvet", "bookClosed", "removed", "removed", "removed", "removed", "bookClosed", "velvet"],
+      ["bookClosed", "bookOpen", "bookClosed", "normal", "removed", "bookClosed", "bookOpen", "bookClosed"],
+      ["removed", "normal", "bookOpen", "bookClosed", "bookClosed", "bookOpen", "removed", "removed"],
+      ["removed", "removed", "normal", "normal", "normal", "normal", "normal", "removed"],
+      ["removed", "normal", "normal", "normal", "normal", "normal", "removed", "removed"],
+      ["removed", "removed", "bookOpen", "bookClosed", "bookClosed", "normal", "bookOpen", "removed"],
+      ["bookClosed", "bookOpen", "bookClosed", "removed", "normal", "bookClosed", "bookOpen", "bookClosed"],
+      ["velvet", "bookClosed", "removed", "removed", "removed", "removed", "bookClosed", "velvet"]
+    ],
+
+  },
 ];
