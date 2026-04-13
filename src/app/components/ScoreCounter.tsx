@@ -11,7 +11,7 @@ export function ScoreCounter({ score, highScore }: ScoreCounterProps) {
   return (
     <div
       className="
-        mb-3 text-white font-bold flex flex-col sm:flex-row sm:gap-2
+         text-white font-bold flex flex-col sm:flex-row sm:gap-2
         text-base sm:text-xl md:text-2xl
         items-center justify-between sm:justify-start
       "

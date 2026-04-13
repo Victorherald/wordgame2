@@ -2092,73 +2092,106 @@ const handleScramble = () => {
     "
   >
 {/* --- Top Bar (Mobile only) --- */}
-<div className={`${level.difficulty === 'Hard Level' ? 'flex md:hidden justify-between items-center bg-red-950 border border-neutral-800 rounded-lg p-2 mb-2' : 'flex md:hidden justify-between items-center bg-neutral-950 border border-neutral-800 rounded-lg p-2 mb-2'} ${level.difficulty === 'demon'
-  ? `
-    flex md:hidden justify-between items-center
-    bg-gradient-to-r from-red-950 via-orange-950 to-red-900
-    border border-red-700
+<div
+  className={`
+    md:hidden
+    flex flex-col gap-2
+    bg-neutral-950 border border-neutral-800
     rounded-lg p-2 mb-2
-    text-red-100
-    shadow-lg shadow-red-900/60
-    animate-pulse
-    relative overflow-hidden
-  `
-  : `
-    flex md:hidden justify-between items-center
-    bg-neutral-950
-    border border-neutral-800
-    rounded-lg p-2 mb-2
-  `
-}
-`}>
-      <div className="text-xs sm:text-sm font-semibold text-white">
-        {levelName ? levelName : "Level"}
-      </div>
-      <div className="text-xs sm:text-sm text-white font-semibold">
-        Moves: {movesLeft}
-      </div>
-      <div   onClick={() => setShowObjectivePopup(true)} className="text-xs sm:text-sm text-yellow-400 font-semibold flex items-center gap-1">
-         {objective
-      ? `${objective.type === 'words'
-          ? 'Words Found'
-          : objective.type === 'lightsUp' 
-          ? `Lights Up`
-          : objective.type ===  'defrost'
-          ? ' Defrost'
-          : objective.type === 'score'
-           ? 'Score'
-          : objective.type === 'collectVelvet'
-          ? 'Velvets Crushed'
-          : `Destroy ${objective.tileType} tiles`
-        }: ${objMet}/${objective.objGoal}`
-      : 'No objective'}
-      
-      </div>
-      
+  `}
+>
+  {/* ===== TOP ROW ===== */}
+  <div className="flex justify-between items-center">
+    <div className="text-xs font-semibold text-white">
+      {isBossLevel ? `BOSS: ${levelName}` : levelName || "Level"}
     </div>
-<div className="flex md:hidden w-full items-center justify-between gap-3 px-2">
 
-{isBossLevel && (
-  <BossBar hp={bossHp} maxHp={bossMaxHp} color={bossColor} />
-)}
-
-  {/* Score */}
-  <div className="flex-shrink-0">
-    <ScoreCounter score={score} />
+    <div className="flex items-center gap-2">
+      {/* Sword Moves */}
+      {isBossLevel ? (
+        <>
+        <Sword size={14} className="text-red-500" />
+        <span className="text-white text-xs font-bold">{movesLeft}</span>
+        </>
+      ): (
+        <span className="text-orange-400 text-xs font-bold">Moves: {movesLeft}</span>
+      )}
+      <div className="flex items-center gap-1 bg-black/60 px-2 py-1 rounded">
+       
+      </div>
+    </div>
   </div>
 
-  {/* Scramble button */}
-  <button
-    onClick={handleScramble}
-    disabled={movesLeft < 3 || isGameOver}
-    className={`flex-shrink-0 px-3 py-2 text-sm rounded transition ${
-      movesLeft >= 3 && !isGameOver
-        ? "bg-red-600 text-white hover:bg-red-700"
-        : "bg-gray-500 text-gray-300 cursor-not-allowed"
-    }`}
-  >
-    Scramble (-3)
-  </button>
+  {/* ===== BOSS BAR OR OBJECTIVE ===== */}
+  {isBossLevel ? (
+    <div className="flex items-center gap-2">
+      
+      {/* 👹 BOSS ICON */}
+      <div className="w-8 h-8 rounded-full border-2 border-red-700 overflow-hidden flex-shrink-0">
+        <img
+          src="/boss.png" // <-- replace with your boss asset
+          alt="Boss"
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+      {/* ❤️ HP BAR */}
+      <div className="relative flex-1 h-3 bg-neutral-800 rounded overflow-hidden border border-red-900">
+        <div
+          className="h-full bg-red-600 transition-all duration-300"
+          style={{ width: `${(bossHp / bossMaxHp) * 100}%` }}
+        />
+
+        {/* HP TEXT INSIDE */}
+        <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white">
+          {bossHp}/{bossMaxHp}
+        </span>
+      </div>
+    </div>
+  ) : (
+    <div
+      onClick={() => setShowObjectivePopup(true)}
+      className="text-xs text-yellow-400 font-semibold"
+    >
+      {objective
+        ? `${
+            objective.type === "words"
+              ? "Words"
+              : objective.type === "lightsUp"
+              ? "Lights"
+              : objective.type === "defrost"
+              ? "Ice"
+              : objective.type === "score"
+              ? "Score"
+              : objective.type === "collectVelvet"
+              ? "Velvets"
+              : `Destroy ${objective.tileType}`
+          }: ${objMet}/${objective.objGoal}`
+        : "No objective"}
+    </div>
+  )}
+
+  {/* ===== SECOND ROW ===== */}
+  <div className="flex items-center justify-between gap-2">
+
+    {/* SCORE */}
+    <div className="text-green-400 font-bold text-sm">
+      {score}
+    </div>
+
+    {/* SCRAMBLE */}
+    <button
+      onClick={handleScramble}
+      disabled={movesLeft < 3 || isGameOver}
+      className={`px-3 py-1 text-xs rounded transition ${
+        movesLeft >= 3 && !isGameOver
+          ? "bg-red-600 text-white"
+          : "bg-gray-500 text-gray-300 cursor-not-allowed"
+      }`}
+    >
+      Scramble (-3)
+    </button>
+  </div>
 </div>
 
 
@@ -2220,7 +2253,7 @@ const handleScramble = () => {
       </p>
     </div>
   ) : (
-    <div className="flex items-center justify-between bg-neutral-800/70 border border-neutral-700 rounded-lg p-3 mb-2">
+    <div className="flex items-center justify-between bg-neutral-800/70 border border-neutral-700 rounded-lg p-2 mb-2">
       <p className="text-white text-sm font-semibold">
         {objective
           ? `${
