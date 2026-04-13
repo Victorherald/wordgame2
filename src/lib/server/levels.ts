@@ -5917,4 +5917,114 @@ export const levels: LevelData[] = [
     ],
 
   },
+  {
+    id: 254,
+    name: "Level 254",
+    objective: { type: 'destroy',  objGoal: 18, tileType: 'warped'},
+    moves: 30,
+  
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 11,
+    warpTurns: 25,
+    board: [
+      ["removed", "removed", "normal", "removed", "warped", "warped", "removed", "removed"],
+      ["removed", "removed", "normal", "removed", "warped", "warped", "removed", "removed"],
+      ["warped", "warped", "locked", "normal", "normal", "normal", "ice", "warped"],
+      ["warped", "warped", "normal", "locked", "normal", "normal", "removed", "removed"],
+      ["removed", "removed", "normal", "normal", "locked", "normal", "warped", "warped"],
+      ["warped", "ice", "normal", "normal", "normal", "locked", "warped", "warped"],
+      ["removed", "removed", "warped", "warped", "removed", "normal", "removed", "removed"],
+      ["removed", "removed", "warped", "warped", "removed", "normal", "removed", "removed"]
+    ],
+
+  },
+  {
+    id: 255,
+    name: "Level 255",
+    objective: { type: 'score',  objGoal: 7000},
+    moves: 60,
+    difficulty: 'Hard Level',
+    allowHardLetters: false,
+    locked: false,
+    cursedTurns: 45,
+    warpTurns: 25,
+    board: [
+      ["removed", "cursed", "bulb", "removed", "removed", "bulb", "cursed", "removed"],
+      ["removed", "bulb", "cursed", "removed", "removed", "cursed", "bulb", "removed"],
+      ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+      ["normal", "normal", "normal", "infected", "infected", "normal", "normal", "normal"],
+      ["cursed", "normal", "normal", "infected", "infected", "normal", "normal", "cursed"],
+      ["normal", "cursed", "cursed", "normal", "normal", "cursed", "cursed", "normal"],
+      ["removed", "removed", "bulb", "cursed", "cursed", "bulb", "removed", "removed"],
+      ["removed", "removed", "removed", "bulb", "bulb", "removed", "removed", "removed"]
+    ],
+
+  },
+  {
+    id: 256,
+    name: "Level 256",
+    objective: { type: 'score',  objGoal: 14000},
+    moves: 60,
+
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 14,
+    warpTurns: 25,
+    board: [
+      ["mystery", "removed", "removed", "locked", "normal", "removed", "removed", "normal"],
+      ["mystery", "removed", "removed", "normal", "locked", "removed", "removed", "normal"],
+      ["mystery", "mystery", "mystery", "locked", "normal", "removed", "removed", "normal"],
+      ["mystery", "mystery", "mystery", "normal", "locked", "removed", "removed", "normal"],
+      ["normal", "removed", "removed", "locked", "normal", "mystery", "mystery", "mystery"],
+      ["normal", "removed", "removed", "normal", "locked", "mystery", "mystery", "mystery"],
+      ["normal", "removed", "removed", "locked", "normal", "removed", "removed", "mystery"],
+      ["normal", "removed", "removed", "normal", "locked", "removed", "removed", "mystery"]
+    ],
+
+  },
+  {
+    id: 257,
+    name: "Level 257",
+    objective: { type: 'lightsUp',  objGoal: 10, tileType: 'bulb'},
+    moves: 35,
+
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 9,
+    dullTurns: 25,
+    board: [
+      ["dull", "bulb", "removed", "removed", "normal", "removed", "dull", "bulb"],
+      ["bulb", "bulb", "ice", "normal", "normal", "removed", "dull", "dull"],
+      ["removed", "removed", "removed", "normal", "normal", "removed", "locked", "removed"],
+      ["normal", "normal", "normal", "normal", "normal", "locked", "locked", "removed"],
+      ["removed", "normal", "normal", "normal", "normal", "locked", "locked", "normal"],
+      ["removed", "ice", "removed", "normal", "normal", "removed", "removed", "removed"],
+      ["bulb", "bulb", "removed", "normal", "normal", "ice", "bulb", "bulb"],
+      ["dull", "bulb", "removed", "normal", "removed", "removed", "bulb", "dull"]
+    ],
+
+  },
+  {
+    id: 258,
+    name: "Level 258",
+    objective: { type: 'score',  objGoal: 3000},
+    moves: 35,
+    difficulty: 'demon',
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 9,
+    cursedTurns: 20,
+    board: [
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["removed", "removed", "mystery", "mystery", "removed", "removed", "cursed", "removed"],
+      ["removed", "cursed", "exclamator", "normal", "removed", "removed", "exclamator", "removed"],
+      ["removed", "exclamator", "cursed", "normal", "cursed", "exclamator", "cursed", "removed"],
+      ["removed", "cursed", "exclamator", "cursed", "normal", "cursed", "exclamator", "removed"],
+      ["removed", "exclamator", "removed", "removed", "normal", "exclamator", "cursed", "removed"],
+      ["removed", "cursed", "removed", "removed", "mystery", "mystery", "removed", "removed"],
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"]
+    ],
+
+  },
 ];

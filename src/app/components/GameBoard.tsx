@@ -1405,7 +1405,7 @@ if (tile.isDull) return;
 
       
   
- if (wordsIncludesCursed) points -= 100;
+ if (wordsIncludesCursed) points -= 240;
 
       if(tile.letter?.includes("QU")) points += 300;
 
@@ -1664,7 +1664,7 @@ if (boneUsed) {
 
   const validNeighbors = directions
     .map(([dr, dc]) => ({ r: row + dr, c: col + dc }))
-    .filter(({ r, c }) => grid[r]?.[c] && !grid[r][c].isRemoved);
+    .filter(({ r, c }) => grid[r]?.[c] && !grid[r][c].isRemoved && !grid[r][c].isInfected);
 
   if (validNeighbors.length > 0) {
     const chosen = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
@@ -1726,6 +1726,7 @@ if (infectedSources.length > 0) {
         !t.isDull  &&
         !t.isBook &&
         !t.isVelvet &&
+        !t.isBone &&
         !t.isWarped       // dull tiles immune
         && !t.isLightBulb
         &&  !t.isBulbOn &&
@@ -1780,7 +1781,7 @@ for (let r = 0; r < rows; r++) {
           isRipe: true,
           isStationary: false,
           boneTurns: level?.boneRipeTurns ?? 3,
-          letter: "B",
+          ...generateRandomTile(level?.allowHardLetters ?? true),
           rarity: "gold",
         };
       }
