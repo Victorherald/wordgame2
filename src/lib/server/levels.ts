@@ -11,26 +11,21 @@ export type GemTiles = "purple"
 export type TutorialTypes = "Locked Tiles" | "Surprise Tile" | "Exclaimer" | "Purifiers" | "Burning Tiles" | "Poisoned Tile" | "Warped Tiles" | "Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" | "Flippers";
 
 
-type SingleObjective = {
+type Objective = {
   type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
 
-  objGoal?: number; // 👈 important (boss won't use this)
 
-  bossHp?: number;
-  bossMaxHp?: number;
+  
+  bossHp?: number | undefined;
+  bossMaxHp?: number | undefined;
   bossColor?: string;
-
+  objGoal: number;
   tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" | "velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse')[][];
 };
 
-type Objective =
-  | SingleObjective
-  | {
-      type: "multi";
-      objectives: SingleObjective[];
-    };
+
 
 export type LevelData = {
   id: number;

@@ -2094,15 +2094,35 @@ const handleScramble = () => {
 {/* --- Top Bar (Mobile only) --- */}
 <div
   className={`
-    md:hidden
-    flex flex-col gap-2
-    bg-neutral-950 border border-neutral-800
-    rounded-lg p-2 mb-2
+    md:hidden flex flex-col gap-2 rounded-lg p-2 mb-2 border
+
+    ${
+      isBossLevel
+        ? "bg-gradient-to-r from-red-950 via-black to-red-900 border-red-700 shadow-lg shadow-red-900/60"
+        : level.difficulty === "demon"
+        ? "bg-gradient-to-r from-red-950 via-orange-950 to-red-900 border-red-700 text-red-100 shadow-lg shadow-red-900/60 animate-pulse"
+        : level.difficulty === "Hard Level"
+        ? "bg-red-950 border-red-700"
+        : "bg-neutral-950 border-neutral-800"
+    }
   `}
 >
   {/* ===== TOP ROW ===== */}
   <div className="flex justify-between items-center">
-    <div className="text-xs font-semibold text-white">
+    <div
+      className={`
+        text-xs font-bold
+        ${
+          isBossLevel
+            ? "text-red-400"
+            : level.difficulty === "demon"
+            ? "text-orange-300"
+            : level.difficulty === "Hard Level"
+            ? "text-red-400"
+            : "text-white"
+        }
+      `}
+    >
       {isBossLevel ? `BOSS: ${levelName}` : levelName || "Level"}
     </div>
 
@@ -2110,15 +2130,14 @@ const handleScramble = () => {
       {/* Sword Moves */}
       {isBossLevel ? (
         <>
-        <Sword size={14} className="text-red-500" />
-        <span className="text-white text-xs font-bold">{movesLeft}</span>
+          <Sword size={14} className="text-red-500" />
+          <span className="text-white text-xs font-bold">{movesLeft}</span>
         </>
-      ): (
-        <span className="text-orange-400 text-xs font-bold">Moves: {movesLeft}</span>
+      ) : (
+        <span className="text-orange-400 text-xs font-bold">
+          Moves: {movesLeft}
+        </span>
       )}
-      <div className="flex items-center gap-1 bg-black/60 px-2 py-1 rounded">
-       
-      </div>
     </div>
   </div>
 
@@ -2129,7 +2148,7 @@ const handleScramble = () => {
       {/* 👹 BOSS ICON */}
       <div className="w-8 h-8 rounded-full border-2 border-red-700 overflow-hidden flex-shrink-0">
         <img
-          src="/boss.png" // <-- replace with your boss asset
+          src="/boss.png"
           alt="Boss"
           className="w-full h-full object-cover"
         />
@@ -2138,11 +2157,20 @@ const handleScramble = () => {
       {/* ❤️ HP BAR */}
       <div className="relative flex-1 h-3 bg-neutral-800 rounded overflow-hidden border border-red-900">
         <div
-          className="h-full bg-red-600 transition-all duration-300"
+          className={`
+            h-full transition-all duration-300
+            ${
+              bossHp / bossMaxHp > 0.6
+                ? "bg-green-500"
+                : bossHp / bossMaxHp > 0.3
+                ? "bg-yellow-500"
+                : "bg-red-600"
+            }
+          `}
           style={{ width: `${(bossHp / bossMaxHp) * 100}%` }}
         />
 
-        {/* HP TEXT INSIDE */}
+        {/* HP TEXT */}
         <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white">
           {bossHp}/{bossMaxHp}
         </span>
@@ -2151,7 +2179,7 @@ const handleScramble = () => {
   ) : (
     <div
       onClick={() => setShowObjectivePopup(true)}
-      className="text-xs text-yellow-400 font-semibold"
+      className="text-xs font-semibold text-yellow-400"
     >
       {objective
         ? `${
@@ -2175,7 +2203,18 @@ const handleScramble = () => {
   <div className="flex items-center justify-between gap-2">
 
     {/* SCORE */}
-    <div className="text-green-400 font-bold text-sm">
+    <div
+      className={`
+        font-bold text-sm
+        ${
+          level.difficulty === "demon"
+            ? "text-red-300"
+            : level.difficulty === "Hard Level"
+            ? "text-orange-400"
+            : "text-green-400"
+        }
+      `}
+    >
       {score}
     </div>
 
@@ -2185,7 +2224,7 @@ const handleScramble = () => {
       disabled={movesLeft < 3 || isGameOver}
       className={`px-3 py-1 text-xs rounded transition ${
         movesLeft >= 3 && !isGameOver
-          ? "bg-red-600 text-white"
+          ? "bg-red-600 text-white hover:bg-red-700"
           : "bg-gray-500 text-gray-300 cursor-not-allowed"
       }`}
     >
