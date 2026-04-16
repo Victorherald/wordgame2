@@ -8,10 +8,10 @@ export type Difficulty = "Hard Level" | "demon";
 
 export type GemTiles = "purple"
 
-export type TutorialTypes = "Locked Tiles" | "Surprise Tile" | "Exclaimer" | "Purifiers" | "Burning Tiles" | "Poisoned Tile" | "Warped Tiles" | "Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" | "Flippers";
+export type TutorialTypes = "Locked Tiles" | "Ethereal Tiles" | "Surprise Tile" | "Exclaimer" | "Purifiers" | "Burning Tiles" | "Poisoned Tile" | "Warped Tiles" | "Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" | "Flippers";
 
 
-type Objective = {
+type SingleObjective = {
   type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
 
 
@@ -25,7 +25,12 @@ type Objective = {
   groundLayout?: ('none' | 'cleanse')[][];
 };
 
-
+type Objective =
+  | SingleObjective
+  | {
+      type: "multi";
+      objectives: SingleObjective[];
+    };
 
 export type LevelData = {
   id: number;
@@ -637,7 +642,7 @@ export const levels: LevelData[] = [
   {
     id: 28,
     name: "Level 28",
-    objective: { type: 'score', objGoal: 10000 },
+    objective: { type: 'score', objGoal: 8000 },
     locked: false,
     moves: 45,
     allowHardLetters: false,
@@ -844,7 +849,7 @@ export const levels: LevelData[] = [
   {
     id: 38,
     name: "Level 38",
-    objective: { type: 'words', objGoal: 1, minLength: 7 },
+    objective: { type: 'words', objGoal: 1, minLength: 6 },
     moves: 30,
     allowHardLetters: false,
     locked: false,
@@ -1749,11 +1754,12 @@ export const levels: LevelData[] = [
   {
     id: 79,
     name: "Level 79",
-    objective: { type: 'score', objGoal: 10000 },
+    objective: { type: 'score', objGoal: 6000 },
     moves: 40,
     allowHardLetters: false,
     locked: false,
     cursedTurns: 15,
+   
     allowBulbTiles: true,
     board: [
       ["removed", "removed", "normal", "normal", "removed", "normal", "normal", "removed"],
@@ -1824,7 +1830,7 @@ export const levels: LevelData[] = [
     allowHardLetters: false,
     locked: false,
     lockTurns: 13,
-    dullTurns: 5,
+    dullTurns: 15,
     allowBulbTiles: true,
     board: [
       ["removed", "normal", "removed", "normal", "removed", "normal", "removed", "normal"],
@@ -1957,7 +1963,7 @@ export const levels: LevelData[] = [
   {
     id: 88,
     name: "Level 88",
-    objective: { type: 'score', objGoal: 9000 },
+    objective: { type: 'score', objGoal: 4000 },
 
     moves: 30,
     allowHardLetters: true,
@@ -1982,7 +1988,7 @@ export const levels: LevelData[] = [
   {
     id: 89,
     name: "Level 89",
-    objective: { type: 'score', objGoal: 14000 },
+    objective: { type: 'score', objGoal: 8000 },
 
     moves: 30,
     difficulty: 'Hard Level',
@@ -2178,9 +2184,9 @@ export const levels: LevelData[] = [
   {
     id: 97,
     name: "Level 97",
-    objective: { type: 'words', minLength: 6, objGoal: 3 },
+    objective: { type: 'words', minLength: 4, objGoal: 3 },
 
-    moves: 50,
+    moves: 20,
     allowHardLetters: false,
     locked: false,
     dullTurns: 17,
@@ -2541,7 +2547,7 @@ export const levels: LevelData[] = [
   {
     id: 112,
     name: "Level 112",
-    objective: { type: 'score', objGoal: 8000 },
+    objective: { type: 'score', objGoal: 3000 },
 
     moves: 30,
     allowHardLetters: false,
@@ -6080,4 +6086,286 @@ export const levels: LevelData[] = [
     ],
 
   },
+   {
+    id: 261,
+    name: "Level 261",
+    objective: { type: 'destroy',  objGoal: 15, tileType: 'bone'},
+    moves: 45,
+     
+    allowHardLetters: false,
+    locked: false,
+    dullTurns: 20,
+    boneTurns: 3,
+    cursedTurns: 20,
+    board: [
+      ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"],
+      ["normal", "bone", "bone", "bone", "normal", "normal", "normal", "normal"],
+      ["normal", "bone", "dull", "bone", "bone", "bone", "normal", "normal"],
+      ["removed", "bone", "bone", "bone", "dull", "bone", "normal", "removed"],
+      ["removed", "normal", "bone", "dull", "bone", "bone", "bone", "removed"],
+      ["normal", "normal", "bone", "bone", "bone", "dull", "bone", "normal"],
+      ["normal", "normal", "normal", "normal", "bone", "bone", "bone", "normal"],
+      ["normal", "normal", "normal", "removed", "removed", "normal", "normal", "normal"]    ],
+      tutorialTileType: 'Ethereal Tiles',
+      tutorialMessage: "Ethereal tiles starts dead for a certain amount of turns, When the dead tile ran out of turns, it becomes Ethereal and usable for a certain amount of turns, When used, the regular tile next to it gets undead, Also if not used till turn runs out, it gets dead again!",
+      tutorial: {}
+  },
+   {
+    id: 262,
+    name: "Level 262",
+    objective: { type: 'score',  objGoal: 25000},
+    moves: 50,
+       
+    allowHardLetters: false,
+    locked: false,
+    boneTurns: 8,
+    cursedTurns: 20,
+    board: [
+      ["removed", "removed", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["removed", "removed", "bone", "normal", "bone", "normal", "normal", "normal"],
+      ["ice", "bone", "normal", "bone", "normal", "bone", "normal", "normal"],
+      ["ice", "ice", "bone", "removed", "removed", "normal", "bone", "normal"],
+      ["ice", "bone", "normal", "removed", "removed", "bone", "normal", "normal"],
+      ["ice", "ice", "bone", "normal", "bone", "normal", "bone", "normal"],
+      ["ice", "ice", "ice", "bone", "ice", "bone", "removed", "removed"],
+      ["ice", "ice", "ice", "ice", "ice", "ice", "removed", "removed"]   ],
+
+  },
+  {
+    id: 263,
+    name: "Level 263",
+    objective: { type: 'destroy',  objGoal: 3, tileType: 'flippers'},
+    moves: 35,
+
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 9,
+    cursedTurns: 20,
+    board: [
+      ["normal", "normal", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["normal", "normal", "removed", "normal", "normal", "removed", "removed", "removed"],
+      ["normal", "normal", "removed", "normal", "normal", "removed", "normal", "normal"],
+      ["normal", "normal", "removed", "normal", "normal", "removed", "normal", "normal"],
+      ["bone", "bone", "removed", "normal", "normal", "removed", "normal", "normal"],
+      ["bone", "bookOpen", "removed", "bone", "bone", "removed", "normal", "normal"],
+      ["removed", "removed", "removed", "bone", "bookClosed", "removed", "bone", "bone"],
+      ["removed", "removed", "removed", "removed", "removed", "removed", "bone", "bookOpen"]
+    ],
+
+  },
+   {
+   id: 264,
+    name: "Level 264",
+    objective: { type: 'lightsUp',  objGoal: 3, tileType: 'bulb'},
+    moves: 30,
+
+    allowHardLetters: false,
+    locked: false,
+    lockTurns: 9,
+    cursedTurns: 20,
+    board: [
+      ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["removed", "normal", "removed", "normal", "normal", "normal", "removed", "normal"],
+      ["removed", "normal", "locked", "removed", "normal", "removed", "locked", "normal"],
+      ["removed", "normal", "ice", "bulb", "normal", "bulb", "ice", "normal"],
+      ["removed", "normal", "removed", "removed", "removed", "removed", "removed", "normal"],
+      ["removed", "normal", "normal", "locked", "bulb", "ice", "normal", "normal"],
+      ["removed", "normal", "normal", "normal", "removed", "normal", "normal", "normal"],
+      ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+    ],
+
+  },
+  {
+    id: 265,
+     name: "Level 265",
+     objective: { type: 'destroy',  objGoal: 8, tileType: 'warped'},
+     moves: 48,
+ 
+     allowHardLetters: false,
+     locked: false,
+     boneTurns: 7,
+     warpTurns: 30,
+     board: [
+      ["warped", "bone", "warped", "removed", "warped", "removed", "warped", "bone"],
+      ["bone", "removed", "normal", "removed", "normal", "removed", "bone", "normal"],
+      ["normal", "removed", "normal", "removed", "normal", "bone", "normal", "bone"],
+      ["bone", "removed", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "removed", "bone"],
+      ["bone", "normal", "bone", "normal", "removed", "normal", "removed", "normal"],
+      ["normal", "bone", "removed", "normal", "removed", "normal", "removed", "bone"],
+      ["bone", "warped", "removed", "warped", "removed", "warped", "bone", "warped"]
+     ],
+ 
+   },
+   {
+    id: 266,
+     name: "Level 266",
+     objective: { type: 'score',  objGoal: 5040},
+     moves: 25,
+ 
+     allowHardLetters: false,
+     locked: false,
+     boneTurns: 7,
+     warpTurns: 30,
+     board: [
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "removed", "normal", "removed", "normal", "normal", "removed", "normal"],
+      ["normal", "normal", "infected", "infected", "infected", "infected", "normal", "normal"],
+      ["normal", "normal", "infected", "removed", "removed", "infected", "removed", "normal"],
+      ["normal", "removed", "infected", "removed", "removed", "infected", "normal", "normal"],
+      ["normal", "normal", "infected", "infected", "infected", "infected", "normal", "normal"],
+      ["normal", "removed", "normal", "normal", "removed", "normal", "removed", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+     ],
+ 
+   },
+   {
+    id: 267,
+     name: "Level 267",
+     objective: { type: 'score',  objGoal: 50000},
+     moves: 60,
+     difficulty: "Hard Level",
+     allowHardLetters: false,
+     locked: false,
+     boneTurns: 6,
+     warpTurns: 15,
+     dullTurns: 40,
+     cursedTurns: 40 ,
+     board: [
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "bone", "bone", "bone", "bone", "bone", "bone", "normal"],
+      ["normal", "bone", "dull", "dull", "dull", "dull", "bone", "normal"],
+      ["normal", "bone", "bone", "warped", "cursed", "bone", "bone", "normal"],
+      ["normal", "normal", "bone", "cursed", "warped", "bone", "normal", "normal"],
+      ["normal", "normal", "bone", "warped", "cursed", "bone", "normal", "normal"],
+      ["normal", "normal", "bone", "bone", "bone", "bone", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+     ],
+ 
+   },
+   {
+    id: 268,
+     name: "Level 268",
+     objective: { type: 'destroy',  objGoal: 50, tileType: 'bone'},
+     moves: 55,
+ 
+     allowHardLetters: false,
+     locked: false,
+     boneTurns: 2,
+     boneRipeTurns: 2,
+     warpTurns: 15,
+     dullTurns: 40,
+     cursedTurns: 40 ,
+     board: [
+      ["bone", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["bone", "normal", "bone", "bone", "bone", "normal", "bone", "bone"],
+      ["bone", "normal", "bone", "mystery", "bone", "normal", "bone", "mystery"],
+      ["bone", "normal", "bone", "normal", "bone", "normal", "bone", "normal"],
+      ["bone", "normal", "bone", "normal", "bone", "normal", "bone", "normal"],
+      ["bone", "mystery", "bone", "normal", "bone", "mystery", "bone", "normal"],
+      ["bone", "normal", "bone", "normal", "bone", "bone", "bone", "normal"],
+      ["bone", "bone", "bone", "normal", "normal", "normal", "normal", "normal"]
+     ],
+ 
+   },
+   {
+    id: 269,
+     name: "Level 269",
+     objective: { type: 'lightsUp',  objGoal: 4, tileType: 'bulb'},
+     moves: 40,
+ 
+     allowHardLetters: false,
+     locked: false,
+     boneTurns: 2,
+     boneRipeTurns: 2,
+     warpTurns: 15,
+     dullTurns: 40,
+     cursedTurns: 40 ,
+     board: [
+      ["normal", "normal", "removed", "removed", "removed", "removed", "normal", "normal"],
+      ["normal", "exclamator", "normal", "removed", "removed", "normal", "exclamator", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+      ["removed", "removed", "removed", "exclamator", "exclamator", "removed", "removed", "removed"],
+      ["normal", "exclamator", "bulb", "bone", "bone", "bulb", "exclamator", "normal"],
+      ["normal", "exclamator", "bookClosed", "bone", "bone", "bookClosed", "exclamator", "normal"],
+      ["normal", "exclamator", "removed", "bulb", "bulb", "removed", "exclamator", "normal"]
+     ],
+ 
+   },
+   {
+    id: 270,
+     name: "Level 270",
+     objective: { type: 'destroy',  objGoal:25, tileType: 'dull'},
+     moves: 30,
+     difficulty: 'Hard Level',
+     allowHardLetters: false,
+     locked: false,
+     boneTurns: 2,
+     boneRipeTurns: 2,
+     warpTurns: 15,
+     dullTurns: 40,
+     cursedTurns: 40 ,
+     board: [
+      ["fire", "removed", "fire", "removed", "removed", "fire", "removed", "fire"],
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["dull", "dull", "dull", "removed", "removed", "dull", "dull", "dull"],
+      ["dull", "dull", "dull", "removed", "removed", "dull", "dull", "dull"],
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["dull", "dull", "dull", "removed", "removed", "dull", "dull", "dull"],
+      ["dull", "dull", "dull", "removed", "removed", "dull", "dull", "dull"],
+      ["dull", "dull", "dull", "removed", "removed", "dull", "dull", "dull"]
+     ],
+ 
+   },
+   {
+    id: 271,
+     name: "Level 271",
+     objective: { type: 'words',  objGoal: 10, minLength: 4},
+     moves: 45,
+   
+     allowHardLetters: false,
+     locked: false,
+     boneTurns: 2,
+     boneRipeTurns: 2,
+     warpTurns: 15,
+     dullTurns: 40,
+     cursedTurns: 40 ,
+     board: [
+      ["removed", "normal", "mystery", "mystery", "mystery", "mystery", "mystery", "removed"],
+      ["removed", "normal", "normal", "infected", "infected", "normal", "normal", "removed"],
+      ["mystery", "normal", "mystery", "mystery", "mystery", "mystery", "normal", "mystery"],
+      ["mystery", "infected", "mystery", "mystery", "mystery", "mystery", "infected", "mystery"],
+      ["mystery", "infected", "mystery", "mystery", "mystery", "mystery", "infected", "mystery"],
+      ["mystery", "normal", "mystery", "mystery", "mystery", "mystery", "normal", "mystery"],
+      ["removed", "normal", "normal", "infected", "infected", "normal", "normal", "removed"],
+      ["removed", "normal", "mystery", "mystery", "mystery", "mystery", "mystery", "removed"]
+     ],
+ 
+   },
+   {
+    id: 272,
+     name: "Level 272",
+     objective: { type: 'lightsUp',  objGoal: 4,tileType: 'bulb'},
+     moves: 30,
+   
+     allowHardLetters: false,
+     locked: false,
+     boneTurns: 2,
+     boneRipeTurns: 2,
+     warpTurns: 15,
+     lockTurns: 8,
+     cursedTurns: 40 ,
+     board: [
+      ["normal", "normal", "normal", "removed", "removed", "removed", "ice", "ice"],
+      ["normal", "bulb", "locked", "normal", "removed", "ice", "bulb", "ice"],
+      ["removed", "locked", "locked", "normal", "ice", "ice", "ice", "ice"],
+      ["removed", "removed", "normal", "locked", "normal", "ice", "normal", "removed"],
+      ["removed", "normal", "ice", "normal", "locked", "normal", "removed", "removed"],
+      ["ice", "ice", "ice", "ice", "ice", "locked", "locked", "removed"],
+      ["ice", "bulb", "ice", "removed", "normal", "locked", "bulb", "normal"],
+      ["ice", "ice", "removed", "removed", "removed", "normal", "normal", "normal"]
+     ],
+ 
+   },
 ];

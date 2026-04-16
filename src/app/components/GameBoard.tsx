@@ -1664,7 +1664,22 @@ if (boneUsed) {
 
   const validNeighbors = directions
     .map(([dr, dc]) => ({ r: row + dr, c: col + dc }))
-    .filter(({ r, c }) => grid[r]?.[c] && !grid[r][c].isRemoved && !grid[r][c].isInfected);
+    .filter(({ r, c }) => grid[r]?.[c] 
+    && !grid[r][c].isRemoved 
+    && !grid[r][c].isInfected
+    && !grid[r][c].isDull
+    && !grid[r][c].isFire
+    && !grid[r][c].isBook
+    && !grid[r][c].isVelvet
+    && !grid[r][c].isBone
+    && !grid[r][c].isWarped
+    && !grid[r][c].isLightBulb
+    && !grid[r][c].isBulbOn
+    && !grid[r][c].isCursed
+    && !grid[r][c].isMystery);
+
+   
+     
 
   if (validNeighbors.length > 0) {
     const chosen = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
