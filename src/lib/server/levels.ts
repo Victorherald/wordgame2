@@ -11,8 +11,8 @@ export type GemTiles = "purple"
 export type TutorialTypes = "Locked Tiles" | "Ethereal Tiles" | "Surprise Tile" | "Exclaimer" | "Purifiers" | "Burning Tiles" | "Poisoned Tile" | "Warped Tiles" | "Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" | "Flippers";
 
 
-type SingleObjective = {
-  type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
+type Objective = {
+  type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp'  | 'defrost' | 'alphabet' | 'collectVelvet';
 
 
   
@@ -25,12 +25,7 @@ type SingleObjective = {
   groundLayout?: ('none' | 'cleanse')[][];
 };
 
-type Objective =
-  | SingleObjective
-  | {
-      type: "multi";
-      objectives: SingleObjective[];
-    };
+
 
 export type LevelData = {
   id: number;
