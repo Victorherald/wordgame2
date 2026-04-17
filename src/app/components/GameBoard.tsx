@@ -62,6 +62,10 @@ isSpreading?: boolean;
   warpTurns?: number;
   isDull?: boolean;
   isBurnt?: boolean;
+  //Boulder
+  isBoulder?: boolean;
+  boulderHP?: number;
+  boulderMaxHP?: number;
   isChanging?: boolean;
   isRemoved?: boolean;
    dullTurns?: number;
@@ -82,7 +86,7 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
+  layout?: ("normal"| "lineBlasterRow" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
   type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
@@ -511,6 +515,20 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             presets: true,
           });
         }
+
+        else if (presetType === "boulder") {
+           const boulderhp = level?.boulderHP ?? 2 ;
+
+          rowTiles.push({
+             isBoulder: true,
+             boulderHP: boulderhp,
+             boulderMaxHP: boulderhp,
+             isStationary: true,
+             letter: "",
+             rarity: 'none',
+            presets: true,
+          });
+        }
         
         else if (presetType === "bookClosed" && specialTileSettings.allowBooks) {
           rowTiles.push({
@@ -687,7 +705,7 @@ const canSubmit = letterCount >= 3 && isWordValid;
 
   const handleTileClick = async (row: number, col: number) => {
   const tile = grid[row][col];
-  if (!tile || tile.isRemoved || (tile.isBook && !tile.isBookOpen) || tile.isLocked || (tile.isBone && tile.isStationary) || (tile.isFrozen && tile.isStationary))
+  if (!tile || tile.isRemoved || tile.isBoulder || (tile.isBook && !tile.isBookOpen) || tile.isLocked || (tile.isBone && tile.isStationary) || (tile.isFrozen && tile.isStationary))
     return;
 
   const last = selected[selected.length - 1];
@@ -1006,6 +1024,46 @@ function getLineBlastersUsed(
   return selected.filter(
     ({ row, col }) => grid[row][col]?.isLineBlaster
   );
+}
+
+
+function applyBoulderDamage(grid: Tile[][], selected: Position[]){
+ const newGrid = grid.map(r => [...r]);
+ let destroyedBoulders = 0;
+
+ //adjacent directions to destroy boulders
+ const dirs =
+ [
+   [1, 0], [-1, 0], [0, 1], [0, -1]
+ ]
+
+ selected.forEach(({row, col}) =>{
+   dirs.forEach(([dr, dc]) =>{
+     const r = row + dr;
+     const c = row + dc;
+     const tile = newGrid[r]?.[c];
+
+     if (tile?.isBoulder){
+       const newHP = (tile.boulderHP ?? 1) - 1;
+
+       if (newHP <= 0) {
+         newGrid[r][c]; null as any
+         destroyedBoulders++
+       }
+
+       else {
+         newGrid[r][c] = {
+           ...tile ,
+           boulderHP: newHP
+         }
+       }
+
+     }
+   }
+   )
+ }
+ )
+ return {grid: newGrid, destroyedBoulders}
 }
 
 
@@ -1643,6 +1701,8 @@ if (gem) {
 
 applyIceDamage(grid, selected);
 
+const boulderResult = applyBoulderDamage(updatedGrid, selected);
+updatedGrid = boulderResult.grid;
 }
 
 

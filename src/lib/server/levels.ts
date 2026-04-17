@@ -6363,4 +6363,209 @@ export const levels: LevelData[] = [
      ],
  
    },
+     {
+    id: 273,
+     name: "Level 273",
+     objective: { type: 'destroy',  objGoal: 8,tileType: 'exclamator'},
+     moves: 30,
+   
+     allowHardLetters: true,
+     locked: false,
+     boneTurns: 2,
+     boneRipeTurns: 2,
+     warpTurns: 15,
+     lockTurns: 8,
+     cursedTurns: 40 ,
+     board: [
+      ["exclamator", "normal", "exclamator", "normal", "exclamator", "normal", "exclamator", "removed"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["removed", "exclamator", "normal", "exclamator", "normal", "exclamator", "normal", "exclamator"]
+     ],
+ 
+   },
+   {
+    id: 274,
+     name: "Level 274",
+     objective: { type: 'lightsUp',  objGoal: 10,tileType: 'bulb'},
+     moves: 50,
+   
+     allowHardLetters: false,
+     locked: false,
+     boneTurns: 7,
+     boneRipeTurns: 4,
+     warpTurns: 15,
+     lockTurns: 8,
+     cursedTurns: 40 ,
+     board: [
+      ["bulb", "removed", "removed", "removed", "ice", "bone", "bulb", "removed"],
+      ["normal", "bulb", "removed", "ice", "bone", "bulb", "removed", "normal"],
+      ["normal", "normal", "bulb", "ice", "ice", "removed", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "removed", "bone", "bone", "bulb", "normal", "normal"],
+      ["normal", "removed", "bulb", "bone", "bone", "bone", "bulb", "normal"],
+      ["removed", "bulb", "bone", "bone", "removed", "removed", "removed", "bulb"]
+
+     ],
+ 
+   },
+   
+   {
+    id: 275,
+     name: "Level 275",
+     objective: { type: 'lightsUp',  objGoal: 2,tileType: 'bulb'},
+     moves: 50,
+   
+     allowHardLetters: true,
+     locked: true,
+     boneTurns: 7,
+     boneRipeTurns: 4,
+     warpTurns: 15,
+     lockTurns: 10,
+     cursedTurns: 40 ,
+     board: [
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "ice", "locked", "locked", "normal", "normal", "normal", "removed"],
+        ["removed", "locked", "bulb", "locked", "normal", "removed", "removed", "removed"],
+        ["removed", "locked", "locked", "ice", "normal", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "normal", "ice", "locked", "locked",  "removed"],
+        ["removed", "removed", "removed","normal", "locked", "bulb", "locked",  "removed"],
+        ["removed", "normal", "normal","normal", "locked", "locked", "ice",  "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+     ],
+ 
+   },
+   {
+    id: 276,
+     name: "Level 276",
+     objective: { type: 'defrost',  objGoal: 3,tileType: 'ice'},
+     moves: 55,
+   
+     allowHardLetters: true,
+     locked: true,
+     boneTurns: 10,
+     boneRipeTurns: 5,
+     warpTurns: 15,
+     dullTurns: 10,
+     cursedTurns: 40 ,
+     board: [
+      ["removed", "removed", "dull", "warped", "dull", "removed", "removed", "removed"],
+      ["removed", "dull", "dull", "warped", "dull", "dull", "removed", "removed"],
+      ["removed", "dull", "warped", "warped", "warped", "dull", "removed", "removed"],
+      ["removed", "bone", "bone", "mystery", "bone", "bone", "removed", "removed"],
+      ["removed", "ice", "bone", "bone", "bone", "ice", "removed", "removed"],
+      ["removed", "removed", "removed", "bone", "removed", "removed", "removed", "removed"],
+      ["removed", "removed", "removed", "bone", "removed", "removed", "removed", "removed"],
+      ["removed", "removed", "removed", "ice", "removed", "removed", "removed", "removed"]
+
+     ],
+ 
+   },
+   {
+    id: 277,
+     name: "Level 277",
+     objective: { type: 'destroy',  objGoal: 33,tileType: 'dull'},
+     moves: 40,
+   
+     allowHardLetters: false,
+     locked: true,
+     boneTurns: 10,
+     boneRipeTurns: 5,
+     warpTurns: 15,
+     dullTurns: 45,
+     cursedTurns: 40 ,
+     board: [
+      ["dull", "dull", "dull", "dull", "dull", "dull", "dull", "dull"],
+      ["dull", "removed", "removed", "normal", "normal", "removed", "removed", "dull"],
+      ["dull", "removed", "dull", "normal", "normal", "dull", "removed", "dull"],
+      ["normal", "normal", "dull", "normal", "normal", "dull", "normal", "normal"],
+      ["removed", "normal", "dull", "removed", "removed", "dull", "normal", "removed"],
+      ["dull", "normal", "dull", "removed", "removed", "dull", "normal", "dull"],
+      ["dull", "removed", "dull", "normal", "normal", "dull", "removed", "dull"],
+      ["dull", "dull", "dull", "removed", "removed", "dull", "dull", "dull"]
+
+     ],
+ 
+   },
+   {
+    id: 278,
+     name: "Level 278",
+     objective: { type: 'lightsUp',  objGoal: 6,tileType: 'bulb'},
+     moves: 30,
+     difficulty: 'demon',
+     allowHardLetters: false,
+     locked: true,
+     boneTurns: 10,
+     boneRipeTurns: 5,
+     lockTurns: 13,
+     dullTurns: 45,
+     cursedTurns: 40 ,
+     board: [
+      ["removed", "normal", "removed", "removed", "removed", "removed", "normal", "removed"],
+      ["removed", "removed", "normal", "removed", "removed", "normal", "removed", "removed"],
+      ["removed", "bulb", "locked", "normal", "normal", "locked", "bulb", "removed"],
+      ["removed", "normal", "removed", "normal", "normal", "removed", "normal", "removed"],
+      ["normal", "normal", "exclamator", "exclamator", "exclamator", "exclamator", "normal", "normal"],
+      ["ice", "removed", "normal", "normal", "normal", "normal", "removed", "ice"],
+      ["bulb", "removed", "normal", "removed", "removed", "normal", "removed", "bulb"],
+      ["removed", "removed", "removed", "bulb", "bulb", "removed", "removed", "removed"]
+
+     ],
+ 
+   },
+   {
+    id: 279,
+     name: "Level 279",
+     objective: { type: 'destroy',  objGoal: 5,tileType: 'dull'},
+     moves: 28,
+ 
+     allowHardLetters: false,
+     locked: true,
+     boneTurns: 9,
+     boneRipeTurns: 5,
+     lockTurns: 24,
+     dullTurns: 15,
+     cursedTurns: 40 ,
+     board: [
+      ["fire", "removed", "normal", "normal", "normal", "normal", "removed", "fire"],
+      ["normal", "removed", "normal", "normal", "normal", "normal", "removed", "normal"],
+      ["normal", "removed", "normal", "removed", "removed", "normal", "removed", "normal"],
+      ["normal", "removed", "normal", "removed", "removed", "normal", "removed", "normal"],
+      ["normal", "removed", "normal", "normal", "normal", "normal", "removed", "normal"],
+      ["normal", "removed", "dull", "mystery", "mystery", "dull", "removed", "normal"],
+      ["normal", "removed", "normal", "normal", "normal", "normal", "removed", "normal"],
+      ["mystery", "mystery", "mystery", "dull", "dull", "mystery", "mystery", "mystery"]
+     ],
+ 
+   },
+   {
+    id: 280,
+     name: "Level 280",
+     objective: { type: 'collectVelvet',  objGoal: 6,tileType: 'velvet'},
+     moves: 20,
+ 
+     allowHardLetters: false,
+     locked: true,
+     boneTurns: 8,
+     boneRipeTurns: 5,
+     lockTurns: 24,
+     dullTurns: 15,
+     cursedTurns: 40 ,
+     board: [
+      ["normal", "normal", "normal", "removed", "removed", "removed", "normal", "normal"],
+      ["normal", "velvet", "bone", "bone", "bone", "bone", "velvet", "normal"],
+      ["removed", "bone", "normal", "removed", "removed", "normal", "bone", "normal"],
+      ["removed", "bone", "removed", "velvet", "velvet", "removed", "bone", "removed"],
+      ["removed", "bone", "removed", "velvet", "velvet", "removed", "bone", "removed"],
+      ["normal", "bone", "normal", "removed", "removed", "normal", "bone", "removed"],
+      ["normal", "velvet", "bone", "bone", "bone", "bone", "velvet", "normal"],
+      ["normal", "normal", "removed", "removed", "removed", "normal", "normal", "normal"]
+     ],
+ 
+   },
 ];
