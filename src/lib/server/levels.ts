@@ -34,6 +34,7 @@ export type LevelData = {
   difficulty?: Difficulty;
   objective: Objective;
   locked: boolean;
+
   board: TileType[][];
   layout?: string[][];
   shouldWarpedSpawn?: boolean;
@@ -52,6 +53,7 @@ export type LevelData = {
     maxHp: number;
     color?: string;
   };
+  boulderHP?: number;
   dullTurns?: number;
   shouldDullSpawn?: boolean;
   boneTurns?: number;
