@@ -5,6 +5,7 @@ import { ScoreCounter } from '../components/ScoreCounter';
 import { WordDisplay } from '../components/WordDisp';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
+import { Boulder } from "../components/Boulder";
 import { AnimatePresence, motion} from "framer-motion";
 import { BookTile } from "../components/Books";
 import { MysteryTile } from "../components/MysteryTiles";
@@ -65,6 +66,8 @@ isSpreading?: boolean;
   //Boulder
   isBoulder?: boolean;
   boulderHP?: number;
+  isBreaking?: boolean;
+
   boulderMaxHP?: number;
   isChanging?: boolean;
   isRemoved?: boolean;
@@ -517,7 +520,7 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
         }
 
         else if (presetType === "boulder") {
-           const boulderhp = level?.boulderHP ?? 2 ;
+           const boulderhp = level?.boulderHP ?? 3 ;
 
           rowTiles.push({
              isBoulder: true,
@@ -1027,44 +1030,56 @@ function getLineBlastersUsed(
 }
 
 
-function applyBoulderDamage(grid: Tile[][], selected: Position[]){
- const newGrid = grid.map(r => [...r]);
- let destroyedBoulders = 0;
+function applyBoulderDamage(grid: Tile[][], selected: Position[]) {
+  const newGrid = grid.map(row =>
+    row.map(tile => (tile ? { ...tile } : tile))
+  );
 
- //adjacent directions to destroy boulders
- const dirs =
- [
-   [1, 0], [-1, 0], [0, 1], [0, -1]
- ]
+  let destroyedBoulders = 0;
 
- selected.forEach(({row, col}) =>{
-   dirs.forEach(([dr, dc]) =>{
-     const r = row + dr;
-     const c = row + dc;
-     const tile = newGrid[r]?.[c];
+  const dirs = [
+    [1, 0], [-1, 0], [0, 1], [0, -1]
+  ];
 
-     if (tile?.isBoulder){
-       const newHP = (tile.boulderHP ?? 1) - 1;
+  const hitBoulders = new Set<string>(); // 👈 IMPORTANT
 
-       if (newHP <= 0) {
-         newGrid[r][c]; null as any
-         destroyedBoulders++
-       }
+  selected.forEach(({ row, col }) => {
+    dirs.forEach(([dr, dc]) => {
+      const r = row + dr;
+      const c = col + dc;
 
-       else {
-         newGrid[r][c] = {
-           ...tile ,
-           boulderHP: newHP
-         }
-       }
+      const key = `${r}-${c}`;
+      if (hitBoulders.has(key)) return;
 
-     }
-   }
-   )
- }
- )
- return {grid: newGrid, destroyedBoulders}
+      const tile = newGrid[r]?.[c];
+      if (!tile?.isBoulder && !tile?.isBreaking) return;
+
+      hitBoulders.add(key); // 👈 only 1 hit per word
+
+      const newHP = (tile.boulderHP ?? 1) - 1;
+
+      if (newHP <= 0) {
+        newGrid[r][c] = {
+          ...tile,
+          boulderHP: 0,
+          isBreaking: true,
+        };
+        destroyedBoulders++;
+      } else {
+        newGrid[r][c] = {
+          ...tile,
+          boulderHP: newHP,
+          isBreaking: true,
+        };
+      }
+    });
+  });
+
+  return { grid: newGrid, destroyedBoulders };
 }
+
+
+
 
 
     // Frozen tile mechanics
@@ -1479,7 +1494,7 @@ if(wordsIncludesInfected ) return;
        if (tile.gem?.includes("orange")) points += 770;
         if (tile.gem?.includes("red")) points += 850;
          if (tile.gem?.includes("pink")) points += 3000;
-       if (tile.gem?.includes("blue")) points += 10000;
+       if (tile.gem?.includes("white")) points += 10000;
     })
     setScore((p) => p + points);
 
@@ -1516,8 +1531,40 @@ const uniqueDestroyed = Array.from(
 );
 
 
-  const iceResult = applyIceDamage(updatedGrid, selected);
+ 
+
+// 🔥 FIRST: apply effects BEFORE clearing
+const iceResult = applyIceDamage(updatedGrid, selected);
 updatedGrid = iceResult.grid;
+
+const boulderResult = applyBoulderDamage(updatedGrid, selected);
+updatedGrid = boulderResult.grid;
+
+
+// 🔥 SECOND: remove broken boulders (THIS is your missing null)
+updatedGrid = updatedGrid.map(row =>
+  row.map(tile => {
+    if (!tile) return tile;
+
+    if (tile.isBoulder &&  ( tile.boulderHP ?? 0) <= 0) {
+      return null as any; // 👈 NOW it disappears properly
+    }
+
+    return tile;
+  })
+);
+
+
+// 🔥 THIRD: clear selected tiles
+selected.forEach(({ row, col }) => {
+  const t = updatedGrid[row][col];
+  if (!t) return;
+
+  if (!t.isLightBulb && !t.isMystery) {
+    destroyedThisMove.push({ row, col });
+    updatedGrid[row][col] = null as any;
+  }
+});
 
 if (objective?.type === 'defrost') {
   updatedObjMet += iceResult.brokenIce;
@@ -1703,6 +1750,7 @@ applyIceDamage(grid, selected);
 
 const boulderResult = applyBoulderDamage(updatedGrid, selected);
 updatedGrid = boulderResult.grid;
+
 }
 
 
@@ -2100,6 +2148,7 @@ function canScrambleLetter(tile: Tile | null) {
 
   // Tiles that should NEVER change
   if (
+    tile.isBoulder ||
     tile.isLocked ||
     tile.isFrozen ||
     tile.isBone ||
@@ -2580,12 +2629,21 @@ const fridge = tile?.isFridge
   ? <FridgeSVG/>
   : "";
 
+  const boulderHit = tile?.isBoulder && tile.isBreaking
+  ? "animate-pulse scale-105" : "";
+
       const warped = tile?.isWarped
         ? 'tile animate-warped warp-tile cursor-pointer'
         : '';
         const velvet = tile?.isVelvet
   ? 'velvet-tile animate-velvet-sheen'
   : '';
+
+     const boulder = tile?.isBoulder ? (
+       <div className="absolute  inset-0 z-10 pointer-events-none">
+         <Boulder hp={tile.boulderHP ?? 1} />
+         </div>
+     )  : null;
 
         const dull = tile?.isDull 
         ? 'bg-gradient-to-br from-neutral-700 to-neutral-700 text-gray-100 border border-neutral-500  brightness-85'
@@ -2649,6 +2707,18 @@ const fridge = tile?.isFridge
     />
   </div>
 )}
+
+   {/*Book Render*/}
+   {tile?.isBoulder && (
+  <div className="absolute inset-0 z-10 pointer-events-none">
+    <Boulder
+      hp={tile.boulderHP ?? 1}
+      
+    />
+  </div>
+)}
+
+
 
 
 
@@ -2774,11 +2844,13 @@ const fridge = tile?.isFridge
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''}  ${fridge} ${velvet} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${boulderHit}  ${fridge} ${velvet} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
           `}
         >
 
-   
+   {tile?.isBoulder && tile.isBreaking && (
+     <div className="absolute inset-0 bg-/30 animate-ping z-20"/>
+   )}
 
   
       
@@ -2843,12 +2915,12 @@ const fridge = tile?.isFridge
 
 
           {/* Letter */}
-          {(!tile?.isBook || tile?.isBookOpen) && (
+          {(!tile?.isBook || tile?.isBookOpen && !tile?.isBoulder) && (
   <span className="z-30 font-bold">{tile?.letter}</span>
 )}
 
           {/* Status dots */}
-          {(!tile?.isBook || tile?.isBookOpen) && (
+          {(!tile?.isBook || tile?.isBookOpen && !tile?.isBoulder ) && (
   <>
     {tile?.isCursed ? (
       <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-red-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
