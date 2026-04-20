@@ -90,7 +90,7 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
+  layout?: ("normal"| "lineBlasterRow" | "boulder002" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
   type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
