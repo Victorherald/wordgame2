@@ -7122,31 +7122,5 @@ export const levels: LevelData[] = [
      ],
  
    },
-   {
-    id: 301,
-     name: "Level 301",
-     objective: { type: 'destroy' , objGoal: 20, tileType: 'bone'},
-     moves: 40,
-     difficulty: 'Hard Level',
-      boulderHP: 2,
-     allowHardLetters: false,
-     locked: true,
-     boneTurns: 6,
-     boneRipeTurns: 5,
-     warpTurns: 20,
-     dullTurns2: 15,
-     dullTurns: 55,
-     lockTurns: 10,
-     board: [
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
-     ],
- 
-   },
+  
 ];
