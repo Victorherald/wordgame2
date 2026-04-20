@@ -39,6 +39,7 @@ type Tile = {
   isFridge?: boolean;
 fridgeCharge?: number; // 0 → 3
 fridgeHP?: number;
+dullTurns2?: number;
 fridgeMaxHp?: number;
   isCleansed?: boolean;
 isSpreading?: boolean;
@@ -532,6 +533,34 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             presets: true,
           });
         }
+
+        else if (presetType === "boulder002") {
+          const boulderhp = level?.boulderHP ?? 3 ;
+
+         rowTiles.push({
+            isBoulder: true,
+            boulderHP: 2,
+            boulderMaxHP: 2,
+            isStationary: true,
+            letter: "",
+            rarity: 'none',
+           presets: true,
+         });
+       }
+
+       else if (presetType === "boulder003") {
+        const boulderhp = level?.boulderHP ?? 3 ;
+
+       rowTiles.push({
+          isBoulder: true,
+          boulderHP: 1,
+          boulderMaxHP: 1,
+          isStationary: true,
+          letter: "",
+          rarity: 'none',
+         presets: true,
+       });
+     }
         
         else if (presetType === "bookClosed" && specialTileSettings.allowBooks) {
           rowTiles.push({
@@ -586,6 +615,13 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             dullTurns: level?.dullTurns ?? 3,
             presets: true,
           }); }
+          else if (presetType === "dull02" && specialTileSettings.allowDullTiles) {
+            rowTiles.push({
+              ...generateRandomTile(level?.allowHardLetters ?? true),
+              isDull: true,
+              dullTurns2: level?.dullTurns2 ?? 3,
+              presets: true,
+            }); }
           else if (presetType === "locked" && specialTileSettings.allowLockedTiles) {
           rowTiles.push({
             ...generateRandomTile(level?.allowHardLetters ?? true),
