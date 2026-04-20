@@ -5,9 +5,9 @@ type BoulderProps = {
   export  function Boulder({ hp }: BoulderProps) {
     // darker = stronger
     const baseColor =
-      hp === 3 ? "#4b5563" : // strong
-      hp === 2 ? "#6b7280" : // medium
-                 "#9ca3af";  // weak
+      hp === 3 ? "#771900" : // strong
+      hp === 2 ? "#C54600" : // medium
+                 "#CE7F53";  // weak
   
     return (
       <svg viewBox="0 0 100 100" className="w-full h-full">

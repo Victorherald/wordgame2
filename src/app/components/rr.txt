@@ -58,7 +58,7 @@
            ? 'Score'
           : objective.type === 'collectVelvet'
           ? 'Velvets Crushed'
-          : `Destroy ${objective.tileType} tiles`
+          : `Destroy ${currentObjective.tileType} tiles`
         }: ${objMet}/${objective.objGoal}`
       : 'No objective'}
       
@@ -116,7 +116,7 @@
             <p className="text-white text-sm font-semibold">
             {objective
       ? `${objective.type === 'words'
-          ? `${objective.minLength}-letter words found`
+          ? `${currentObjective.minLength}-letter words found`
           : objective.type === 'score'
           ? 'Score'
            : objective.type === 'lightsUp' 
@@ -128,7 +128,7 @@
 
           : objective.type === 'defrost'
           ? 'Ice cleared'
-          : `Destroy ${objective.tileType} tiles`
+          : `Destroy ${currentObjective.tileType} tiles`
         }: ${objMet}/${objective.objGoal}`
 
       : 'No objective'}
@@ -616,9 +616,9 @@ const fridge = tile?.isFridge
             {objective.type === "score" &&
               `Reach ${objective.objGoal} points`}
             {objective.type === "words" &&
-              `Find ${objective.objGoal} words of ${objective.minLength} letters`}
+              `Find ${objective.objGoal} words of ${currentObjective.minLength} letters`}
             {objective.type === "destroy" &&
-              `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
+              `Destroy ${objective.objGoal} ${currentObjective.tileType} tiles`}
             {objective.type === "lightsUp" && `Turn on all the lights!`}
             {objective.type === "collectVelvet" && `Crush the velvets!`}
             {objective.type === "defrost" && "Clear all the ice!"}

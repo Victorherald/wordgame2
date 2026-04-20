@@ -1555,25 +1555,7 @@ updatedGrid = updatedGrid.map(row =>
 );
 
 
-// 🔥 THIRD: clear selected tiles
-selected.forEach(({ row, col }) => {
-  const t = updatedGrid[row][col];
-  if (!t) return;
 
-  if (!t.isLightBulb && !t.isMystery) {
-    destroyedThisMove.push({ row, col });
-    updatedGrid[row][col] = null as any;
-  }
-});
-
-if (objective?.type === 'defrost') {
-  updatedObjMet += iceResult.brokenIce;
-}
-
-//alphabet levels
-if (objective.type === "alphabet"){
-  
-}
 
 
 
