@@ -25,18 +25,14 @@ type Objective = {
   groundLayout?: ('none' | 'cleanse')[][];
 };
 
-type LevelPhase = {
-  objective: Objective;
-  board: TileType[][];
-  groundLayout?: ('none' | 'cleanse')[][];
-};
+
 
 export type LevelData = {
   id: number;
   name: string;
   gemtiles?: GemTiles;
   difficulty?: Difficulty;
-  phases?: LevelPhase[];
+ 
   objective: Objective;
   locked: boolean;
   dullTurns2?: number;
