@@ -58,6 +58,7 @@ isSpreading?: boolean;
   isBookOpen?: boolean;
   isInfected?: boolean;
   curseTurns?: number;
+  dullturns2?: number;
   presets?: boolean;
   isWarped?: boolean;
   justBrokeIce?: boolean;
