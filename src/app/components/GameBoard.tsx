@@ -36,9 +36,15 @@ type LineBlasterDirection = "row" | "col";
 type Tile = {
    isLineBlaster?: boolean;
   blastDirection?: LineBlasterDirection;
+
+  //fridge
   isFridge?: boolean;
 fridgeCharge?: number; // 0 → 3
 fridgeHP?: number;
+fridgeMaxHP?: number;
+isFridgeOverheating?: boolean;
+fridgeChargeMax?: number;
+
 dullTurns2?: number;
 fridgeMaxHp?: number;
   isCleansed?: boolean;
@@ -101,7 +107,7 @@ type LetterBoardProps = {
    bossMaxHp?: number;
    bossColor?: string;
   
-  tileType?: 'cursed' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
+  tileType?: 'cursed' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse')[][];
 };
@@ -521,6 +527,23 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
           });
         }
 
+        else if (presetType === "fridge") {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+        
+            isFridge: true,
+              isStationary: true,
+            // 👇 IMPORTANT: preset values from level
+            fridgeHP: level?.fridgeHP ,
+            fridgeMaxHp: level?.fridgeHP ,
+            
+            fridgeCharge: level?.fridgeCharge,
+            fridgeChargeMax: level?.fridgeChargeMax ?? 99,
+        
+            presets: true,
+          });
+        }
+
         else if (presetType === "boulder") {
            const boulderhp = level?.boulderHP ?? 3 ;
 
@@ -672,15 +695,7 @@ else if (presetType === "lineBlasterColumn") {
           });
         }
 
-           else if (presetType === "fridge" && specialTileSettings.allowFridges) {
-          rowTiles.push({
-            ...generateRandomTile(level?.allowHardLetters ?? true),
-            isFridge: true,
-            
-            presets: true,
-          });
-        }
-
+         
         // 🦴 Bone tile (unripe by default)
          else if (presetType === "bone" && specialTileSettings.allowBoneTiles) {
           rowTiles.push({
@@ -1021,36 +1036,138 @@ const handleSubmit = () => {
         })
       );
     }
+
+    function triggerFridgeFreeze(grid: Tile[][]): Tile[][] {
+      const newGrid = grid.map(r => [...r]);
+    
+      const dirs = [
+        [1,0],[-1,0],[0,1],[0,-1]
+      ];
+    
+      for (let r = 0; r < newGrid.length; r++) {
+        for (let c = 0; c < newGrid[r].length; c++) {
+          const tile = newGrid[r][c];
+    
+          if (!tile?.isFridge) continue;
+    
+          const max = tile.fridgeChargeMax ?? 3;
+    
+          if ((tile.fridgeCharge ?? 0) < max) continue;
+    
+          // freeze adjacent
+          dirs.forEach(([dr, dc]) => {
+            const nr = r + dr;
+            const nc = c + dc;
+    
+            const target = newGrid[nr]?.[nc];
+    
+            if (!target || target.isRemoved) return;
+    
+            // ❌ do NOT freeze blockers (as you requested)
+            if (
+              target.isFridge ||
+              target.isBoulder ||
+              target.isLocked
+            ) return;
+    
+            target.isFrozen = true;
+            target.iceHealth = 1;
+            target.isStationary = true;
+          });
+    
+          // reset charge after activation
+          newGrid[r][c] = {
+            ...tile,
+            fridgeCharge: 0
+          };
+        }
+      }
+    
+      return newGrid;
+    }
  
 
-function triggerFridgeOverheat(
-  grid: Tile[][],
-  r: number,
-  c: number
-) {
-  const tile = grid[r][c];
-  if (!tile || !tile.isFrozen) return;
+    function updateFridgeCharge(grid: Tile[][]): Tile[][] {
+      return grid.map(row =>
+        row.map(tile => {
+          if (!tile?.isFridge) return tile;
+    
+          const nextCharge = (tile.fridgeCharge ?? 0) + 1;
+          const max = tile.fridgeChargeMax ?? 3;
+    
+          return {
+            ...tile,
+            fridgeCharge: nextCharge >= max ? max : nextCharge,
+          };
+        })
+      );
+    }
 
-  tile.isOverheating = true;
 
-  // auto cool down
-  setTimeout(() => {
-    tile.isOverheating = false;
-  }, 1000);
-}
+    function damageFridge(grid: Tile[][], selected: Position[]) {
+      const newGrid = grid.map(r => [...r]);
 
-    function advanceFridgeCharge(grid: Tile[][]): Tile[][] {
-  return grid.map(row =>
-    row.map(tile => {
-      if (!tile || !tile.isFridge) return tile;
+      const wordStrength = selected.length * 10
 
-      return {
-        ...tile,
-        fridgeCharge: Math.min((tile.fridgeCharge ?? 0) + 1, 3),
-      };
-    })
-  );
-}
+      const damage2 = wordStrength;
+    
+      selected.forEach(({ row, col }) => {
+        const dirs = [
+          [1,0],[-1,0],[0,1],[0,-1]
+        ];
+    
+        dirs.forEach(([dr, dc]) => {
+          const nr = row + dr;
+          const nc = col + dc;
+    
+          const tile = newGrid[nr]?.[nc];
+    
+          if (!tile?.isFridge) return;
+    
+          const hp = (tile.fridgeHP ?? 99) - 1;
+    
+          newGrid[nr][nc] = {
+            ...tile,
+            fridgeHP: hp,
+            isFridgeOverheating: true
+          };
+    
+          // remove if destroyed
+          if (hp <= 0) {
+            newGrid[nr][nc] = null as any;
+          }
+    
+          // stop overheating animation
+          setTimeout(() => {
+            newGrid[nr][nc] = {
+              ...newGrid[nr][nc],
+              isFridgeOverheating: false
+            };
+          }, 600);
+        });
+      });
+    
+      return newGrid;
+    }
+
+
+    function triggerFridgeHeat ( grid: Tile[][], r: number , c: number)
+    {
+      const newGrid = grid.map(row => [...row]);
+
+      const tile = newGrid[r][c];
+      if (!tile?.isFridge) return newGrid;
+
+      tile.isOverheating =  true;
+
+      //ease out like an impact
+      setTimeout (() =>
+      setGrid(prev => prev.map((row, ri) =>
+        row.map((t, ci) =>
+        ri === r && ci === c ? {...t, isOverheating: false} : t ))), 200 //flash like an impact BOOM
+
+      )
+    }
 
 
 
@@ -1574,6 +1691,8 @@ const uniqueDestroyed = Array.from(
 const iceResult = applyIceDamage(updatedGrid, selected);
 updatedGrid = iceResult.grid;
 
+
+
 const boulderResult = applyBoulderDamage(updatedGrid, selected);
 updatedGrid = boulderResult.grid;
 
@@ -1583,9 +1702,12 @@ updatedGrid = updatedGrid.map(row =>
   row.map(tile => {
     if (!tile) return tile;
 
-    if (tile.isBoulder &&  ( tile.boulderHP ?? 0) <= 0) {
+    if (tile.isBoulder &&  ( tile.boulderHP ?? 0)  <= 0) {
       return null as any; // 👈 NOW it disappears properly
     }
+
+  
+
 
     return tile;
   })
@@ -2070,7 +2192,18 @@ function areBooksOpen(grid: Tile[][]): boolean {
   }
   return false;
 }
+
+updatedGrid = damageFridge(updatedGrid, selected)
+
+
 updatedGrid = toggleBooks(updatedGrid);
+
+updatedGrid = updateFridgeCharge(updatedGrid)
+
+
+
+updatedGrid = triggerFridgeFreeze(updatedGrid)
+
 
 
 // ✅ Apply updates
@@ -2081,6 +2214,10 @@ setSelected([]);
 //mystery reveal
 
   }
+
+  
+
+ 
 
 
 
@@ -2629,6 +2766,36 @@ const handleScramble = () => {
       const isNew = newTiles.some((p) => p.row === r && p.col === c);
       const anim = isNew || !ground ? 'tile-drop' : '';
 
+      if (tile?.isFridge){
+        return (
+          <div
+          key={`${r}-${c}`}
+        className="relative  absolute inset-0">
+      <FridgeSVG
+          charge={tile.fridgeCharge}
+          hp={tile.fridgeHP}
+          fridgeMaxHp={tile.fridgeMaxHp}
+          overheating={tile.isFridgeOverheating}
+        />
+        </div>
+          
+        )
+      }
+
+   //book render
+  if (tile?.isBoulder){
+        return (
+          <div
+          key={`${r}-${c}`}
+        className="relative w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14">
+      <Boulder
+      hp={tile.boulderHP ?? 1}
+      
+    />
+    </div>
+    )
+  }
+
       // effects
       const fire = tile?.isFire
         ? 'animate-fire-tile bg-orange-700 text-white shadow-lg shadow-orange-500/30 fire-particles'
@@ -2643,9 +2810,6 @@ const handleScramble = () => {
   : '';
 const exclamated = tile?.isExclamator
   ? "border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.8)]"
-  : "";
-const fridge = tile?.isFridge
-  ? <FridgeSVG/>
   : "";
 
   const boulderHit = tile?.isBoulder && tile.isBreaking
@@ -2663,6 +2827,15 @@ const fridge = tile?.isFridge
          <Boulder hp={tile.boulderHP ?? 1} />
          </div>
      )  : null;
+
+
+    
+
+
+
+
+
+
 
         const dull = tile?.isDull 
         ? 'bg-gradient-to-br from-neutral-700 to-neutral-700 text-gray-100 border border-neutral-500  brightness-85'
@@ -2727,15 +2900,9 @@ const fridge = tile?.isFridge
   </div>
 )}
 
-   {/*Book Render*/}
-   {tile?.isBoulder && (
-  <div className="absolute inset-0 z-10 pointer-events-none">
-    <Boulder
-      hp={tile.boulderHP ?? 1}
-      
-    />
-  </div>
-)}
+  
+
+ 
 
 
 
@@ -2863,7 +3030,7 @@ const fridge = tile?.isFridge
             flex items-center justify-center
             border border-[#d6c6a1] shadow-md shadow-black/10
             transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${boulderHit}  ${fridge} ${velvet} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice}  
+            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${boulderHit}   ${velvet} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice} 
           `}
         >
 
@@ -2934,7 +3101,7 @@ const fridge = tile?.isFridge
 
 
           {/* Letter */}
-          {(!tile?.isBook || tile?.isBookOpen && !tile?.isBoulder) && (
+          {(!tile?.isBook || tile?.isBookOpen && !tile?.isBoulder && !tile?.isFridge) && (
   <span className="z-30 font-bold">{tile?.letter}</span>
 )}
 

@@ -32,7 +32,10 @@ export type LevelData = {
   name: string;
   gemtiles?: GemTiles;
   difficulty?: Difficulty;
- 
+  fridgeHP?: number;
+  fridgeCharge?: number;
+fridgeChargeMax?: number;
+fridgeMaxHP?: number;
   objective: Objective;
   locked: boolean;
   dullTurns2?: number;
@@ -85,6 +88,9 @@ export const levels: LevelData[] = [
     name: "Level 1",
     objective: { type: 'words', objGoal: 5, minLength: 3 },
     moves: 5,
+    fridgeHP: 9,
+    fridgeMaxHP: 24,
+
     allowHardLetters: false,
     locked: false,
     allowBulbTiles: true,
@@ -7122,5 +7128,33 @@ export const levels: LevelData[] = [
      ],
  
    },
-  
+   {
+    id: 301,
+     name: "Level 301",
+     objective: { type: 'score' , objGoal: 5500},
+     moves: 40,
+      fridgeCharge: 0,
+      fridgeChargeMax: 2,
+      fridgeHP: 2,
+     allowHardLetters: false,
+     locked: true,
+     boneTurns: 6,
+     boneRipeTurns: 5,
+     warpTurns: 20,
+     dullTurns2: 15,
+     dullTurns: 55,
+     lockTurns: 10,
+     board: [
+      ["normal", "normal", "removed", "removed", "removed", "removed", "normal", "normal"],
+      ["normal", "normal", "removed", "fridge", "fridge", "removed", "normal", "normal"],
+      ["normal", "normal", "fridge", "normal", "normal", "fridge", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "fridge", "normal", "normal", "fridge", "normal", "normal"],
+      ["normal", "normal", "removed", "fridge", "fridge", "removed", "normal", "normal"],
+      ["normal", "normal", "removed", "removed", "removed", "removed", "normal", "normal"]
+
+     ],
+ 
+   },
 ];
