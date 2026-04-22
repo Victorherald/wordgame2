@@ -104,7 +104,7 @@ export function FridgeSVG({
          r="24"
         
          fill="#ff4500"
-         className="animate-pulse"
+         className="animate-[heat-pulse-once_0.6s_ease-out]"
          />
       )}
 

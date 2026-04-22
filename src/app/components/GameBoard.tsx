@@ -42,9 +42,10 @@ type Tile = {
 fridgeCharge?: number; // 0 → 3
 fridgeHP?: number;
 fridgeMaxHP?: number;
+spawnIce?: boolean;
 isFridgeOverheating?: boolean;
 fridgeChargeMax?: number;
-
+spreadLevel?: number;
 dullTurns2?: number;
 fridgeMaxHp?: number;
   isCleansed?: boolean;
@@ -532,13 +533,14 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             ...generateRandomTile(level?.allowHardLetters ?? true),
         
             isFridge: true,
-              isStationary: true,
+              iceHealth: 1,
             // 👇 IMPORTANT: preset values from level
             fridgeHP: level?.fridgeHP ,
+
             fridgeMaxHp: level?.fridgeHP ,
-            
-            fridgeCharge: level?.fridgeCharge,
-            fridgeChargeMax: level?.fridgeChargeMax ?? 99,
+            spreadLevel: 0,
+            fridgeCharge: level?.fridgeCharge ?? 3,
+            fridgeChargeMax: level?.fridgeChargeMax ?? 3,
         
             presets: true,
           });
@@ -1037,118 +1039,185 @@ const handleSubmit = () => {
       );
     }
 
-    function triggerFridgeFreeze(grid: Tile[][]): Tile[][] {
-      const newGrid = grid.map(r => [...r]);
-    
-      const dirs = [
-        [1,0],[-1,0],[0,1],[0,-1]
-      ];
-    
-      for (let r = 0; r < newGrid.length; r++) {
-        for (let c = 0; c < newGrid[r].length; c++) {
-          const tile = newGrid[r][c];
-    
-          if (!tile?.isFridge) continue;
-    
-          const max = tile.fridgeChargeMax ?? 3;
-    
-          if ((tile.fridgeCharge ?? 0) < max) continue;
-    
-          // freeze adjacent
-          dirs.forEach(([dr, dc]) => {
-            const nr = r + dr;
-            const nc = c + dc;
-    
-            const target = newGrid[nr]?.[nc];
-    
-            if (!target || target.isRemoved) return;
-    
-            // ❌ do NOT freeze blockers (as you requested)
-            if (
-              target.isFridge ||
-              target.isBoulder ||
-              target.isLocked
-            ) return;
-    
-            target.isFrozen = true;
-            target.iceHealth = 1;
-            target.isStationary = true;
-          });
-    
-          // reset charge after activation
-          newGrid[r][c] = {
-            ...tile,
-            fridgeCharge: 0
-          };
-        }
+
+    function spawnIce(tile: Tile): Tile {
+      return {
+        ...tile ,
+        isFrozen: true ,
+        iceHealth: 1,
+        isStationary: true,
+        spawnIce: true
       }
-    
+    }
+
+    function damageFridge(grid: Tile[][], selected: Position[]): Tile[][] {
+      const newGrid = grid.map(r => r.map(t => t ? {...t}: t))
+
+      const dirs = [[1,0], [-1,0], [0,1],[0,-1]];
+
+      selected.forEach(({row, col}) => {
+        dirs.forEach(([dr, dc])  => {
+          const r = row + dr;
+          const c = col + dc;
+
+
+          const tile = newGrid[r]?.[c];
+          if (!tile?.isFridge) return;
+
+          tile.fridgeHP = (tile.fridgeHP ?? 1) - 1;
+
+          tile.isFridgeOverheating = true;
+
+
+          
+
+          setTimeout(() => {
+            setGrid(prev => {
+              const copy = prev.map(r => r.map (t => t ? {...t} : t));
+
+              if (copy[r]?.[c]) copy[r][c].isFridgeOverheating = false;
+
+              return copy;
+            })
+          }, 400)
+
+          if (tile.fridgeHP <= 0) {
+            newGrid[r][c] = null as any;
+          }
+
+
+        })
+      })
+
       return newGrid;
     }
- 
 
     function updateFridgeCharge(grid: Tile[][]): Tile[][] {
       return grid.map(row =>
         row.map(tile => {
           if (!tile?.isFridge) return tile;
     
-          const nextCharge = (tile.fridgeCharge ?? 0) + 1;
-          const max = tile.fridgeChargeMax ?? 3;
+        
     
           return {
-            ...tile,
-            fridgeCharge: nextCharge >= max ? max : nextCharge,
+           ...tile ,
+           fridgeCharge: Math.min(
+             (tile.fridgeCharge ?? 0) + 1,
+            
+           )
           };
         })
       );
     }
 
+   function shouldFridgeSpread(tile: Tile): boolean {
+     const charge = tile.fridgeCharge ?? 0;
+     const max  = tile.fridgeChargeMax ?? 3;
 
-    function damageFridge(grid: Tile[][], selected: Position[]) {
-      const newGrid = grid.map(r => [...r]);
+     return charge > 0 && charge % max === 0;
+   }
 
-      const wordStrength = selected.length * 10
+    function triggerFridgeFreeze(grid: Tile[][]): Tile[][] {
+      const newGrid = grid.map(r => r.map(t => t ? {...t} : t))
 
-      const damage2 = wordStrength;
-    
-      selected.forEach(({ row, col }) => {
-        const dirs = [
-          [1,0],[-1,0],[0,1],[0,-1]
-        ];
-    
-        dirs.forEach(([dr, dc]) => {
-          const nr = row + dr;
-          const nc = col + dc;
-    
-          const tile = newGrid[nr]?.[nc];
-    
-          if (!tile?.isFridge) return;
-    
-          const hp = (tile.fridgeHP ?? 99) - 1;
-    
-          newGrid[nr][nc] = {
-            ...tile,
-            fridgeHP: hp,
-            isFridgeOverheating: true
-          };
-    
-          // remove if destroyed
-          if (hp <= 0) {
-            newGrid[nr][nc] = null as any;
+      for (let r = 0; r < grid.length; r++){
+        for(let c= 0; c < grid[r].length; c++){
+          const tile = grid[r][c]
+          if (!tile?.isFridge) continue;
+
+          const max = tile.fridgeChargeMax ?? 3;
+
+          if ((tile.fridgeCharge ?? 0) >= max)
+          {
+           freezeAdjacent(newGrid, r, c);
+
+            newGrid[r][c].fridgeCharge = 0
           }
-    
-          // stop overheating animation
-          setTimeout(() => {
-            newGrid[nr][nc] = {
-              ...newGrid[nr][nc],
-              isFridgeOverheating: false
-            };
-          }, 600);
-        });
-      });
-    
+        }
+      }
       return newGrid;
     }
+
+    function spreadFridgeIce(grid: Tile[][]): Tile[][] {
+      const newGrid = grid.map(r => r.map(t => t ? {...t} : t))
+ 
+      for (let r = 0;  r < grid.length; r++){
+        for (let c= 0; c < grid[r].length; c++){
+          const tile = grid[r][c];
+          if (!tile?.isFridge) continue;
+
+           const max  = tile.fridgeChargeMax ?? 3;
+           const charge = tile.fridgeCharge ?? 0;
+
+
+           if (charge > max) continue;
+ 
+          let level = tile.spreadLevel ?? 1;
+ 
+ 
+          if(adjacentAllOccupied(grid, r, c)){
+            level += 1;
+            newGrid[r][c].spreadLevel = level;
+          }
+
+          const dirs = [[1,0], [-1, 0], [0, 0], [0, -1], [0, 1]]
+
+          for (let i = 1; i <= level; i++){
+            dirs.forEach(([dr, dc]) => {
+              const nr = r + dr * i;
+              const nc = c + dc * i;
+
+              const t = newGrid[nr]?.[nc];
+                if(!t) return;
+                if (t.isFrozen) return;
+              if (t.isFridge || t.isDull || tile.isExclamator || tile.isWarped || t.isLocked || t.isBone || t.isFire) return;
+
+
+              newGrid[r + dr][c + dc] = spawnIce(t);
+            })
+          }
+ 
+        }
+      }
+      return newGrid
+ 
+     }
+
+    
+  
+ 
+
+  
+
+    function adjacentAllOccupied(grid: Tile[][], r: number, c: number){
+      const dirs = [[1,0], [-1,0], [0,1], [0, -1]];
+
+      return dirs.every(([dr, dc]) => {
+        const t = grid[r + dr]?.[c + dc];
+        return t?.isFrozen;
+      })
+    }
+
+    function freezeAdjacent(grid: Tile[][], r: number, c: number){
+      const dirs =[[1, 0], [-1, 0], [0, 1], [0, -1] , [1, -1], [-1, 1]]
+
+     
+      for (const [dr, dc] of dirs){
+        const nr = r + dr;
+        const nc = c + dc;
+
+        const t = grid[nr]?.[nc];
+        if(!t) continue;
+
+        if (t.isFridge || t.isFrozen || t.isInfected ||
+          t.isRemoved || t.isInfected || t.isMystery || t.isBone) continue;
+
+          grid [r + dr][c + dc] = spawnIce(t); break;
+      }
+    }
+
+
+    
 
 
     function triggerFridgeHeat ( grid: Tile[][], r: number , c: number)
@@ -1758,7 +1827,7 @@ else if (objective.type === "defrost") {
   const iceBroken = uniqueDestroyed.filter(({ row, col }) => {
     const tile = grid[row][col];
     if (!tile) return false;
-    return objective.tileType === "ice" && tile.isFrozen;
+    return objective.tileType === "ice" && tile.isFrozen && tile.spawnIce ;
   }).length;
 
   updatedObjMet += iceBroken;
@@ -2196,13 +2265,21 @@ function areBooksOpen(grid: Tile[][]): boolean {
 updatedGrid = damageFridge(updatedGrid, selected)
 
 
-updatedGrid = toggleBooks(updatedGrid);
+updatedGrid = triggerFridgeFreeze(updatedGrid)
 
 updatedGrid = updateFridgeCharge(updatedGrid)
 
+updatedGrid = spreadFridgeIce (updatedGrid)
+
+updatedGrid = toggleBooks(updatedGrid);
 
 
-updatedGrid = triggerFridgeFreeze(updatedGrid)
+
+
+
+
+
+
 
 
 
