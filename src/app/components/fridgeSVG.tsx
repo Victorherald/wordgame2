@@ -1,5 +1,5 @@
 import '../animations/tileAnimations.css'
-
+import { LetterBoard } from '../components/GameBoard'
 
 
 
@@ -17,6 +17,7 @@ export function FridgeSVG({
   overheating?: boolean,
 }) {
   const percent = (charge / maxCharge) * 100;
+
 
   const spinDuration = Math.max(2.5 - charge * 0.5 , 0.4)
 
@@ -104,7 +105,7 @@ export function FridgeSVG({
          r="24"
         
          fill="#ff4500"
-         className="animate-[heat-pulse-once_0.6s_ease-out]"
+         className="animate"
          />
       )}
 

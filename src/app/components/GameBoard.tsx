@@ -48,8 +48,10 @@ fridgeChargeMax?: number;
 spreadLevel?: number;
 dullTurns2?: number;
 fridgeMaxHp?: number;
+fridgeTurnSkip?: boolean;
   isCleansed?: boolean;
 isSpreading?: boolean;
+shakeTick?: number;
   letter: string;
   rarity: Rarity;
   isMysteryRevealing?: boolean;
@@ -98,17 +100,17 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow" | "boulder002" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
+  layout?: ("normal"| "lineBlasterRow" | {gemColor?: GemColor} | "boulder002" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
   type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
-
+   
    // Boss-specific fields (optional)
    bossHp?: number;
    bossMaxHp?: number;
    bossColor?: string;
   
-  tileType?: 'cursed' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
+  tileType?: 'cursed' | 'boulder002' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse')[][];
 };
@@ -492,10 +494,16 @@ const initializeGround = (rows: number, cols: number): GroundCell[][] => {
 const initializeBoard = ( rows: number, cols: number): Tile[][] => {
   const newGrid: Tile[][] = [];
 
+
+
   for (let row = 0; row < rows; row++) {
     const rowTiles: Tile[] = [];
     for (let col = 0; col < cols; col++) {
       const presetType = presetTileMap[row]?.[col] ?? "normal";
+
+
+
+    
 
 
 
@@ -507,7 +515,10 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             isFire: true,
             presets: false,
           });
-        } else if (presetType === "removed") {
+      
+            
+        } 
+        else if (presetType === "removed") {
           rowTiles.push({ isRemoved: true } as Tile);
         } else if (presetType === "cursed" && specialTileSettings.allowCursedTiles) {
           rowTiles.push({
@@ -517,6 +528,8 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             presets: true,
           });
         } 
+
+       
 
         else if (presetType === "bookOpen" && specialTileSettings.allowBooks) {
           rowTiles.push({
@@ -531,7 +544,7 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
         else if (presetType === "fridge") {
           rowTiles.push({
             ...generateRandomTile(level?.allowHardLetters ?? true),
-        
+            isStationary: true,
             isFridge: true,
               iceHealth: 1,
             // 👇 IMPORTANT: preset values from level
@@ -1067,9 +1080,15 @@ const handleSubmit = () => {
           tile.fridgeHP = (tile.fridgeHP ?? 1) - 1;
 
           tile.isFridgeOverheating = true;
+          tile.fridgeTurnSkip = true;
+          tile.shakeTick = Date.now(); //trigger animation
 
-
-          
+          setTimeout(() => {
+            grid[r][c] = {
+              ...grid[r][c] ,
+              shakeTick: 0,
+            }
+          } , 300)
 
           setTimeout(() => {
             setGrid(prev => {
@@ -1097,6 +1116,9 @@ const handleSubmit = () => {
         row.map(tile => {
           if (!tile?.isFridge) return tile;
     
+          if (tile.fridgeTurnSkip) {
+            
+          };
         
     
           return {
@@ -1124,6 +1146,8 @@ const handleSubmit = () => {
         for(let c= 0; c < grid[r].length; c++){
           const tile = grid[r][c]
           if (!tile?.isFridge) continue;
+
+          if (tile.fridgeTurnSkip) continue;
 
           const max = tile.fridgeChargeMax ?? 3;
 
@@ -1170,7 +1194,7 @@ const handleSubmit = () => {
               const t = newGrid[nr]?.[nc];
                 if(!t) return;
                 if (t.isFrozen) return;
-              if (t.isFridge || t.isDull || tile.isExclamator || tile.isWarped || t.isLocked || t.isBone || t.isFire) return;
+              if (t.isFridge || t.isDull || t.isLightBulb || tile.isExclamator || tile.isWarped || t.isLocked || t.isBone || t.isFire) return;
 
 
               newGrid[r + dr][c + dc] = spawnIce(t);
@@ -1184,7 +1208,13 @@ const handleSubmit = () => {
      }
 
     
-  
+       function clearFridgeFlags(grid: Tile[][]): Tile [][] {
+         return grid.map(row => 
+          row.map(tile => 
+            tile?.isFridge ?
+            { ...tile, fridgeTurnSkip: false}
+            : tile))
+       }
  
 
   
@@ -1194,7 +1224,7 @@ const handleSubmit = () => {
 
       return dirs.every(([dr, dc]) => {
         const t = grid[r + dr]?.[c + dc];
-        return t?.isFrozen;
+        return t?.isFrozen || t?.isBoulder;
       })
     }
 
@@ -1279,7 +1309,7 @@ function applyBoulderDamage(grid: Tile[][], selected: Position[]) {
 
       hitBoulders.add(key); // 👈 only 1 hit per word
 
-      const newHP = (tile.boulderHP ?? 1) - 1;
+      const newHP = (tile.boulderHP ?? 3) - 1;
 
       if (newHP <= 0) {
         newGrid[r][c] = {
@@ -1850,6 +1880,9 @@ else if (objective.type === "collectVelvet") {
 
     if (objective.tileType === 'fire') return t.isFire;
     if (objective.tileType === 'flippers') return t.isBook;
+    if (objective.tileType === 'boulder') return t.isBoulder;
+    if (objective.tileType === 'boulder002') return t.isBoulder;
+    if (objective.tileType === 'boulder003') return t.isBoulder;
     if (objective.tileType === 'exclamator') return t.isExclamator;
     if (objective.tileType === 'dull') return t.isDull;
     if (objective.tileType === 'cursed') return t.isCursed;
@@ -2188,6 +2221,18 @@ for (let c = 0; c < cols; c++) {
       continue;
     }
 
+    if (t.isBoulder && t.isStationary) {
+      newCol[r] = { ...t };
+      insertRow = r - 1; // everything above falls only to just above this tile
+      continue;
+    }
+
+    if (t.isFridge && t.isStationary) {
+      newCol[r] = { ...t };
+      insertRow = r - 1; // everything above falls only to just above this tile
+      continue;
+    }
+
     // Handle timed effects before moving
     if (t.isCursed) {
       const remaining = (t.curseTurns ?? 0) - 1;
@@ -2263,6 +2308,8 @@ function areBooksOpen(grid: Tile[][]): boolean {
 }
 
 updatedGrid = damageFridge(updatedGrid, selected)
+
+updatedGrid = clearFridgeFlags(updatedGrid)
 
 
 updatedGrid = triggerFridgeFreeze(updatedGrid)
@@ -2848,12 +2895,15 @@ const handleScramble = () => {
           <div
           key={`${r}-${c}`}
         className="relative  absolute inset-0">
-      <FridgeSVG
+          <motion.div animate={tile?.shakeTick ? {x: [0, -2, 3, -3, 2, 0], y: [0, 1, -1, 1 , -1, 0],}
+      : {} }  transition={{ duration: 0.25, ease: "easeInOut",}} >
+      <FridgeSVG 
           charge={tile.fridgeCharge}
           hp={tile.fridgeHP}
           fridgeMaxHp={tile.fridgeMaxHp}
           overheating={tile.isFridgeOverheating}
         />
+        </motion.div>
         </div>
           
         )
@@ -3005,6 +3055,25 @@ const exclamated = tile?.isExclamator
   </>
 )}
 
+{tile?.isBreaking && (
+  <>
+    {/* Cleanse glow */}
+    <div
+      className="
+        absolute inset-0
+        rounded-[6px]
+        bg-brown-400/30
+        animate-cleanse
+        z-30
+        pointer-events-none
+      "
+    />
+
+    {/* Holy rain */}
+    <CleanseRain />
+  </>
+)}
+
 {tile?.isLineBlaster && tile.blastDirection === "row" && (
   <>
     <ChevronLeft
@@ -3111,9 +3180,7 @@ const exclamated = tile?.isExclamator
           `}
         >
 
-   {tile?.isBoulder && tile.isBreaking && (
-     <div className="absolute inset-0 bg-/30 animate-ping z-20"/>
-   )}
+   
 
   
       
