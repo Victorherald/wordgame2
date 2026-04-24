@@ -6737,7 +6737,7 @@ export const levels: LevelData[] = [
    {
     id: 287,
      name: "Level 287",
-     objective: { type: 'score',  objGoal: 100000},
+     objective: { type: 'score',  objGoal: 50000},
      moves: 50,
       difficulty: 'Hard Level',
      allowHardLetters: false,
@@ -7501,14 +7501,15 @@ export const levels: LevelData[] = [
      ],
  
    },
-    {
+  
+   {
     id: 315,
      name: "Level 315",
-     objective: { type: 'lightsUp' , objGoal: 4,  tileType: "bulb"},
+     objective: { type: 'lightsUp' , objGoal: 2,  tileType: "bulb"},
      moves: 50,
       boulderHP: 3,
       fridgeCharge:0,
-       difficulty: 'Hard Level',
+       
       fridgeChargeMax: 2,
       fridgeHP: 4,
       boneTurns: 4,
@@ -7525,6 +7526,145 @@ export const levels: LevelData[] = [
         ["removed", "boulder", "mystery", "mystery", "mystery", "mystery", "boulder", "removed"],
         ["removed", "boulder", "boulder", "boulder", "boulder", "boulder", "boulder", "removed"],
         ["bulb", "removed", "removed", "removed", "removed", "removed", "removed", "bulb"]
+     ],
+ 
+   },
+   {
+    id: 316,
+     name: "Level 316",
+     objective: { type: 'destroy' , objGoal: 2,  tileType: "flippers"},
+     moves: 20,
+      boulderHP: 3,
+      fridgeCharge:0,
+    
+      fridgeChargeMax: 2,
+      fridgeHP: 4,
+      boneTurns: 4,
+      boneRipeTurns: 2,
+     allowHardLetters: false,
+     locked: true,
+     lockTurns: 5,
+     board: [
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "boulder", "boulder", "boulder", "normal", "normal", "normal", "normal"],
+      ["normal", "boulder", "bookClosed", "boulder", "boulder002", "boulder002", "normal", "normal"],
+      ["normal", "boulder", "boulder", "boulder", "boulder002", "boulder002", "normal", "normal"],
+      ["normal", "normal", "boulder002", "boulder002", "boulder", "boulder", "boulder", "normal"],
+      ["normal", "normal", "boulder002", "boulder002", "boulder", "bookClosed", "boulder", "normal"],
+      ["normal", "normal", "normal", "normal", "boulder", "boulder", "boulder", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+     ],
+ 
+   },
+   {
+    id: 317,
+     name: "Level 317",
+     objective: { type: 'destroy' , objGoal: 8,  tileType: "bone"},
+     moves: 40,
+      boulderHP: 3,
+      fridgeCharge:0,
+    
+      fridgeChargeMax: 2,
+      fridgeHP: 4,
+      boneTurns: 4,
+      lockTurns: 14,
+      boneRipeTurns: 4,
+     allowHardLetters: false,
+     locked: true,
+    
+     board: [
+      ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+      ["removed", "locked", "locked", "locked", "locked", "locked", "ice", "removed"],
+      ["normal", "locked", "removed", "bone", "bone", "removed", "ice", "normal"],
+      ["normal", "locked", "bone", "removed", "removed", "bone", "ice", "normal"],
+      ["normal", "locked", "bone", "removed", "removed", "bone", "ice", "normal"],
+      ["normal", "locked", "removed", "bone", "bone", "removed", "ice", "normal"],
+      ["removed", "ice", "ice", "ice", "ice", "ice", "ice", "removed"],
+      ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"]
+     ],
+ 
+   },
+   {
+    id: 318,
+     name: "Level 318",
+     objective: { type: 'score' , objGoal: 16000},
+     moves: 30,
+      boulderHP: 3,
+      fridgeCharge:0,
+    
+      fridgeChargeMax: 5,
+      fridgeHP: 5,
+      boneTurns: 4,
+      lockTurns: 14,
+      boneRipeTurns: 4,
+     allowHardLetters: false,
+     locked: true,
+    
+     board: [
+      ["fridge", "normal", "mystery", "normal", "normal", "mystery", "normal", "fridge"],
+      ["fridge", "normal", "normal", "mystery", "mystery", "normal", "normal", "fridge"],
+      ["fridge", "mystery", "normal", "normal", "normal", "normal", "mystery", "fridge"],
+      ["fridge", "normal", "mystery", "normal", "normal", "mystery", "normal", "fridge"],
+      ["fridge", "normal", "normal", "normal", "normal", "normal", "normal", "fridge"],
+      ["fridge", "normal", "mystery", "normal", "normal", "mystery", "normal", "fridge"],
+      ["fridge", "mystery", "normal", "mystery", "mystery", "normal", "mystery", "fridge"],
+      ["fridge", "fridge", "fridge", "mystery", "mystery", "fridge", "fridge", "fridge"]
+     ],
+ 
+   },
+   {
+    id: 319,
+     name: "Level 319",
+     objective: { type: 'lightsUp' , objGoal: 7, tileType: 'bulb' },
+     moves: 35,
+      boulderHP: 3,
+      fridgeCharge:0,
+     difficulty: 'demon',
+      fridgeChargeMax: 6,
+      fridgeHP: 7,
+      boneTurns: 4,
+      lockTurns: 14,
+      boneRipeTurns: 4,
+     allowHardLetters: false,
+     locked: true,
+    
+     board: [
+      ["bulb", "ice", "removed", "removed", "removed", "normal", "ice", "bulb"],
+      ["ice", "fridge", "locked", "locked", "locked", "normal", "fridge", "ice"],
+      ["removed", "normal", "locked", "bulb", "locked", "normal", "normal", "normal"],
+      ["removed", "normal", "locked", "locked", "locked", "normal", "bulb", "removed"],
+      ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+      ["normal", "normal", "normal", "bulb", "normal", "normal", "normal", "removed"],
+      ["ice", "fridge", "normal", "normal", "normal", "normal", "fridge", "ice"],
+      ["bulb", "ice", "normal", "removed", "removed", "removed", "ice", "bulb"]
+     ],
+ 
+   },
+   {
+    id: 320,
+     name: "Level 320",
+     objective: { type: 'score' , objGoal: 15000},
+     moves: 50,
+      boulderHP: 3,
+      fridgeCharge:0,
+   
+      fridgeChargeMax: 6,
+      fridgeHP: 7,
+      boneTurns: 4,
+      warpTurns: 54,
+      boneRipeTurns: 5,
+     allowHardLetters: false,
+     locked: true,
+    
+     board: [
+        ["normal", "normal", "normal", "normal", "normal", "removed", "removed", "removed"],
+        ["removed", "normal", "normal", "normal", "bone", "bone", "bone", "bone"],
+        ["removed", "normal", "normal", "normal", "warped", "bone", "bone", "bone"],
+        ["bone", "warped", "normal", "normal", "normal", "warped", "bone", "bone"],
+        ["bone", "bone", "warped", "normal", "normal", "normal", "warped", "bone"],
+        ["bone", "bone", "bone", "warped", "normal", "normal", "normal", "removed"],
+        ["bone", "bone", "bone", "bone", "normal", "normal", "normal", "removed"],
+        ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "normal"]
      ],
  
    },

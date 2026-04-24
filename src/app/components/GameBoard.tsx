@@ -93,6 +93,8 @@ isRipe?: boolean;        // true if glowing, usable in words
 boneTurns?: number;    
 isStationary?: boolean;  // true if it cannot move (unripe)
 isLightBulb?: boolean;
+bulbType?: "normal" | "fluorescent";
+bulbCharge?: number;
 isBulbOn?: boolean
 };
 
@@ -100,7 +102,7 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow" | {gemColor?: GemColor} | "boulder002" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
+  layout?: ("normal"| "lineBlasterRow"  | "boulder002" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
   type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
@@ -1063,6 +1065,15 @@ const handleSubmit = () => {
       }
     }
 
+    function adjacentAllOccupied(grid: Tile[][], r: number, c: number){
+      const dirs = [[1,0], [-1,0], [0,1], [0, -1]];
+
+      return dirs.every(([dr, dc]) => {
+        const t = grid[r + dr]?.[c + dc];
+        return t?.isFrozen || t?.isBoulder || t?.isLocked || t?.isLightBulb;
+      })
+    }
+
     function damageFridge(grid: Tile[][], selected: Position[]): Tile[][] {
       const newGrid = grid.map(r => r.map(t => t ? {...t}: t))
 
@@ -1193,8 +1204,8 @@ const handleSubmit = () => {
 
               const t = newGrid[nr]?.[nc];
                 if(!t) return;
-                if (t.isFrozen) return;
-              if (t.isFridge || t.isDull || t.isLightBulb || tile.isExclamator || tile.isWarped || t.isLocked || t.isBone || t.isFire) return;
+              
+              if (t?.isFridge || t?.isFrozen || t?.isDull || t?.isLightBulb || tile?.isExclamator || tile?.isWarped || t?.isLocked || t?.isBone || t?.isFire) return;
 
 
               newGrid[r + dr][c + dc] = spawnIce(t);
@@ -1215,18 +1226,10 @@ const handleSubmit = () => {
             { ...tile, fridgeTurnSkip: false}
             : tile))
        }
- 
 
   
 
-    function adjacentAllOccupied(grid: Tile[][], r: number, c: number){
-      const dirs = [[1,0], [-1,0], [0,1], [0, -1]];
-
-      return dirs.every(([dr, dc]) => {
-        const t = grid[r + dr]?.[c + dc];
-        return t?.isFrozen || t?.isBoulder;
-      })
-    }
+ 
 
     function freezeAdjacent(grid: Tile[][], r: number, c: number){
       const dirs =[[1, 0], [-1, 0], [0, 1], [0, -1] , [1, -1], [-1, 1]]
@@ -1309,7 +1312,7 @@ function applyBoulderDamage(grid: Tile[][], selected: Position[]) {
 
       hitBoulders.add(key); // 👈 only 1 hit per word
 
-      const newHP = (tile.boulderHP ?? 3) - 1;
+      const newHP = (tile.boulderHP ?? 0) - 1;
 
       if (newHP <= 0) {
         newGrid[r][c] = {
@@ -2975,8 +2978,11 @@ const exclamated = tile?.isExclamator
     ? 'tile-bone-ripe'
     : 'tile-bone-unripe'
   : '';
-   const bulb = tile?.isLightBulb ? tile.isBulbOn ? "bulb bulb-on"
-   : "bulb bulb-off" : "";
+   const bulb = tile?.bulbType === "fluorescent"
+   ? tile.bulbCharge === 0
+   ? "bulb-dim" : tile.bulbCharge === 1 
+   ? "bulb-fading" : "bulb-bright" : tile?.isLightBulb 
+   ? tile.isBulbOn ? "bulb bulb-on" : "bulb bulb-off" : "";
 
       if (tile?.isRemoved) {
       return (
