@@ -1554,7 +1554,7 @@ selected.forEach(({ row, col }) => {
 
 function allFluoresLit(grid: Tile[][]){
   for (let r = 0; r < grid.length; r ++){
-    for (let c = 0 ; c < grid.length c++){
+    for (let c = 0 ; c < grid.length ; c++){
       const t = grid[r][c];
       if (t?.isLightBulb  && t.bulbType === "fluorescent"){
         if ((t.bulbCharge ?? 0) < 2) return false;
@@ -1607,7 +1607,7 @@ if (usedBulbThisMatch && allBulbsAreLit) {
   for (let r = 0; r < updatedGrid.length; r++) {
     for (let c = 0; c < updatedGrid[r].length; c++) {
       const t = updatedGrid[r][c];
-      if (t?.isLightBulb || !t?.bulbType === "fluorescent") {
+      if (t?.isLightBulb || !t?.bulbType === "fluorescent" ) {
        updatedGrid[r][c] = generateRandomTile(level?.allowHardLetters ?? true);
  // remove bulb
         bulbsCleared++;

@@ -7385,7 +7385,7 @@ export const levels: LevelData[] = [
       ["bone", "removed", "locked", "normal", "normal", "locked", "removed", "bone"],
       ["fridge", "removed", "normal", "removed", "normal", "normal", "removed", "fridge"],
       ["bone", "normal", "locked", "normal", "normal", "locked", "normal", "bone"],
-      ["bone", "normal", "normal", "purple", "removed", "normal", "normal", "bone"],
+      ["bone", "normal", "normal", "normal", "removed", "normal", "normal", "bone"],
       ["bone", "normal", "locked", "removed", "normal", "locked", "normal", "bone"],
       ["bone", "removed", "normal", "normal", "normal", "normal", "removed", "bone"],
       ["fridge", "removed", "normal", "normal", "removed", "normal", "removed", "fridge"],
