@@ -1525,7 +1525,7 @@ let usedBulbThisMatch = false;
 if (!wordsIncludesInfected){
 selected.forEach(({ row, col }) => {
   const tile = updatedGrid[row][col];
-  if (!tile?.isLightBulb || tile.bulbType === "fluorescent") return;
+  if (!tile?.isLightBulb) return;
 
   usedBulbThisMatch = true;
 
@@ -1539,29 +1539,10 @@ selected.forEach(({ row, col }) => {
     isBulbOn: isNowOn
   };
 
- const current = tile.bulbCharge ?? 0;
-
- if (current > 2){
-   updatedGrid[row][col] = {
-     ...tile ,
-     bulbCharge: current + 1
-   }
- }
+ 
 
   
 });
-}
-
-function allFluoresLit(grid: Tile[][]){
-  for (let r = 0; r < grid.length; r ++){
-    for (let c = 0 ; c < grid.length ; c++){
-      const t = grid[r][c];
-      if (t?.isLightBulb  && t.bulbType === "fluorescent"){
-        if ((t.bulbCharge ?? 0) < 2) return false;
-      }
-    }
-  }
-  return true;
 }
 
 // Check if all bulbs are lit
@@ -1577,27 +1558,6 @@ function allBulbsLit(grid: Tile[][]) {
 
 const allBulbsAreLit = allBulbsLit(updatedGrid);
 
-const allFluoresAreLit = allFluoresLit(updatedGrid);
-
-if (allFluoresAreLit){
-  let cleared = 0;
-
-  for (let r = 0; r < updatedGrid.length; r++){
-    for (let c = 0; c < updatedGrid[r].length; c++){
-      const t = updatedGrid[r][c];
-
-      if (t?.isLightBulb && t.bulbType === "fluorescent"){
-        updatedGrid[r][c] = generateRandomTile(level?.includeHardLetters ?? true);
-        cleared ++
-      }
-    }
-  }
-
-  if (objective?.type === "lightsUp"){
-    setObjMet(prev => prev + cleared);
-  }
-}
-
 // CLEAR bulbs ONLY if:
 // 1. all bulbs are ON
 // 2. a bulb was used in the matched word
@@ -1607,15 +1567,13 @@ if (usedBulbThisMatch && allBulbsAreLit) {
   for (let r = 0; r < updatedGrid.length; r++) {
     for (let c = 0; c < updatedGrid[r].length; c++) {
       const t = updatedGrid[r][c];
-      if (t?.isLightBulb || !t?.bulbType === "fluorescent" ) {
+      if (t?.isLightBulb) {
        updatedGrid[r][c] = generateRandomTile(level?.allowHardLetters ?? true);
  // remove bulb
         bulbsCleared++;
       }
     }
   }
-
-  
 
   // objective updates
   if (objective?.type === 'destroy' && objective.tileType === 'bulb') {
@@ -1886,7 +1844,7 @@ else if (objective.type === "lightsUp") {
   const bulbsOn =
   uniqueDestroyed.forEach(({ row, col }) => {
     const tile = grid[row][col];
-    if (!tile?.isLightBulb || tile?.bulbType === "fluorescent") return;
+    if (!tile?.isLightBulb) return;
 
     const wasOn = tile.isBulbOn;
     const isNowOn = !wasOn;
