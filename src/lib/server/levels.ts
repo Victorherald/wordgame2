@@ -2,7 +2,7 @@
 
 
 
-export type TileType = "normal" | "purple" | "boulder" | "dull02" | "boulder002" | "boulder003" |"locked" | "lineBlasterRow" | "lineBlasterColumn" | "fire" | "velvet" | "cursed" | "warped" | "removed" | "mystery" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge" | "bookOpen" | "bookClosed";
+export type TileType = "normal"  | "boulder" | "dull02" | "boulder002" | "boulder003" |"locked" | "lineBlasterRow" | "lineBlasterColumn" | "fire" | "velvet" | "cursed" | "warped" | "removed" | "mystery" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge" | "bookOpen" | "bookClosed";
 
 export type Difficulty = "Hard Level" | "demon";
 
@@ -7665,6 +7665,34 @@ export const levels: LevelData[] = [
         ["bone", "bone", "bone", "warped", "normal", "normal", "normal", "removed"],
         ["bone", "bone", "bone", "bone", "normal", "normal", "normal", "removed"],
         ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "normal"]
+     ],
+ 
+   },
+   {
+    id: 320,
+     name: "Level 320",
+     objective: { type: 'score' , objGoal: 15000},
+     moves: 50,
+      boulderHP: 3,
+      fridgeCharge:0,
+   
+      fridgeChargeMax: 6,
+      fridgeHP: 7,
+      boneTurns: 4,
+      warpTurns: 54,
+      boneRipeTurns: 5,
+     allowHardLetters: false,
+     locked: true,
+    
+     board: [
+       ["normal", "normal", "removed", "normal", "normal", "removed", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "removed", "normal", "normal", "removed", "normal", "normal"]
      ],
  
    },
