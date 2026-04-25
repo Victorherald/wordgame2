@@ -271,6 +271,7 @@ useEffect(() => {
   }, []);
 
 
+
    //  Layout from data otherwise fallback
   const presetTileMap = layout ?? level?.board ?? [];
 
@@ -756,6 +757,8 @@ const canSubmit = letterCount >= 3 && isWordValid;
       return () => clearTimeout(t);
     }
   }, [newTiles]);
+
+  
 
   const getRarityColor = (r: Rarity) =>
     r === 'bronze' ? 'bg-amber-700' : r === 'silver' ? 'bg-gray-300' : 'bg-yellow-400';
@@ -1931,11 +1934,7 @@ else if (objective.type === "defrost") {
   updatedObjMet += iceBroken;
 }
 
-useEffect(() => {
-  if (objective?.type === "spreadInk"){
-    setObjMet(countInk(ground))
-  }
-})
+
 
 //ink objective
 if (objective?.type === "spreadInk"){
