@@ -104,7 +104,7 @@ type LetterBoardProps = {
   level?: LevelData;
   layout?: ("normal"| "lineBlasterRow"  | "boulder002" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
-  type: 'score' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
+  type: 'score' | 'spreadInk' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
    
    // Boss-specific fields (optional)
@@ -114,7 +114,7 @@ type LetterBoardProps = {
   
   tileType?: 'cursed' | 'boulder002' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
-  groundLayout?: ('none' | 'cleanse')[][];
+  groundLayout?: ('none' | 'cleanse' | 'ink')[][];
 };
 
 
@@ -125,7 +125,7 @@ type LetterBoardProps = {
 };
 
 type GroundCell = {
-  type: 'cleanse' | 'none';
+  type: 'cleanse' | 'none' | 'ink';
 };
 
 
@@ -1054,8 +1054,21 @@ const handleSubmit = () => {
       );
     }
 
-
+    //ink sum
+    function countInk(ground: GroundCell[][]){
+      let count = 0;
+      for (let r = 0; r < ground.length; r++){
+      for (let c = 0; c < ground.length; c++){
+        if (ground[r][c]?.type ===  "ink") count ++;
+      }
+    }
+    return count;
+}
+// ice fridge
     function spawnIce(tile: Tile): Tile {
+      if  (!tile) return tile;
+
+      if (NegativeTile(tile)){return tile}
       return {
         ...tile ,
         isFrozen: true ,
@@ -1269,6 +1282,54 @@ const handleSubmit = () => {
         ri === r && ci === c ? {...t, isOverheating: false} : t ))), 200 //flash like an impact BOOM
 
       )
+    }
+
+
+
+
+    function spreadInk(ground: GroundCell[][], selected: Position[]):
+    {newGround: GroundCell[][]; spreadCount: number }{
+      const newGround = ground.map(row => row.map(cell => ({...cell})));
+      let spreadCount = 0;
+      
+      const dirs = [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1]
+
+      ]
+
+      //only spread if word involves a tile sitting on it 
+      const touchedInk = selected.some(({row, col}) => 
+      ground[row][col]?.type === "ink");
+
+      if (!touchedInk){
+        return {newGround, spreadCount: 0};
+
+      }
+
+       selected.forEach(({row, col}) => {
+         dirs.forEach(([dr, dc]) => {
+           const r = row + dr;
+           const c = col + dc;
+
+           const cell = newGround[r]?.[c];
+           if (!cell) return;
+
+           if (cell.type === "cleanse") return;
+
+           if (cell.type === "ink"){
+             newGround[r][c] = {...cell, type: "ink"};
+
+             spreadCount++
+           }
+         })
+       }
+       )
+     return {newGround, spreadCount}
+        
+
     }
 
 
@@ -1767,6 +1828,7 @@ else if (objective?.type === "destroy")
   label = `Destroy ${objective.tileType} tiles!`;
 else if (objective?.type === "lightsUp")
   label = "Lights turned on";
+  else if (objective?.type === "spreadInk") label = "Ink Spread";
 else if (objective?.type === "defrost")
   label = "Ice cleared";
     
@@ -1792,6 +1854,9 @@ const uniqueDestroyed = Array.from(
 // 🔥 FIRST: apply effects BEFORE clearing
 const iceResult = applyIceDamage(updatedGrid, selected);
 updatedGrid = iceResult.grid;
+
+const inkResult = spreadInk(ground, selected);
+setGround(inkResult.newGround)
 
 
 
@@ -1864,6 +1929,25 @@ else if (objective.type === "defrost") {
   }).length;
 
   updatedObjMet += iceBroken;
+}
+
+useEffect(() => {
+  if (objective?.type === "spreadInk"){
+    setObjMet(countInk(ground))
+  }
+})
+
+//ink objective
+if (objective?.type === "spreadInk"){
+
+  if (wordsIncludesInfected) return;
+  const result = spreadInk(ground, selected);
+
+  setGround(result.newGround);
+
+  const totalInk = result.newGround.flat().filter(cell => cell.type === "ink").length;
+
+  updatedObjMet += countInk(ground);
 }
 
 
@@ -2266,6 +2350,8 @@ for (let c = 0; c < cols; c++) {
   
 
    updatedGrid = applyCleanseGround(updatedGrid, ground)
+
+  
  
 
     // Find the nearest empty cell above any stationary blockers
@@ -2597,6 +2683,8 @@ const handleScramble = () => {
               ? "Lights"
               : objective.type === "defrost"
               ? "Ice"
+              : objective.type === "spreadInk" 
+              ? "Ink" 
               : objective.type === "score"
               ? "Score"
               : objective.type === "collectVelvet"
@@ -2709,7 +2797,9 @@ const handleScramble = () => {
                 : objective.type === "score"
                 ? "Score"
                 : objective.type === "lightsUp"
-                ? "Lights turned on"
+                ? "Lights turned on" : 
+                 objective.type === "spreadInk"
+                 ? "Ink Spread" 
                 : objective.type === "collectVelvet"
                 ? "Velvets Squashed"
                 : objective.type === "defrost"
@@ -3018,6 +3108,20 @@ const exclamated = tile?.isExclamator
 
       z-0
       pointer-events-none
+              "
+            />
+          )}
+
+{ground?.[r]?.[c]?.type === "ink" && (
+            <div
+              className="
+               absolute inset-[-6px]
+               rounded-[10px]
+              bg-purple-500
+               shadow-[0_0_20px_rgba(139,0,139,0,8)]
+               animate-pulse
+               z-0
+               pointer-events-none
               "
             />
           )}
@@ -3424,6 +3528,7 @@ const exclamated = tile?.isExclamator
             {objective.type === "collectVelvet" && `Crush the velvets!`}
             {objective.type === "defrost" && "Clear all the ice!"}
             {objective.type === "boss" && "Defeat the boss!"}
+            {objective.type === "spreadInk" && "Spread the Ink!"}
           </p>
         ) : (
           <p className="text-gray-500 text-xs sm:text-sm italic">

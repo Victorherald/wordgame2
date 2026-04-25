@@ -187,7 +187,7 @@ export default function LevelList() {
                      {lvl.objective?.type === "collectVelvet" &&
                     `Squash ${lvl.objective.objGoal} velvets!`}
                      {lvl.objective?.type === "boss" &&
-                    `Defeat the boss!`}
+                    `Defeat the boss!`} {lvl.objective === "spreadInk" && `Spread ink to ${lvl.objective.objGoal} spaces!`}
                 </p>
 
                 <button
