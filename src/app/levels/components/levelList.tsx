@@ -176,6 +176,8 @@ export default function LevelList() {
                 <p className="text-sm text-gray-400">
                   {lvl.objective?.type === "score" &&
                     `Reach ${lvl.objective.objGoal} points`}
+                      {lvl.objective?.type === "spreadInk" &&
+                    `Spread the ink around`}
                     {lvl.objective?.type === "defrost" &&
                     `Clear ${lvl.objective.objGoal} ice`}
                      {lvl.objective?.type === "lightsUp" &&

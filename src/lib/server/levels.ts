@@ -7967,8 +7967,8 @@ export const levels: LevelData[] = [
    {
     id: 331,
      name: "Level 331",
-     objective: { type: 'spreadInk' , objGoal: 60 },
-     moves: 45,
+     objective: { type: 'spreadInk' , objGoal: 30 },
+     moves: 15,
       boulderHP: 2,
       fridgeCharge:0,
  
@@ -7981,14 +7981,14 @@ export const levels: LevelData[] = [
      locked: true,
     
      board: [
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+      ["removed", "removed", "removed", "boulder", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "boulder", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "boulder", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "boulder", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "boulder", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "boulder", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "boulder", "normal", "normal", "normal", "normal"],
+      ["removed", "removed", "removed", "boulder", "normal", "normal", "normal", "normal"]
      ],
      groundLayout: [
       ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
@@ -7997,6 +7997,43 @@ export const levels: LevelData[] = [
       ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
       ['none', 'ink', 'none', 'none', 'none', 'none', 'none', 'none'],
       ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+    ],
+   },
+   {
+    id: 332,
+     name: "Level 332",
+     objective: { type: 'spreadInk' , objGoal: 25 },
+     moves: 35,
+      boulderHP: 2,
+      fridgeCharge:0,
+ 
+      fridgeChargeMax: 4,
+      fridgeHP: 6,
+      boneTurns: 8,
+      cursedTurns: 28,
+      boneRipeTurns: 5,
+     allowHardLetters: true,
+     locked: true,
+    
+     board: [
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "removed", "removed", "normal", "boulder", "removed", "removed", "normal"],
+      ["normal", "removed", "normal", "normal", "boulder", "fridge", "removed", "normal"],
+      ["normal", "normal", "normal", "normal", "boulder", "boulder", "boulder", "normal"],
+      ["normal", "boulder", "boulder", "boulder", "normal", "normal", "normal", "normal"],
+      ["normal", "removed", "normal", "boulder", "normal", "normal", "removed", "normal"],
+      ["normal", "removed", "removed", "boulder", "normal", "removed", "removed", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+     ],
+     groundLayout: [
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'ink', 'none', 'none', 'none', 'none', 'none'],
       ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
       ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
     ],

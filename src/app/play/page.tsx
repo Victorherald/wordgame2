@@ -31,7 +31,7 @@ export default function PlayPage() {
         if (!res.ok) throw new Error("Level not found");
         const data: LevelData = await res.json();
         setLevel(data);
-      } catch (err: any) {
+      } catch (err) {
         setError(err.message);
       } finally {
         setLoading(false);
