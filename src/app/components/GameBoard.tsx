@@ -1322,11 +1322,10 @@ const handleSubmit = () => {
 
            if (cell.type === "cleanse") return;
 
-           if (cell.type === "ink"){
-             newGround[r][c] = {...cell, type: "ink"};
-
-             spreadCount++
-           }
+         if (cell.type !== "ink"){
+           newGround[r][c].type = "ink";
+           spreadCount++
+         }
          })
        }
        )
@@ -1858,8 +1857,15 @@ const uniqueDestroyed = Array.from(
 const iceResult = applyIceDamage(updatedGrid, selected);
 updatedGrid = iceResult.grid;
 
-const inkResult = spreadInk(ground, selected);
-setGround(inkResult.newGround)
+let inkResult = {newGround: ground, spreadCount: 0};
+if (selected.some(({row, col}) => 
+ground[row][col]?.type === "ink")){
+  inkResult = spreadInk(ground, selected);
+
+
+  setGround(inkResult.newGround)
+  
+}
 
 
 
@@ -1946,7 +1952,7 @@ if (objective?.type === "spreadInk"){
 
   const totalInk = result.newGround.flat().filter(cell => cell.type === "ink").length;
 
-  updatedObjMet += countInk(ground);
+  updatedObjMet += inkResult.spreadCount;
 }
 
 
@@ -3112,17 +3118,39 @@ const exclamated = tile?.isExclamator
           )}
 
 {ground?.[r]?.[c]?.type === "ink" && (
-            <div
+           <>
+           
+           <div
               className="
-               absolute inset-[-6px]
-               rounded-[10px]
-              bg-purple-500
-               shadow-[0_0_20px_rgba(139,0,139,0,8)]
-               animate-pulse
-               z-0
-               pointer-events-none
+              absolute inset-[-6px]
+              rounded-[2px]
+              bg-gradient-to-bl
+              from-purple-700/40
+              via-blue-500/50
+              to-purple-700/10
+              shadow-[inset_0_0_8px_rgba(0,0,0,0,9),inset_0_20px_rgba(250,0,40,0,2)]
+
+              backdrop -blur-[1px]  saturate-[120%]
+              z-20
+          pointer-events-none
               "
             />
+             <div
+
+          className="absolute inset-[-6px] rounded-[6px]
+          from-purple-600/20
+              via-red-500/20
+              to-neutral-200/10
+          opacity-60
+          animate-[inkPulse_3s_ease-in-out_infinite]
+          z-0 pointer-events-none"
+
+
+
+
+
+/>
+            </>
           )}
 
 

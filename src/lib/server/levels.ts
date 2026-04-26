@@ -7284,7 +7284,7 @@ export const levels: LevelData[] = [
       ["normal", "exclamator", "removed", "warped", "removed", "removed", "removed", "normal"],
       ["normal", "removed", "exclamator", "exclamator", "normal", "removed", "normal", "normal"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
-     ],
+    ],
  
    },
    {
@@ -7967,7 +7967,7 @@ export const levels: LevelData[] = [
    {
     id: 331,
      name: "Level 331",
-     objective: { type: 'spreadInk' , objGoal: 4 },
+     objective: { type: 'spreadInk' , objGoal: 60 },
      moves: 45,
       boulderHP: 2,
       fridgeCharge:0,
