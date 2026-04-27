@@ -1070,7 +1070,7 @@ const handleSubmit = () => {
 // ice fridge
     function spawnIce(tile: Tile): Tile {
       if  (!tile) return tile;
-
+      if (tile?.isLightBulb) return;
       if (NegativeTile(tile)){return tile}
       return {
         ...tile ,
