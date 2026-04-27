@@ -1318,9 +1318,12 @@ const handleSubmit = () => {
            const c = col + dc;
 
            const cell = newGround[r]?.[c];
+           const tile = grid[r]?.[c];
            if (!cell) return;
 
            if (cell.type === "cleanse") return;
+
+           if (tile.isRemoved) return;
 
          if (cell.type !== "ink"){
            newGround[r][c].type = "ink";

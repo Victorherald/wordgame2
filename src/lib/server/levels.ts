@@ -8253,4 +8253,41 @@ export const levels: LevelData[] = [
      ],
     
    },
+   {
+    id: 340,
+     name: "Level 340",
+     objective: { type: 'spreadInk' ,  objGoal: 17 },
+     moves: 10,
+      boulderHP: 2,
+      fridgeCharge:0,
+      difficulty: 'Hard Level',
+      fridgeChargeMax: 6,
+      fridgeHP: 8,
+      cursedTurns: 35,
+  warpTurns: 28,
+      boneRipeTurns: 5,
+     allowHardLetters: false,
+     locked: true,
+    
+     board: [
+      ["normal", "normal", "normal", "normal", "removed", "removed", "removed", "removed"],
+      ["normal", "normal", "normal", "normal", "removed", "removed", "removed", "removed"],
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["removed", "removed", "removed", "normal", "normal", "normal", "normal", "normal"],
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+      ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+      ["normal", "normal", "normal", "normal", "normal", "removed", "removed", "removed"]
+     ],
+     groundLayout: [
+      ['none', 'ink', 'none', 'none', 'none', 'ink', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'ink', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'ink', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['ink', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+    ],
+   },
 ];
