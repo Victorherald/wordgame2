@@ -8561,7 +8561,7 @@ export const levels: LevelData[] = [
       fridgeCharge:0,
      
       fridgeChargeMax: 7,
-      fridgeHP: 5,
+      fridgeHP: 9,
       cursedTurns: 15,
   
   boneTurns: 5,
@@ -8573,8 +8573,8 @@ export const levels: LevelData[] = [
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
       ["normal", "fridge", "normal", "normal", "fridge", "normal", "fridge", "normal"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "fridge", "normal", "fridge", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "fridge", "normal", "fridge", "normal"],
+      ["normal", "normal", "normal", "fridge", "normal", "normal", "fridge", "normal"],
+      ["normal", "fridge", "normal", "normal", "fridge", "normal", "normal", "normal"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
       ["normal", "fridge", "normal", "fridge", "normal", "normal", "fridge", "normal"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
