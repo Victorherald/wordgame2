@@ -203,6 +203,7 @@ export default function LevelList() {
           </div>
         ))}
       </div>
+      <p className="text-sm text-gray-400 whitespace-nowrap">NEW LEVELS ARE COMING SOON!</p>
     </div>
   );
 }

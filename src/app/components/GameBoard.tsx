@@ -1069,8 +1069,9 @@ const handleSubmit = () => {
 }
 // ice fridge
     function spawnIce(tile: Tile): Tile {
+       if (tile?.isLightBulb) {};
       if  (!tile) return tile;
-      if (tile?.isLightBulb) return;
+     
       if (NegativeTile(tile)){return tile}
       return {
         ...tile ,
@@ -1322,6 +1323,8 @@ const handleSubmit = () => {
            if (!cell) return;
 
            if (cell.type === "cleanse") return;
+
+           if (NegativeTile(tile)) return;
 
            if (tile.isRemoved) return;
 
@@ -1758,6 +1761,7 @@ function NegativeTile(tile: Tile) {
     tile.isLocked ||
     tile.isInfected ||
     tile.isLightBulb ||
+    tile.isBoulder ||
     tile.isBulbOn ||
     tile.isExclamator
   );
