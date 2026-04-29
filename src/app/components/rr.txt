@@ -622,6 +622,7 @@ const fridge = tile?.isFridge
             {objective.type === "lightsUp" && `Turn on all the lights!`}
             {objective.type === "collectVelvet" && `Crush the velvets!`}
             {objective.type === "defrost" && "Clear all the ice!"}
+            {objective.type === "inkSpread" && "Spread the Ink!"}
           </p>
         ) : (
           <p className="text-gray-500 text-xs sm:text-sm italic">
