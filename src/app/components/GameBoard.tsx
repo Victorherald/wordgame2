@@ -79,6 +79,13 @@ shakeTick?: number;
   boulderHP?: number;
   isBreaking?: boolean;
 
+  //shockwave fr TNT
+  shockwave?: {
+    dx: number;
+    dy: number;
+    tick: number;
+  };
+
   boulderMaxHP?: number;
   isChanging?: boolean;
   isRemoved?: boolean;
@@ -1339,6 +1346,59 @@ const handleSubmit = () => {
         
 
     }
+
+    //TNT explosion
+
+    function explodeTNT(grid: Tile[][], r: number, c: number) {
+      const newGrid = grid.map(row => row.map(t => (t ? { ...t } : t)));
+    
+      for (let dr = -1; dr <= 1; dr++) {
+        for (let dc = -1; dc <= 1; dc++) {
+          const nr = r + dr;
+          const nc = c + dc;
+    
+          const tile = newGrid[nr]?.[nc];
+          if (!tile) continue;
+    
+          // optional: protect blockers
+          if (tile.isFridge || tile.isLocked) continue;
+    
+          newGrid[nr][nc] = null as any; // 💥 destroy
+        }
+      }
+    
+      return newGrid;
+    }
+
+    function getShockwaveTiles(grid: Tile[][], r: number, c: number) {
+      const affected: { row: number; col: number; dx: number; dy: number }[] = [];
+    
+      for (let dr = -2; dr <= 2; dr++) {
+        for (let dc = -2; dc <= 2; dc++) {
+          const dist = Math.max(Math.abs(dr), Math.abs(dc));
+    
+          // only ring OUTSIDE 3x3
+          if (dist !== 2) continue;
+    
+          const nr = r + dr;
+          const nc = c + dc;
+    
+          if (!grid[nr]?.[nc]) continue;
+    
+          // direction AWAY from center
+          affected.push({
+            row: nr,
+            col: nc,
+            dx: dc,
+            dy: dr,
+          });
+        }
+      }
+    
+      return affected;
+    }
+
+    
 
 
 
