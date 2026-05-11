@@ -9854,7 +9854,7 @@ export const levels: LevelData[] = [
    {
     id: 383,
      name: "Level 383",
-     objective: { type: 'boss' , bossHp: 500, bossMaxHp: 500, bossColor: 'green'},
+     objective: { type: 'boss' , objGoal: 0, bossHp: 500, bossMaxHp: 500, bossColor: 'green'},
      moves: 40,
      
       boulderHP: 3,
