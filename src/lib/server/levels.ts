@@ -19,7 +19,7 @@ type Objective = {
   bossHp?: number | undefined;
   bossMaxHp?: number | undefined;
   bossColor?: string;
-  objGoal?: number;
+  objGoal: number;
   tileType?: 'cursed' | 'fire'  | 'boulder002' | 'boulder003' | 'boulder' | 'exclamator' | 'warped' | "dull" | "locked" | "velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse' | 'ink')[][];
