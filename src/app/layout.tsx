@@ -1,15 +1,13 @@
+/// <reference types="next" />
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Nunito_Sans} from "next/font/google";
+// @ts-ignore
 import "./globals.css";
-
 
 const nunito = Nunito_Sans({
   subsets: ["latin"],
   weight: ["400", "700", "900"],
 });
-
-
-
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,10 +19,9 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
 export const metadata: Metadata = {
-  title: "Worzzle",
-  description: "Puzzle game designed by Yakazuba Technologies",
+  title: "Worzzle - World Cup Edition",
+  description: "Soccer themed word puzzle game",
 };
 
 export default function RootLayout({
@@ -34,9 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable}  antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>
     </html>

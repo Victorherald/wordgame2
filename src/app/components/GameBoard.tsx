@@ -210,6 +210,12 @@ useEffect(() => {
   }
 }, [level]);
 
+ // World Cup theme ends after July 20, 2026
+const today = new Date();
+const worldCupEnd = new Date("2026-07-20T23:59:59");
+
+const isWorldCupTheme = today <= worldCupEnd;
+
 
 const tutorialType = level.tutorialTileType;
 const tutorialEnabled = level.shouldShowTutorial;
@@ -2179,6 +2185,7 @@ if (boneUsed) {
     && !grid[r][c].isInfected
     && !grid[r][c].isDull
     && !grid[r][c].isFire
+     && !grid[r][c].isLocked
     && !grid[r][c].isBook
     && !grid[r][c].isVelvet
     && !grid[r][c].isBone
@@ -2644,18 +2651,24 @@ const handleScramble = () => {
 
    
 
-   <div className="min-h-screen w-full bg-neutral-950 flex justify-center items-start py-1 sm:py-3 px-1 sm:px-5">
+   <div  className={`min-h-screen w-full  flex justify-center items-start py-1 sm:py-3 px-1 sm:px-5 ${
+    isWorldCupTheme ? "soccer-pitch-bg" : "bg-black"
+  }`}>
   <div
-    className="
-      w-full max-w-6xl
-      flex flex-col md:grid md:grid-cols-[280px_1fr]
-      gap-4
-      bg-neutral-900
-      rounded-xl
-      shadow-inner shadow-black/30
-      overflow-hidden
-      p-2 sm:p-3
-    "
+   className={`
+  w-full max-w-6xl
+  flex flex-col md:grid md:grid-cols-[280px_1fr]
+  gap-4
+  rounded-xl
+  shadow-inner shadow-black/30
+  overflow-hidden
+  p-2 sm:p-3
+  ${
+    isWorldCupTheme
+      ? "soccer-container"
+      : "bg-neutral-900 border border-neutral-700"
+  }
+`}
   >
 {/* --- Top Bar (Mobile only) --- */}
 <div
@@ -2804,7 +2817,7 @@ const handleScramble = () => {
 
 
     {/*  Sidebar */}
-    <div
+<div
   className={`
     hidden md:flex flex-col justify-between p-4 rounded-lg overflow-y-auto space-y-3
     ${
@@ -2814,7 +2827,9 @@ const handleScramble = () => {
         ? "bg-orange-950 border border-orange-700"
         : level.difficulty === "Hard Level"
         ? "bg-red-950 border border-red-700"
-        : "bg-neutral-950 border border-neutral-800"
+        : isWorldCupTheme
+        ? "bg-green-900/30 border-2 border-yellow-400/50 shadow-lg"
+        : "bg-neutral-900 border border-neutral-700 shadow-lg"
     }
   `}
 >
@@ -3031,12 +3046,16 @@ const handleScramble = () => {
 
     {/*  Board */}
     <div
-      className="
-        bg-neutral-950 rounded-lg p-3
-        flex flex-col justify-center items-center
-        border border-neutral-800
-        w-full
-      "
+    className={`
+  rounded-lg p-3
+  flex flex-col justify-center items-center
+  border w-full
+  ${
+    isWorldCupTheme
+      ? "soccer-game-container border-neutral-800"
+      : "bg-black border-neutral-700"
+  }
+`}
     >
       {/* Tile Grid */}
 
@@ -3129,9 +3148,9 @@ const exclamated = tile?.isExclamator
 
 
 
-        const dull = tile?.isDull 
-        ? 'bg-gradient-to-br from-neutral-700 to-neutral-700 text-gray-100 border border-neutral-500  brightness-85'
-        : '';
+       const dull = tile?.isDull
+  ? "bg-neutral-700 border border-neutral-500 text-white-300 brightness-90 dull-tile"
+  : "";
         const locked = tile?.isLocked
   ? 'bg-gray-800 text-gray-400 border-2 border-gray-500 relative overflow-hidden locked-chain'
   : '';
@@ -3372,16 +3391,30 @@ const exclamated = tile?.isExclamator
             handleRightClick(r, c);
           }}
           className={`
-            relative
-            w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14
-            rounded-[6px] cursor-pointer
-            bg-gradient-to-br from-[#fdf5e6] to-[#f5e1b9]
-            text-black text-sm sm:text-lg md:text-xl font-serif
-            flex items-center justify-center
-            border border-[#d6c6a1] shadow-md shadow-black/10
-            transition duration-150 ease-in-out
-            ${anim} ${tile?.gem ? getGemGlow(tile.gem) : ''} ${boulderHit}   ${velvet} ${plague} ${exclamated} ${bulb} ${bone} ${tile?.isBurnt ? 'bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]' : ''}  ${locked} ${fire} ${cursed} ${warped} ${dull} ${ice} 
-          `}
+  relative
+  w-8 h-8 sm:w-10 sm:h-10 md:w-14 md:h-14
+  rounded-[6px] cursor-pointer
+  ${isWorldCupTheme ? "bg-gradient-to-b from-[#F7E7B5] via-[#F2DDA0] to-[#E5C97A] border border-[#B38B3D] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_2px_4px_rgba(0,0,0,0.25)]" : "bg-gradient-to-b from-[#F7E7B5] via-[#F2DDA0] to-[#E5C97A] border border-[#B38B3D] shadow-[inset_0_1px_0_rgba(255,255,255,0.8),0_2px_4px_rgba(0,0,0,0.25)]"}
+  text-black text-sm sm:text-lg md:text-xl font-sans
+  flex items-center justify-center
+  shadow-md shadow-black/10
+  transition duration-150 ease-in-out
+  ${anim}
+  ${tile?.gem ? getGemGlow(tile.gem) : ""}
+  ${boulderHit}
+  ${velvet}
+  ${plague}
+  ${exclamated}
+  ${bulb}
+  ${bone}
+  ${tile?.isBurnt ? "bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]" : ""}
+  ${locked}
+  ${fire}
+  ${cursed}
+  ${warped}
+  ${dull}
+  ${ice}
+`}
         >
 
    
@@ -3461,20 +3494,20 @@ const exclamated = tile?.isExclamator
         {tile.curseTurns}
       </div>
     ) : tile?.isDull ? (
-      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-600 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-gray-600 text-neutral-200 text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
         {tile.dullTurns}
       </div>
     ) : tile?.isLocked ? (
-      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-gray-700 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-gray-700 text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10">
         {tile.lockTurns}
       </div>
     ) : tile?.isWarped ? (
-      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full bg-yellow-400 text-black text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md animate-pulse">
+      <div className="absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-400 text-black text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md animate-pulse">
         {tile.warpTurns}
       </div>
     ) : tile?.isBone ? (
       <div
-        className={`absolute bottom-1 right-1 w-2 h-2 sm:w-5 sm:h-5 rounded-full text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md ${
+        className={`absolute bottom-1 right-1 w-2 h-2 sm:w-3 sm:h-3 rounded-full text-white text-[10px] sm:text-xs font-bold flex items-center justify-center z-10 shadow-md ${
           tile.isRipe
             ? "bg-teal-400/80 animate-pulse"
             : "bg-[#0f3b3a]/80 text-teal-200"

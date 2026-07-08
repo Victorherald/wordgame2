@@ -335,12 +335,12 @@ transform-origin:  center;
 
 .dull-tile {
   background: linear-gradient(145deg, #2d2d2d, #1a1a1a);
-  color: #888;
+  color: #dbd9d9;
   border: 2px solid #333;
   border-radius: 0.5rem;
   animation: dullPulse 1.5s infinite ease-in-out;
   transition: transform 0.2s ease, filter 0.2s ease;
-  cursor: not-allowed;
+  cursor: pointer;
 }
 
 .warp-tile {
@@ -401,8 +401,8 @@ transform-origin:  center;
 
 /*  Ripe Bone Tile — ethereal teal with glowing energy */
 .tile-bone-ripe {
-  background: radial-gradient(circle at 50% 50%, #0bf483 0%, #05994d 100%);
-  border: 2px solid #0fe97c;
+  background: radial-gradient(circle at 50% 50%, #0a9d56 0%, #066132 100%);
+  border: 2px solid #10a95c;
   box-shadow:
     0 0 15px rgba(13, 225, 112, 0.8),
     inset 0 0 10px rgba(0, 255, 145, 0.4);

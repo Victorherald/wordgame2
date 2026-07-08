@@ -12,7 +12,6 @@ export default function LevelList() {
   const [levels, setLevels] = useState<LevelData[]>([]);
   const [loading, setLoading] = useState(true);
   const [levelFilter, setLevelFilter] = useState<number | "">("");
-
   const router = useRouter();
 
   useEffect(() => {
@@ -58,10 +57,26 @@ export default function LevelList() {
     router.push("/play");
   };
 
+  // World Cup theme ends after July 20, 2026
+const today = new Date();
+const worldCupEnd = new Date("2026-07-20T23:59:59");
+
+const isWorldCupTheme = today <= worldCupEnd;
+
   if (loading) {
     return (
-      <main className="min-h-screen bg-neutral-950 text-white flex items-center justify-center p-6">
-        <div className="text-lg animate-pulse">Loading levels...</div>
+     <main
+  className={`min-h-screen text-white flex items-center justify-center p-6 ${
+    isWorldCupTheme ? "soccer-pitch-bg" : "bg-black"
+  }`}
+>
+        <motion.div
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-lg font-bold"
+        >
+         {` ${isWorldCupTheme ? "⚽ Loading levels..." : "Loading levels..." }`} 
+        </motion.div>
       </main>
     );
   }
@@ -70,25 +85,30 @@ export default function LevelList() {
     <div className="w-full flex flex-col gap-6 items-center">
 
 {/* Sticky Level Filter */}
-<div
-  className="
+<motion.div
+  initial={{ opacity: 0, y: -10 }}
+  animate={{ opacity: 1, y: 0 }}
+  className={`
     sticky top-0 z-30
     w-full
-    bg-neutral-950/90 backdrop-blur
-    border-b border-neutral-800
-    px-4 py-3
+  
+     ${  isWorldCupTheme
+    ? "bg-gradient-to-r from-green-900/80 to-green-800/80 border-yellow-400/50"
+    : "bg-black/90 border-gray-700" }
+    px-4 py-4
     flex justify-center
-  "
+    rounded-lg shadow-lg`}
+  
 >
   <div className="w-full max-w-sm flex items-center gap-3">
-    <label className="text-sm text-gray-400 whitespace-nowrap">
-      Type a level number:
+    <label className="text-sm text-white font-semibold whitespace-nowrap">
+      🔍 Level #:
     </label>
 
     <input
       type="number"
       min={1}
-      placeholder=""
+      placeholder="Search..."
       value={levelFilter}
       onChange={(e) => {
         const val = e.target.value;
@@ -96,114 +116,136 @@ export default function LevelList() {
       }}
       className="
         w-24 rounded-md
-        bg-neutral-900 border border-neutral-700
-        px-2 py-1 text-sm text-white
-        focus:outline-none focus:border-green-500
+        bg-white/10 border-2 border-yellow-400/50
+        px-3 py-2 text-sm text-white font-semibold
+        focus:outline-none focus:border-yellow-300 focus:bg-white/20
+        placeholder-white/50
       "
     />
   </div>
-</div>
+</motion.div>
 
 {filteredLevels.length === 0 && (
-  <p className="text-sm text-gray-500 text-center mt-4">
-    No level found.
-  </p>
+  <motion.p
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    className="text-lg text-yellow-300 text-center mt-4 font-semibold"
+  >
+    ⚠️ No level found.
+  </motion.p>
 )}
 
 
 <div className="h-4" />
 
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-        {filteredLevels.map((lvl) => (
-          <div
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ staggerChildren: 0.1 }}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
+      >
+        {filteredLevels.map((lvl, idx) => (
+          <motion.div
             key={lvl.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.05 }}
             className={`
-              rounded-lg border p-4 flex flex-col items-center justify-between text-center transition
-
-              ${lvl.locked ? "bg-neutral-800 text-gray-500 border-neutral-500" : ""}
-         
-             
-              ${lvl.difficulty === "Hard Level" ? "bg-orange-900/40 text-white border-orange-600 hover:border-orange-500" : ""}
-             ${lvl.difficulty === "demon"
-  ? `
-    bg-gradient-to-br from-red-950 via-red-900 to-orange-900
-    text-red-100
-    border border-red-700
-    shadow-lg shadow-red-900/50
-    hover:shadow-red-700/70
-    hover:border-red-500
-    hover:scale-[1.06]
-    relative
-    overflow-hidden
-  `
-  : "text-green-300"
-}
-
-
-              ${!lvl.locked ? "hover:scale-105" : ""}
+              rounded-xl border-2 p-6 flex flex-col items-center justify-between text-center transition-all transform
+              ${lvl.locked 
+                ? "bg-gray-800/50 text-gray-400 border-gray-600 cursor-not-allowed" 
+                : lvl.difficulty === "demon"
+                ? "bg-gradient-to-br from-red-950 via-orange-900 to-red-900 text-red-100 border-red-600 shadow-lg shadow-red-900/50 hover:shadow-red-700/70 hover:border-red-500 hover:scale-105"
+                : lvl.difficulty === "Hard Level"
+                ? "bg-gradient-to-br from-orange-950 to-orange-900 text-orange-100 border-orange-600 hover:border-orange-500 hover:scale-105 shadow-lg shadow-orange-900/30"
+                : isWorldCupTheme
+  ? "soccer-level-card border-green-600/50"
+  : "bg-gray-900 text-white border-gray-700 hover:border-gray-500 hover:scale-105"
+              }
             `}
           >
             <h2
               className={`
-                text-xl font-bold
+                text-2xl font-bold mb-2
                 ${lvl.difficulty === "Hard Level" ? "text-orange-300" : ""}
-                ${lvl.difficulty === "demon" ? "text-red-400" : ""}
+                ${lvl.difficulty === "demon" ? "text-red-300 animate-pulse" : ""}
+                ${!lvl.locked && lvl.difficulty !== "demon" && lvl.difficulty !== "Hard Level" ? "text-yellow-300" : ""}
               `}
             >
-              {lvl.name}
+              ⚽ {lvl.name}
             </h2>
 
             {/* Difficulty Tag */}
             {!lvl.locked && lvl.difficulty && (
-              <span
+              <motion.span
+                whileHover={{ scale: 1.1 }}
                 className={`
-                  text-xs font-bold uppercase mt-1 px-2 py-1 rounded
-                  ${lvl.difficulty === "Hard Level" ? "text-orange-400" : ""}
-                  ${lvl.difficulty === "demon" ? "text-red-500" : ""}
+                  text-xs font-bold uppercase mt-2 px-3 py-1 rounded-full
+                  ${lvl.difficulty === "Hard Level" ? "bg-orange-600 text-white" : ""}
+                  ${lvl.difficulty === "demon" ? "bg-red-600 text-white animate-pulse" : ""}
+                  ${!lvl.difficulty || (lvl.difficulty !== "Hard Level" && lvl.difficulty !== "demon") ? "bg-green-600 text-white" : ""}
                 `}
               >
-                {lvl.difficulty}
-              </span>
+                {lvl.difficulty === "demon" ? "🔥 DEMON" : lvl.difficulty === "Hard Level" ? "⚠️ HARD" : "✅ NORMAL"}
+              </motion.span>
             )}
 
             {lvl.locked ? (
-              <div className="mt-2 flex items-center gap-1 text-gray-400">
+              <div className="mt-4 flex items-center gap-2 text-gray-400 font-semibold">
                 <Lock className="w-5 h-5" /> Locked
               </div>
             ) : (
               <>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-white/80 mt-3 font-semibold">
                   {lvl.objective?.type === "score" &&
-                    `Reach ${lvl.objective.objGoal} points`}
+                    `🎯 Reach ${lvl.objective.objGoal} points`}
                       {lvl.objective?.type === "spreadInk" &&
-                    `Spread the ink around`}
+                    `🖤 Spread the ink around`}
                     {lvl.objective?.type === "defrost" &&
-                    `Clear ${lvl.objective.objGoal} ice`}
+                    `❄️ Clear ${lvl.objective.objGoal} ice`}
                      {lvl.objective?.type === "lightsUp" &&
-                    `Turn on the lights!`}
+                    `💡 Turn on the lights!`}
                   {lvl.objective?.type === "words" &&
-                    `Find ${lvl.objective.objGoal} words`}
+                    `📝 Find ${lvl.objective.objGoal} words`}
                   {lvl.objective?.type === "destroy" &&
-                    `Destroy ${lvl.objective.objGoal} ${lvl.objective.tileType} tiles`}
+                    `💥 Destroy ${lvl.objective.objGoal} ${lvl.objective.tileType} tiles`}
                      {lvl.objective?.type === "collectVelvet" &&
-                    `Squash ${lvl.objective.objGoal} velvets!`}
+                    `✨ Squash ${lvl.objective.objGoal} velvets!`}
                      {lvl.objective?.type === "boss" &&
-                    `Defeat the boss!`}
+                    `👹 Defeat the boss!`}
                 </p>
 
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => handlePlay(lvl.id)}
-                  className={`${lvl.difficulty === 'Hard Level' ? 'mt-3 flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition' : 'mt-3 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition' } ${lvl.difficulty === 'demon' ? 'mt-3 flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded transition' : 'mt-3 flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition'}`}
+                  className={`
+                    mt-4 flex items-center gap-2 font-bold px-6 py-3 rounded-lg transition-all transform
+                    ${lvl.difficulty === 'demon' 
+                      ? 'bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white shadow-lg shadow-red-600/50' 
+                      : lvl.difficulty === 'Hard Level'
+                      ? 'bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white shadow-lg shadow-orange-600/50'
+                      : 'bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white shadow-lg shadow-green-600/50'
+                    }
+                  `}
                 >
                   <Play className="w-4 h-4" /> Play
-                </button>
+                </motion.button>
               </>
             )}
-          </div>
+          </motion.div>
         ))}
-      </div>
-      <p className="text-sm text-gray-400 whitespace-nowrap">NEW LEVELS ARE COMING SOON!</p>
+      </motion.div>
+      
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="text-sm text-yellow-300 whitespace-nowrap font-bold mt-6"
+      >
+        ⭐ NEW LEVELS ARE COMING SOON! ⭐
+      </motion.p>
     </div>
   );
 }
