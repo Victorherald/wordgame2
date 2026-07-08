@@ -97,9 +97,7 @@ const isWorldCupTheme = today <= worldCupEnd;
   {isWorldCupTheme ? "⚽ Worzzle ⚽" : "Worzzle"}
 </h1>
        <p className={isWorldCupTheme ? "soccer-subtitle" : "text-xl text-gray-400 font-semibold"}>
-  {isWorldCupTheme
-    ? "World Cup Word Game Edition"
-    : "The Ultimate Word Puzzle Game"}
+  The Ultimate Word Puzzle Game
 </p>
         </motion.div>
 

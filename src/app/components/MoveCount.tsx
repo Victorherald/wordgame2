@@ -12,7 +12,7 @@ export function MovesDisplay({ movesLeft }: MovesDisplayProps) {
 
   // World Cup theme ends after July 20, 2026
   const today = new Date();
-  const worldCupEnd = new Date("2023-07-20T23:59:59");
+  const worldCupEnd = new Date("2026-07-20T23:59:59");
   const isWorldCupTheme = today <= worldCupEnd;
 
   return (
