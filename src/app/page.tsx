@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import {BookOpen,  Info,Trophy,Gamepad2, Users, MessageCircle, Send} from "lucide-react";
+  
+
+  
+  
+
 import Image from "next/image";
 
 export default function Home() {
@@ -87,19 +93,42 @@ const isWorldCupTheme = today <= worldCupEnd;
       <div className="relative z-20 flex flex-col items-center justify-center min-h-screen p-6">
         
         {/* Title with Soccer Theme */}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8"
-        >
-         <h1 className={isWorldCupTheme ? "soccer-title mb-2" : "text-5xl md:text-6xl font-extrabold text-white mb-2"}>
-  {isWorldCupTheme ? "⚽ Worzzle ⚽" : "Worzzle"}
-</h1>
-       <p className={isWorldCupTheme ? "soccer-subtitle" : "text-xl text-gray-400 font-semibold"}>
-  The Ultimate Word Puzzle Game
-</p>
-        </motion.div>
+    <motion.div
+  initial={{ scale: 0.8, opacity: 0 }}
+  animate={{ scale: 1, opacity: 1 }}
+  transition={{ duration: 0.6 }}
+  className="text-center mb-8"
+>
+  <div className="flex items-center justify-center gap-3 mb-2">
+    {isWorldCupTheme && (
+      <Trophy className="w-8 h-8 text-yellow-300" />
+    )}
+
+    <h1
+      className={
+        isWorldCupTheme
+          ? "soccer-title"
+          : "text-5xl md:text-6xl font-extrabold text-white"
+      }
+    >
+      Worzzle
+    </h1>
+
+    {isWorldCupTheme && (
+      <Trophy className="w-8 h-8 text-yellow-300" />
+    )}
+  </div>
+
+  <p
+    className={
+      isWorldCupTheme
+        ? "soccer-subtitle"
+        : "text-xl text-gray-400 font-semibold"
+    }
+  >
+    The Ultimate Word Puzzle Game
+  </p>
+</motion.div>
 
        
 
@@ -110,49 +139,75 @@ const isWorldCupTheme = today <= worldCupEnd;
           transition={{ delay: 0.4 }}
           className="flex flex-col md:flex-row gap-6 items-center"
         >
-          <button
-            onClick={() => router.push("/levels")}
-           className={`${
-  isWorldCupTheme
-    ? "soccer-btn"
-    : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
-} w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
-          >
-             Play Game
-          </button>
+        <button
+  onClick={() => router.push("/levels")}
+  className={`${
+    isWorldCupTheme
+      ? "soccer-btn"
+      : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
+  } w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
+>
+  <div className="flex items-center justify-center gap-2">
+    <Gamepad2 className="w-5 h-5" />
+    <span>Play Game</span>
+  </div>
+</button>
 
-          <button
-            onClick={() => openPopup("help")}
-         className={`${
-  isWorldCupTheme
-    ? "soccer-btn"
-    : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
-} w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
-          >
-            📖 How to Play
-          </button>
+         <button
+  onClick={() => openPopup("help")}
+  className={`${
+    isWorldCupTheme
+      ? "soccer-btn"
+      : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
+  } w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
+>
+  <div className="flex items-center justify-center gap-2">
+    <BookOpen className="w-5 h-5" />
+    <span>How to Play</span>
+  </div>
+</button>
 
-          <button
-            onClick={() => openPopup("about")}
-          className={`${
-  isWorldCupTheme
-    ? "soccer-btn"
-    : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
-} w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
-          >
-            ℹ️ About
-          </button>
+        <button
+  onClick={() => openPopup("about")}
+  className={`${
+    isWorldCupTheme
+      ? "soccer-btn"
+      : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
+  } w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
+>
+  <div className="flex items-center justify-center gap-2">
+    <Info className="w-5 h-5" />
+    <span>About</span>
+  </div>
+</button>
+
+<button
+  onClick={() => openPopup("community")}
+  className={`${
+    isWorldCupTheme
+      ? "soccer-btn"
+      : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
+  } w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
+>
+  <div className="flex items-center justify-center gap-2">
+    <Users className="w-5 h-5" />
+    <span>Community</span>
+  </div>
+</button>
         </motion.div>
 
         {/* Footer */}
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="absolute bottom-10 text-white/50 text-sm font-semibold"
-        >
-          Made by Yakazuba Games 🎮
-        </motion.h1>
+      <motion.h1
+  initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  transition={{ delay: 0.6 }}
+  className="absolute bottom-10 text-white/50 text-sm font-semibold"
+>
+  <span className="flex items-center justify-center gap-2">
+    <Gamepad2 className="w-4 h-4" />
+    <span>Made by Yakazuba Games</span>
+  </span>
+</motion.h1>
       </div>
 
       {/* Popup Modal */}
@@ -169,12 +224,34 @@ const isWorldCupTheme = today <= worldCupEnd;
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.85, opacity: 0 }}
               transition={{ duration: 0.25 }}
-              className="soccer-container p-8 rounded-2xl shadow-2xl max-w-md w-full text-center"
+             className={`${
+  isWorldCupTheme && activePopup !== "community"
+    ? "soccer-container"
+    : "bg-gray-900 border border-gray-700"
+} p-8 rounded-2xl shadow-2xl max-w-md w-full text-center`}
             >
-              <h2 className="text-3xl font-bold mb-4 capitalize text-white">
-                {activePopup === "help" && "⚽ How to Play"}
-                {activePopup === "about" && "ℹ️ About Worzzle"}
-              </h2>
+           <h2 className="flex items-center justify-center gap-2 text-3xl font-bold mb-4 capitalize text-white">
+  {activePopup === "help" && (
+    <>
+      <BookOpen className="w-8 h-8" />
+      <span>How to Play</span>
+    </>
+  )}
+
+  {activePopup === "about" && (
+    <>
+      <Info className="w-8 h-8" />
+      <span>About Worzzle</span>
+    </>
+  )}
+
+    {activePopup === "community" && (
+    <>
+      <Users className="w-8 h-8" />
+      <span>Community</span>
+    </>
+  )}
+</h2>
 
               <p className="text-white/80 mb-6 leading-relaxed">
                 {activePopup === "help" &&
@@ -184,15 +261,42 @@ const isWorldCupTheme = today <= worldCupEnd;
                   "Worzzle is a word-forming puzzle game inspired by Bookworm Adventures and Scrabble. This special World Cup edition brings the excitement of soccer to your word game experience!"}
               </p>
 
+               {activePopup === "community" && (
+  <div className="space-y-4 mb-6">
+    <p className="text-white/80">
+      Join the Worzzle community to report bugs, suggest ideas,
+      compete with other players and stay updated!
+    </p>
+
+    <button
+      onClick={() =>
+        window.open("https://discord.gg/mUmkBqpTF", "_blank")
+      }
+     className={`${
+  isWorldCupTheme && activePopup !== "community"
+    ? "soccer-container"
+    : "bg-gray-900 border border-gray-700"
+} p-8 rounded-2xl shadow-2xl max-w-md w-full text-center`}
+    >
+      <MessageCircle className="w-5 h-5" />
+      Join Discord
+    </button>
+
+    
+  </div>
+)}
+
               <button
                 onClick={closePopup}
-                className="soccer-btn px-8 py-3 rounded-lg text-white font-bold hover:shadow-lg"
+               className="bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white px-8 py-3 rounded-lg font-bold hover:shadow-lg transition-all"
               >
                 Close
               </button>
             </motion.div>
           </motion.div>
         )}
+
+       
       </AnimatePresence>
     </div>
   );

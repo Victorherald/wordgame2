@@ -6,6 +6,7 @@ import { WordDisplay } from '../components/WordDisp';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { Boulder } from "../components/Boulder";
+import { SpiralSVG } from './SpiralSVG';
 import { AnimatePresence, motion} from "framer-motion";
 import { BookTile } from "../components/Books";
 import { MysteryTile } from "../components/MysteryTiles";
@@ -39,12 +40,15 @@ type Tile = {
 
   //fridge
   isFridge?: boolean;
+  isSpiral?: boolean;
 fridgeCharge?: number; // 0 → 3
 fridgeHP?: number;
 fridgeMaxHP?: number;
 spawnIce?: boolean;
 isFridgeOverheating?: boolean;
-fridgeChargeMax?: number;
+isSpiralLeaving?: boolean;
+isSpiralEntering?: boolean;
+fridgeChargeMax?: number; 
 spreadLevel?: number;
 dullTurns2?: number;
 fridgeMaxHp?: number;
@@ -109,7 +113,7 @@ type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow"  | "boulder002" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
+  layout?: ("normal"| "lineBlasterRow" | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | "boulder002" | "spiral" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
   type: 'score' | 'spreadInk' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
   objGoal: number;
@@ -119,7 +123,7 @@ type LetterBoardProps = {
    bossMaxHp?: number;
    bossColor?: string;
   
-  tileType?: 'cursed' | 'boulder002' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
+  tileType?: 'cursed' | 'boulder002'  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse' | 'ink')[][];
 };
@@ -148,6 +152,7 @@ const specialTileSettings = {
   allowWarpedTiles: true,
   allowVelvets: true,
   allowBooks: true,
+  allowSpirals: true,
   allowInfectTiles: true,
   allowPresetTiles: true,
   allowFireTiles: true,
@@ -534,6 +539,56 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
       
             
         } 
+
+        else if (presetType === "ltrN") {
+  rowTiles.push({
+    ...generateRandomTile(level?.allowHardLetters ?? true),
+    letter: "N",
+    presets: true,
+  });
+}
+
+else if (presetType === "ltrO") {
+  rowTiles.push({
+    ...generateRandomTile(level?.allowHardLetters ?? true),
+    letter: "O",
+    presets: true,
+  });
+}
+
+else if (presetType === "ltrT") {
+  rowTiles.push({
+    ...generateRandomTile(level?.allowHardLetters ?? true),
+    letter: "T",
+    presets: true,
+  });
+}
+
+else if (presetType === "ltrF") {
+  rowTiles.push({
+    ...generateRandomTile(level?.allowHardLetters ??true),
+    letter: "F",
+    presets: true,
+  });
+}
+
+else if (presetType === "ltrU") {
+  rowTiles.push({
+    ...generateRandomTile(level?.allowHardLetters ?? true),
+    letter: "U",
+    presets: true,
+  });
+}
+
+else if (presetType === "ltrD") {
+  rowTiles.push({
+    ...generateRandomTile(level?.allowHardLetters ?? true),
+    letter: "D",
+    presets: true,
+  });
+}
+
+        
         else if (presetType === "removed") {
           rowTiles.push({ isRemoved: true } as Tile);
         } else if (presetType === "cursed" && specialTileSettings.allowCursedTiles) {
@@ -556,6 +611,7 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             presets: true,
           });
         }
+        
 
         else if (presetType === "fridge") {
           rowTiles.push({
@@ -623,6 +679,16 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
             isBook: true,
         
             isBookOpen: false,
+            presets: true,
+          });
+        }
+
+          else if (presetType === "spiral" && specialTileSettings.allowSpirals) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isSpiral: true,
+        
+          
             presets: true,
           });
         }
@@ -700,6 +766,8 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
     presets: true,
   });
 }
+
+
 
 else if (presetType === "lineBlasterColumn") {
   rowTiles.push({
@@ -796,6 +864,8 @@ const canSubmit = letterCount >= 3 && isWordValid;
   if (!tile || tile.isRemoved || tile.isBoulder || (tile.isBook && !tile.isBookOpen) || tile.isLocked || (tile.isBone && tile.isStationary) || (tile.isFrozen && tile.isStationary))
     return;
 
+  if (tile.isSpiral) return;
+
   const last = selected[selected.length - 1];
   const current = { row, col };
 
@@ -851,7 +921,79 @@ if (currentValidation !== validationRef.current) return;
     }
   }
 };
+function moveSpiral(grid: Tile[][]) {
+  const spirals: Position[] = [];
+  const candidates: Position[] = [];
 
+  // Find all spirals and all valid destinations
+  for (let r = 0; r < grid.length; r++) {
+    for (let c = 0; c < grid[r].length; c++) {
+      const tile = grid[r][c];
+
+      if (!tile) continue;
+
+      if (tile.isSpiral) {
+        spirals.push({ row: r, col: c });
+      }
+
+      if (
+        !tile.isRemoved &&
+        !tile.isFrozen &&
+        !tile.isLightBulb &&
+        !tile.isBone &&
+        !tile.isLocked &&
+        !tile.isSpiral
+      ) {
+        candidates.push({ row: r, col: c });
+      }
+    }
+  }
+
+  if (!spirals.length || !candidates.length) return;
+
+  // Shuffle candidate list
+  for (let i = candidates.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+  }
+
+  // Every spiral starts leaving together
+  spirals.forEach(({ row, col }) => {
+    grid[row][col].isSpiralLeaving = true;
+  });
+
+  setTimeout(() => {
+
+    spirals.forEach(({ row, col }, index) => {
+
+      const next = candidates[index % candidates.length];
+
+      // Remove from old tile
+      grid[row][col].isSpiral = false;
+      grid[row][col].isSpiralLeaving = false;
+
+      // Place on new tile
+      grid[next.row][next.col].isSpiral = true;
+      grid[next.row][next.col].isSpiralEntering = true;
+    });
+
+    // Remove entering animation
+    setTimeout(() => {
+
+      for (let r = 0; r < grid.length; r++) {
+        for (let c = 0; c < grid[r].length; c++) {
+
+          if (grid[r][c]?.isSpiralEntering) {
+            grid[r][c].isSpiralEntering = false;
+          }
+
+        }
+      }
+
+    }, 300);
+
+  }, 250);
+}
 function validateExclamatorRule(
   selected: { row: number; col: number }[],
   grid: Tile[][]
@@ -2492,7 +2634,7 @@ updatedGrid = toggleBooks(updatedGrid);
 
 
 
-
+moveSpiral(updatedGrid);
 
 
 
@@ -3119,6 +3261,11 @@ const handleScramble = () => {
         const ice = tile?.isFrozen
   ? 'ice-tile animate-ice-block bg-blue-300/40 text-white shadow-lg shadow-blue-300/40 backdrop-blur-sanimate-ice-block bg-blue-200/60 text-white shadow-xl shadow-blue-400/40 border-2 border-blue-300/70 ice-particles backdrop-blur-sm saturate-150 z-50'
   : '';
+
+const spiral = tile?.isSpiral
+  ? "spiral-tile"
+  : "";
+
 const exclamated = tile?.isExclamator
   ? "border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.8)]"
   : "";
@@ -3382,6 +3529,22 @@ const exclamated = tile?.isExclamator
   />
 )}   
 
+{tile?.isSpiral && (
+  <div
+    className={`
+      absolute inset-0
+      flex items-center justify-center
+      z-50
+      pointer-events-none
+      spiral-container
+      ${tile.isSpiralLeaving ? "spiral-leaving" : ""}
+      ${tile.isSpiralEntering ? "spiral-entering" : ""}
+    `}
+  >
+    <SpiralSVG />
+  </div>
+)}
+
 
   <div
           key={`${r}-${c}`}
@@ -3414,6 +3577,7 @@ const exclamated = tile?.isExclamator
   ${warped}
   ${dull}
   ${ice}
+  ${spiral}
 `}
         >
 

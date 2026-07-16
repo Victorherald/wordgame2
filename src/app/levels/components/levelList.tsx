@@ -173,7 +173,7 @@ const isWorldCupTheme = today <= worldCupEnd;
                 ${!lvl.locked && lvl.difficulty !== "demon" && lvl.difficulty !== "Hard Level" ? "text-yellow-300" : ""}
               `}
             >
-              ⚽ {lvl.name}
+               {lvl.name}
             </h2>
 
             {/* Difficulty Tag */}

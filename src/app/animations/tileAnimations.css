@@ -343,6 +343,30 @@ transform-origin:  center;
   cursor: pointer;
 }
 
+@keyframes spiralMove {
+
+0%{
+opacity:1;
+transform:scale(1) rotate(0deg);
+}
+
+45%{
+opacity:0;
+transform:scale(.4) rotate(180deg);
+}
+
+55%{
+opacity:0;
+transform:scale(.4) rotate(180deg);
+}
+
+100%{
+opacity:1;
+transform:scale(1) rotate(360deg);
+}
+
+}
+
 .warp-tile {
   background: linear-gradient(#efe300, #e6d009);
  
@@ -572,6 +596,189 @@ transform-origin:  center;
   0% { transform: scale(1); }
   50% { transform: scale(1.03); }
   100% { transform: scale(1); }
+}
+
+.spiral-container{
+
+    animation:
+        spiralHover 1.4s ease-in-out infinite;
+
+}
+
+.spiral-svg{
+
+    animation:
+        spiralSpin .55s linear infinite;
+
+    filter:
+        drop-shadow(0 0 3px rgba(255,255,255,.6))
+        drop-shadow(0 0 10px rgba(160,160,160,.5));
+
+}
+
+@keyframes spiralSpin{
+
+from{
+
+transform:rotate(0deg);
+
+}
+
+to{
+
+transform:rotate(360deg);
+
+}
+
+}
+
+@keyframes spiralHover{
+
+0%{
+
+transform:translateY(0);
+
+}
+
+50%{
+
+transform:translateY(-2px);
+
+}
+
+100%{
+
+transform:translateY(0);
+
+}
+
+}
+.spiral-leaving{
+
+animation:
+spiralLeave .22s ease-in forwards;
+
+}
+
+@keyframes spiralLeave{
+
+0%{
+
+opacity:1;
+transform:scale(1);
+
+}
+
+100%{
+
+opacity:0;
+transform:
+scale(.45)
+rotate(220deg);
+
+}
+
+}
+
+.spiral-entering{
+
+animation:
+spiralEnter .32s cubic-bezier(.22,.8,.18,1)
+forwards;
+
+}
+
+.spiral-impact{
+
+animation:
+spiralImpact .18s ease;
+
+}
+
+@keyframes spiralImpact{
+
+0%{
+
+transform:translate(0);
+
+}
+
+20%{
+
+transform:translateX(-2px);
+
+}
+
+40%{
+
+transform:translateX(2px);
+
+}
+
+60%{
+
+transform:translateY(-2px);
+
+}
+
+100%{
+
+transform:none;
+
+}
+
+}
+
+.spiral-svg path{
+
+stroke:#252525;
+
+}
+
+.spiral-svg polygon{
+
+fill:#dcdcdc;
+
+}
+
+.spiral-svg circle:first-of-type{
+
+filter:brightness(1.2);
+
+}
+
+
+
+@keyframes spiralEnter{
+
+0%{
+
+opacity:0;
+
+transform:
+scale(.3)
+rotate(-180deg);
+
+}
+
+65%{
+
+opacity:1;
+
+transform:
+scale(1.2)
+rotate(40deg);
+
+}
+
+100%{
+
+transform:
+scale(1)
+rotate(0deg);
+
+}
+
 }
 
 
