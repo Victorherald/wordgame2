@@ -106,24 +106,30 @@ isStationary?: boolean;  // true if it cannot move (unripe)
 isLightBulb?: boolean;
 bulbType?: "normal" | "fluorescent";
 bulbCharge?: number;
-isBulbOn?: boolean
+isBulbOn?: boolean;
+isChamber?: boolean;
+isChamberOpen?: boolean;
+isChamberOpening?: boolean;
+
+isDraining?: boolean;
 };
 
 type Position = { row: number; col: number };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow" | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | "boulder002" | "spiral" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
+  layout?: ("normal"| "lineBlasterRow"  | "chamber" | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | "boulder002" | "spiral" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
-  type: 'score' | 'spreadInk' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet';
-  objGoal: number;
+    waterHeight?: number;
+  type: 'score' | 'spreadInk' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet' | 'chamberDrain';
+  objGoal: number
    
    // Boss-specific fields (optional)
    bossHp?: number;
    bossMaxHp?: number;
    bossColor?: string;
   
-  tileType?: 'cursed' | 'boulder002'  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
+  tileType?: 'cursed' | 'boulder002' | "chamber"  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse' | 'ink')[][];
 };
@@ -136,7 +142,7 @@ type LetterBoardProps = {
 };
 
 type GroundCell = {
-  type: 'cleanse' | 'none' | 'ink';
+  type: 'cleanse' | 'none' | 'ink' ;
 };
 
 
@@ -199,6 +205,10 @@ const [bookTrigger, setBookTrigger] = useState(0);
 const [bossHp, setBossHp] = useState(objective?.bossHp ?? 100);
 const [bossMaxHp] = useState(objective?.bossMaxHp ?? 100);
 const [bossColor, setBossColor] = useState<string>(objective?.bossColor ?? "red");
+
+const [waterHeight, setWaterHeight] = useState(
+  level?.waterHeight ?? 0
+);
 
 const isBossLevel = objective?.type === "boss";
 
@@ -548,6 +558,14 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
   });
 }
 
+else if (presetType === "chamber") {
+  rowTiles.push({
+    ...generateRandomTile(),
+    isChamber: true,
+    presets: true,
+  });
+}
+
 else if (presetType === "ltrO") {
   rowTiles.push({
     ...generateRandomTile(level?.allowHardLetters ?? true),
@@ -828,7 +846,16 @@ else if (presetType === "lineBlasterColumn") {
 
 const canSubmit = letterCount >= 3 && isWordValid;
 
-  
+   useEffect(() => {
+  if (
+    objective?.type === "chamberDrain" &&
+    waterHeight === 0 &&
+    !isGameOver
+  ) {
+    setIsGameOver(true);
+    setGameResult("win");
+  }
+}, [waterHeight, objective?.type, isGameOver]);
 
   useEffect(() => setGrid(initializeBoard(8, 8)), []);
   useEffect(() => setGround(initializeGround(8, 8)), []);
@@ -1546,7 +1573,39 @@ const handleSubmit = () => {
       return affected;
     }
 
-    
+
+ function activateChambers(
+  matchedTiles: Position[]
+) {
+  // Find chamber tiles
+  const chamberTiles = matchedTiles.filter(({ row, col }) => {
+    return grid[row][col]?.isChamber;
+  });
+
+  if (chamberTiles.length === 0) return;
+
+  // Open new chambers
+  let openedNewChamber = false;
+
+  for (const { row, col } of chamberTiles) {
+    const tile = grid[row][col];
+
+    if (!tile.isChamberOpen) {
+      tile.isChamberOpen = true;
+      openedNewChamber = true;
+    }
+  }
+
+  // Only drain if a new chamber was opened
+  if (!openedNewChamber) return;
+
+ setWaterHeight(prev => Math.max(prev - 1, 0));
+
+
+}
+
+
+
 
 
 
@@ -2040,6 +2099,7 @@ let label = "Progress";
 
 if (objective?.type === "words") label = "Words Found";
 else if (objective?.type === "score") label = "Score";
+else if (objective?.type === "chamberDrain") label = "Chamber Levelled";
 else if (objective?.type === "collectVelvet") label = "Velvets Crushed";
 else if (objective?.type === "destroy")
   label = `Destroy ${objective.tileType} tiles!`;
@@ -2637,7 +2697,7 @@ updatedGrid = toggleBooks(updatedGrid);
 moveSpiral(updatedGrid);
 
 
-
+activateChambers(selected);
 
 
 // ✅ Apply updates
@@ -2910,6 +2970,8 @@ const handleScramble = () => {
               ? "Lights"
               : objective.type === "defrost"
               ? "Ice"
+               : objective.type === "chamberDrain"
+              ? "Chamber Level"
               : objective.type === "spreadInk" 
               ? "Ink" 
               : objective.type === "score"
@@ -3018,25 +3080,31 @@ const handleScramble = () => {
     </div>
   ) : (
     <div className="flex items-center justify-between bg-neutral-800/70 border border-neutral-700 rounded-lg p-2 mb-2">
-      <p className="text-white text-sm font-semibold">
-        {objective
-          ? `${
-              objective.type === "words"
-                ? `${objective.minLength}-letter words found`
-                : objective.type === "score"
-                ? "Score"
-                : objective.type === "lightsUp"
-                ? "Lights turned on" : 
-                 objective.type === "spreadInk"
-                 ? "Ink Spread" 
-                : objective.type === "collectVelvet"
-                ? "Velvets Squashed"
-                : objective.type === "defrost"
-                ? "Ice cleared"
-                : `Destroy ${objective.tileType} tiles`
-            }: ${objMet}/${objective.objGoal}`
-          : "No objective"}
-      </p>
+     <p className="text-white text-sm font-semibold">
+  {objective
+    ? `${
+        objective.type === "words"
+          ? `${objective.minLength}-letter words found`
+          : objective.type === "score"
+          ? "Score"
+          : objective.type === "lightsUp"
+          ? "Lights turned on"
+          : objective.type === "spreadInk"
+          ? "Ink Spread"
+          : objective.type === "collectVelvet"
+          ? "Velvets Squashed"
+          : objective.type === "chamberDrain"
+          ? "Water Remaining"
+          : objective.type === "defrost"
+          ? "Ice cleared"
+          : `Destroy ${objective.tileType} tiles`
+      }: ${
+        objective.type === "chamberDrain"
+          ? waterHeight
+          : objMet
+      }/${objective.objGoal}`
+    : "No objective"}
+</p>
 
       <button
         onClick={() => setShowObjectivePopup(true)}
@@ -3187,19 +3255,71 @@ const handleScramble = () => {
     </div>
 
     {/*  Board */}
-    <div
-    className={`
-  rounded-lg p-3
-  flex flex-col justify-center items-center
-  border w-full
-  ${
-    isWorldCupTheme
-      ? "soccer-game-container border-neutral-800"
-      : "bg-black border-neutral-700"
-  }
-`}
-    >
+ <div
+  className={`
+    relative
+    overflow-hidden
+    rounded-lg p-3
+    flex flex-col justify-center items-center
+    border w-full
+    ${
+      isWorldCupTheme
+        ? "soccer-game-container border-neutral-800"
+        : "bg-black border-neutral-700"
+    }
+  `}
+>
+
+ 
+
       {/* Tile Grid */}
+
+   {/* Water */}
+{objective?.type === "chamberDrain" && (
+  <motion.div
+    className="
+      absolute
+      inset-x-0
+      bottom-0
+      z-0
+      overflow-hidden
+      pointer-events-none
+    "
+    animate={{
+      height: `${(waterHeight / objective.objGoal) * 100}%`,
+    }}
+    transition={{
+      duration: 0.7,
+      ease: "easeOut",
+    }}
+  >
+    {/* Water color */}
+    <div className="absolute inset-0 bg-cyan-500/35" />
+
+    {/* Texture */}
+    <div
+      className="
+        absolute inset-0
+        bg-[url('/images/water-texture.png')]
+        bg-repeat
+        opacity-40
+        animate-water-flow
+      "
+    />
+
+    {/* Highlight */}
+    <div
+      className="
+        absolute
+        top-0
+        left-0
+        right-0
+        h-3
+        bg-white/20
+      "
+    />
+  </motion.div>
+)} 
 
 
 <div
@@ -3248,6 +3368,7 @@ const handleScramble = () => {
     </div>
     )
   }
+  
 
       // effects
       const fire = tile?.isFire
@@ -3268,6 +3389,10 @@ const spiral = tile?.isSpiral
 
 const exclamated = tile?.isExclamator
   ? "border-red-500 shadow-[0_0_16px_rgba(239,68,68,0.8)]"
+  : "";
+
+  const chamber = tile?.isChamber
+  ? "bg-slate-900 border-cyan-500 text-cyan-600 shadow-cyan-500/40"
   : "";
 
   const boulderHit = tile?.isBoulder && tile.isBreaking
@@ -3387,6 +3512,10 @@ const exclamated = tile?.isExclamator
           )}
 
 
+
+          
+
+
           {/*Book Render*/}
           {tile?.isBook && (
   <div className="absolute inset-0 z-10 pointer-events-none">
@@ -3397,10 +3526,88 @@ const exclamated = tile?.isExclamator
   </div>
 )}
 
-  
+{tile?.isChamber && (
+  <div className="absolute inset-0 z-20 pointer-events-none">
+    <svg
+      viewBox="0 0 64 64"
+      className="w-full h-full"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        <linearGradient id="chamberTile" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#16243d" />
+          <stop offset="100%" stopColor="#050b18" />
+        </linearGradient>
 
- 
+        <linearGradient id="innerDrain" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#38bdf8" />
+          <stop offset="100%" stopColor="#0ea5e9" />
+        </linearGradient>
 
+        <filter id="blueGlow">
+          <feGaussianBlur stdDeviation="2" result="blur"/>
+          <feMerge>
+            <feMergeNode in="blur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+
+      {/* Whole tile */}
+      <rect
+        x="2"
+        y="2"
+        width="60"
+        height="60"
+        rx="8"
+        fill="url(#chamberTile)"
+        stroke="#0ea5e9"
+        strokeWidth="2"
+      />
+
+      {/* Inner panel */}
+      <rect
+        x="10"
+        y="10"
+        width="44"
+        height="44"
+        rx="5"
+        fill="#09111f"
+        stroke="#122156"
+        strokeWidth="1.5"
+      />
+
+      {/* Drain */}
+      <circle
+        cx="32"
+        cy="32"
+        r="13"
+        fill="#020617"
+        stroke="#02347a"
+        strokeWidth="2"
+      />
+
+      {/* Grate */}
+      <line x1="20" y1="32" x2="44" y2="32" stroke="#02172f" strokeWidth="2"/>
+      <line x1="32" y1="20" x2="32" y2="44" stroke="#02172f" strokeWidth="2"/>
+      <line x1="23" y1="23" x2="41" y2="41" stroke="#02172f" strokeWidth="1.5"/>
+      <line x1="41" y1="23" x2="23" y2="41" stroke="#02172f" strokeWidth="1.5"/>
+
+      {/* Letter */}
+      <text
+        x="32"
+        y="37"
+        textAnchor="middle"
+        fontSize="15"
+        fontWeight="900"
+        fill="#7dd3fc"
+        filter="url(#blueGlow)"
+      >
+        C
+      </text>
+    </svg>
+  </div>
+)}
 
 
 
@@ -3578,6 +3785,7 @@ const exclamated = tile?.isExclamator
   ${dull}
   ${ice}
   ${spiral}
+    ${chamber}
 `}
         >
 
@@ -3816,6 +4024,7 @@ const exclamated = tile?.isExclamator
             {objective.type === "destroy" &&
               `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
             {objective.type === "lightsUp" && `Turn on all the lights!`}
+             {objective.type === "chamberDrain" && `Drain the water off the chamber!`}
             {objective.type === "collectVelvet" && `Crush the velvets!`}
             {objective.type === "defrost" && "Clear all the ice!"}
             {objective.type === "boss" && "Defeat the boss!"}

@@ -214,6 +214,8 @@ const isWorldCupTheme = today <= worldCupEnd;
                     `✨ Squash ${lvl.objective.objGoal} velvets!`}
                      {lvl.objective?.type === "boss" &&
                     `👹 Defeat the boss!`}
+                      {lvl.objective?.type === "chamberDrain" &&
+                    `Drain the chambers!`}
                 </p>
 
                 <motion.button

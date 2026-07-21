@@ -161,7 +161,7 @@ const isWorldCupTheme = today <= worldCupEnd;
               stiffness: 220,
               damping: 10,
             }}
-            className="text-4xl font-extrabold text-yellow-300"
+            className="text-4xl font-extrabold text-purple-300"
           >
             Loading Level
           </motion.h1>
@@ -191,7 +191,7 @@ const isWorldCupTheme = today <= worldCupEnd;
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
-                className="w-3 h-3 rounded-full bg-yellow-300"
+                className="w-3 h-3 rounded-full bg-purple-300"
                 animate={{
                   y: [0, -10, 0],
                 }}
@@ -207,7 +207,7 @@ const isWorldCupTheme = today <= worldCupEnd;
           {/* Animated Progress Bar */}
           <div className="mt-8 h-3 rounded-full bg-black/30 overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-green-500 via-yellow-300 to-green-500"
+              className="h-full bg-gradient-to-r from-purple-500 via-blue-300 to-pink-500"
               animate={{
                 x: ["-100%", "100%"],
               }}
@@ -254,7 +254,7 @@ const isWorldCupTheme = today <= worldCupEnd;
 
   if (error || !level) {
     return (
-      <main className="min-h-screen soccer-pitch-bg flex items-center justify-center text-white">
+      <main className="min-h-screen  flex items-center justify-center text-white">
         <motion.p
           initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -267,7 +267,7 @@ const isWorldCupTheme = today <= worldCupEnd;
   }
 
   return (
-    <main className="min-h-screen soccer-pitch-bg text-white flex flex-col items-center justify-center p-6">
+    <main className="min-h-screen text-white flex flex-col items-center justify-center p-6">
       <LetterBoard
         key={level.id}
         layout={level.board}
