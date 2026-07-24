@@ -560,7 +560,7 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
 
 else if (presetType === "chamber") {
   rowTiles.push({
-    ...generateRandomTile(),
+    ...generateRandomTile(level?.allowHardLetters ?? true),
     isChamber: true,
     presets: true,
   });
@@ -1573,8 +1573,7 @@ const handleSubmit = () => {
       return affected;
     }
 
-
- function activateChambers(
+function activateChambers(
   matchedTiles: Position[]
 ) {
   // Find chamber tiles
@@ -1584,26 +1583,22 @@ const handleSubmit = () => {
 
   if (chamberTiles.length === 0) return;
 
-  // Open new chambers
-  let openedNewChamber = false;
+  // Count newly opened chambers
+  let newlyOpened = 0;
 
   for (const { row, col } of chamberTiles) {
     const tile = grid[row][col];
 
     if (!tile.isChamberOpen) {
       tile.isChamberOpen = true;
-      openedNewChamber = true;
+      newlyOpened++;
     }
   }
 
-  // Only drain if a new chamber was opened
-  if (!openedNewChamber) return;
+  if (newlyOpened === 0) return;
 
- setWaterHeight(prev => Math.max(prev - 1, 0));
-
-
+ setWaterHeight(prev => Math.max(prev - newlyOpened, 0));
 }
-
 
 
 
@@ -3392,7 +3387,7 @@ const exclamated = tile?.isExclamator
   : "";
 
   const chamber = tile?.isChamber
-  ? "bg-slate-900 border-cyan-500 text-cyan-600 shadow-cyan-500/40"
+  ? "bg-slate-900 border-cyan-500 text-cyan-200 shadow-cyan-500/40"
   : "";
 
   const boulderHit = tile?.isBoulder && tile.isBreaking
@@ -3525,90 +3520,82 @@ const exclamated = tile?.isExclamator
     />
   </div>
 )}
-
 {tile?.isChamber && (
-  <div className="absolute inset-0 z-20 pointer-events-none">
+  <div className="absolute inset-0 z-10 pointer-events-none">
     <svg
       viewBox="0 0 64 64"
       className="w-full h-full"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
-        <linearGradient id="chamberTile" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#16243d" />
-          <stop offset="100%" stopColor="#050b18" />
+        <linearGradient id="outer" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#18355a" />
+          <stop offset="100%" stopColor="#07111d" />
         </linearGradient>
 
-        <linearGradient id="innerDrain" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#38bdf8" />
-          <stop offset="100%" stopColor="#0ea5e9" />
+        <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#7dd3fc" />
+          <stop offset="100%" stopColor="#0284c7" />
         </linearGradient>
-
-        <filter id="blueGlow">
-          <feGaussianBlur stdDeviation="2" result="blur"/>
-          <feMerge>
-            <feMergeNode in="blur"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
       </defs>
 
-      {/* Whole tile */}
+      {/* Tile frame */}
       <rect
         x="2"
         y="2"
         width="60"
         height="60"
         rx="8"
-        fill="url(#chamberTile)"
-        stroke="#0ea5e9"
+        fill="url(#outer)"
+        stroke="#38bdf8"
         strokeWidth="2"
       />
 
       {/* Inner panel */}
       <rect
-        x="10"
-        y="10"
-        width="44"
-        height="44"
-        rx="5"
-        fill="#09111f"
-        stroke="#122156"
-        strokeWidth="1.5"
+        x="9"
+        y="9"
+        width="46"
+        height="46"
+        rx="6"
+        fill="#0b1323"
       />
 
-      {/* Drain */}
+      {/* Drain ring */}
+      <circle
+        cx="32"
+        cy="32"
+        r="14"
+        fill="url(#ring)"
+        opacity="0.35"
+      />
+
       <circle
         cx="32"
         cy="32"
         r="13"
-        fill="#020617"
-        stroke="#02347a"
-        strokeWidth="2"
+        fill="#000"
+        opacity="0.22"
+        stroke="#38bdf8"
+        strokeWidth="1.5"
       />
 
-      {/* Grate */}
-      <line x1="20" y1="32" x2="44" y2="32" stroke="#02172f" strokeWidth="2"/>
-      <line x1="32" y1="20" x2="32" y2="44" stroke="#02172f" strokeWidth="2"/>
-      <line x1="23" y1="23" x2="41" y2="41" stroke="#02172f" strokeWidth="1.5"/>
-      <line x1="41" y1="23" x2="23" y2="41" stroke="#02172f" strokeWidth="1.5"/>
+      {/* Transparent grate */}
+      <g opacity="0.25">
+        <line x1="20" y1="32" x2="44" y2="32" stroke="#c7f0ff" strokeWidth="2"/>
+        <line x1="32" y1="20" x2="32" y2="44" stroke="#c7f0ff" strokeWidth="2"/>
+        <line x1="23" y1="23" x2="41" y2="41" stroke="#c7f0ff" strokeWidth="1.5"/>
+        <line x1="41" y1="23" x2="23" y2="41" stroke="#c7f0ff" strokeWidth="1.5"/>
+      </g>
 
-      {/* Letter */}
-      <text
-        x="32"
-        y="37"
-        textAnchor="middle"
-        fontSize="15"
-        fontWeight="900"
-        fill="#7dd3fc"
-        filter="url(#blueGlow)"
-      >
-        C
-      </text>
+      {/* Outer bolts */}
+      <circle cx="13" cy="13" r="1.5" fill="#93c5fd"/>
+      <circle cx="51" cy="13" r="1.5" fill="#93c5fd"/>
+      <circle cx="13" cy="51" r="1.5" fill="#93c5fd"/>
+      <circle cx="51" cy="51" r="1.5" fill="#93c5fd"/>
     </svg>
   </div>
 )}
-
 
 
 
