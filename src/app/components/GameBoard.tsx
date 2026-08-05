@@ -2071,7 +2071,7 @@ let points = validTiles.length * 100;
 let cursePenalty = 0;
 
 if (wordsIncludesCursed) {
-  cursePenalty = 240;
+  cursePenalty = 150;
   points -= cursePenalty;
 }
 
