@@ -12303,5 +12303,96 @@ export const levels: LevelData[] = [
 
     ],
    },
+
+    {
+    id: 443,
+     name: "Level 443",
+     
+     objective: { type: 'destroy' ,  tileType: "warped", objGoal: 20 },
+     
+     moves: 35,
+
+      warpTurns: 35,
+      boulderHP: 2,
+     
+      fridgeCharge:0,
+      
+      fridgeChargeMax: 5, 
+      fridgeHP: 8,
+     
+    lockTurns: 13,       
+  dullTurns: 30,
+      boneUnripeTurns: 9,
+      boneRipeTurns: 10,
+      boneTurns: 6,
+     allowHardLetters: false,
+     locked: true,
+    
+       
+    board: [
+      ["removed", "removed", "warped", "mystery", "mystery", "warped", "removed", "removed"],
+      ["removed", "removed", "warped", "removed", "removed", "warped", "removed", "removed"],
+      ["spiral", "warped", "warped", "warped", "warped", "warped", "warped", "spiral"],
+      ["spiral", "warped", "warped", "warped", "warped", "normal", "warped", "spiral"],
+      ["spiral", "warped", "warped", "warped", "warped", "warped", "warped", "spiral"],
+      ["spiral", "warped", "warped", "warped", "warped", "warped", "warped", "spiral"],
+      ["removed", "removed", "removed", "normal", "normal", "removed", "removed", "removed"],
+      ["removed", "removed", "removed", "normal", "normal", "removed", "removed", "removed"]
+    ],
+   
+     groundLayout: [
+
+    ],
+
+
+   },
+
+
+    {
+    id: 444,
+     name: "Level 444",
+     
+     objective: { type: 'lightsUp' ,  tileType: "bulb", objGoal: 2 },
+     
+     moves: 35,
+      difficulty: "Hard Level",
+      warpTurns: 35,
+      boulderHP: 2,
+     
+      fridgeCharge:0,
+      
+      fridgeChargeMax: 5, 
+      fridgeHP: 8,
+     
+    lockTurns: 13,       
+  dullTurns: 30,
+      boneUnripeTurns: 9,
+      boneRipeTurns: 10,
+      boneTurns: 6,
+     allowHardLetters: false,
+     locked: true,
+    
+       
+    board: [
+      ["bulb", "infected", "ice", "infected", "ice", "infected", "removed", "removed"],
+      ["removed", "removed", "removed", "removed", "normal", "ice", "removed", "removed"],
+      ["ice", "infected", "ice", "normal", "normal", "infected", "removed", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "ice", "removed", "normal"],
+      ["normal", "removed", "infected", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "removed", "ice", "normal", "normal", "infected", "ice", "infected"],
+      ["removed", "removed", "infected", "normal", "removed", "removed", "removed", "removed"],
+      ["removed", "removed", "ice", "infected", "ice", "infected", "ice", "bulb"]
+    ],
+    groundLayout: [
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'cleanse', 'none', 'none', 'none'],
+      ['cleanse', 'cleanse', 'none', 'cleanse', 'cleanse', 'none', 'none', 'cleanse'],
+      ['cleanse', 'none', 'none', 'cleanse', 'cleanse', 'none', 'cleanse', 'cleanse'],
+      ['none', 'none', 'none', 'none', 'none', 'cleanse', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+    ],
+   },
 ];
 
