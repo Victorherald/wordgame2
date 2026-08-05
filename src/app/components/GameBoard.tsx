@@ -206,6 +206,18 @@ const [bossHp, setBossHp] = useState(objective?.bossHp ?? 100);
 const [bossMaxHp] = useState(objective?.bossMaxHp ?? 100);
 const [bossColor, setBossColor] = useState<string>(objective?.bossColor ?? "red");
 
+type FloatingScore = {
+  id: number;
+  score: number;
+  text: string;
+  x: number;
+  y: number;
+  color: string;
+  cursePenalty: number;
+};
+
+const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([]);
+
 const [waterHeight, setWaterHeight] = useState(
   level?.waterHeight ?? 0
 );
@@ -2043,51 +2055,91 @@ if (lineBlastersUsed.length > 0) {
 
 
 
+// score system
 
-    // score system
+const validTiles = selected.filter(
+  ({ row, col }) =>
+    !grid[row][col]?.isDull &&
+    !grid[row][col]?.isInfected
+);
 
-    const validTiles = selected.filter(({ row, col }) => !grid[row][col]?.isDull && !grid[row][col]?.isInfected);
 
+let points = validTiles.length * 100;
 
-    
-   
+ 
 
-    
+let cursePenalty = 0;
 
-     let points = validTiles.length * 100;
+if (wordsIncludesCursed) {
+  cursePenalty = 240;
+  points -= cursePenalty;
+}
+
+setFloatingScores(prev => [
+  ...prev,
+  {
+  id: floatingId,
+  score: points,
+  text: `+${points}`,
+  cursePenalty,
+  x: averageCol * 48 + 24,
+  y: averageRow * 48 + 24,
+  color: "green",
+  },
+
   
-   
-    
-    selected.forEach(({ row, col }) => {
-      const tile = grid[row][col];
-if (tile.isDull) return;
+]);
 
-     
 
-      
-  
- if (wordsIncludesCursed) points -= 240;
+selected.forEach(({ row, col }) => {
+  const tile = grid[row][col];
 
-      if(tile.letter?.includes("QU")) points += 300;
+  if (tile.isDull) return;
 
-     
-if(wordsIncludesInfected ) return;
+ 
 
-      if(tile.rarity?.includes('gold')) points += 350;
-      if(tile.rarity?.includes('silver')) points += 170;
-      
-      if (tile.gem?.includes("purple")) points += 300;
-      if (tile.gem?.includes("green")) points += 450;
-      if (tile.gem?.includes("blue")) points += 600;
-       if (tile.gem?.includes("orange")) points += 770;
-        if (tile.gem?.includes("red")) points += 850;
-         if (tile.gem?.includes("pink")) points += 3000;
-       if (tile.gem?.includes("white")) points += 10000;
-    })
-    setScore((p) => p + points);
 
-    
 
+
+  if (tile.letter?.includes("QU")) points += 300;
+
+  if (wordsIncludesInfected) return;
+
+  if (tile.rarity?.includes("gold")) points += 350;
+  if (tile.rarity?.includes("silver")) points += 170;
+
+  if (tile.gem?.includes("purple")) points += 300;
+  if (tile.gem?.includes("green")) points += 450;
+  if (tile.gem?.includes("blue")) points += 600;
+  if (tile.gem?.includes("orange")) points += 770;
+  if (tile.gem?.includes("red")) points += 850;
+  if (tile.gem?.includes("pink")) points += 3000;
+  if (tile.gem?.includes("white")) points += 10000;
+});
+
+// Create a unique id for this floating score
+const floatingId = Date.now();
+
+const averageRow =
+  selected.reduce((s, p) => s + p.row, 0) / selected.length;
+
+const averageCol =
+  selected.reduce((s, p) => s + p.col, 0) / selected.length;
+
+
+
+// Remove it after 900ms
+setTimeout(() => {
+  setFloatingScores(prev =>
+    prev.filter(s => s.id !== floatingId)
+  );
+}, 900);
+
+
+
+// For now update the score immediately.
+
+setScore(prev => prev + points);
 
     
 let label = "Progress";
@@ -3268,6 +3320,62 @@ const handleScramble = () => {
  
 
       {/* Tile Grid */}
+
+
+   {floatingScores.map(item => (
+  <motion.div
+    key={item.id}
+    initial={{
+      opacity: 0,
+      scale: 0.5,
+      y: 0,
+    }}
+    animate={{
+      opacity: 1,
+      scale: 1,
+      y: -70,
+    }}
+    transition={{
+      duration: 0.8,
+    }}
+    className={`
+      absolute
+      left-1/2
+      top-1/2
+      -translate-x-1/2
+      text-3xl
+      font-black
+      pointer-events-none
+      z-50
+      ${
+        item.color === "red"
+          ? "text-red-500"
+          : item.color === "green"
+          ? "text-green-700"
+          : item.color === "blue"
+          ? "text-cyan-400"
+          : "text-green-300"
+      }
+    `}
+    onAnimationComplete={() => {
+      setFloatingScores(prev =>
+        prev.filter(x => x.id !== item.id)
+      );
+    }}
+  >
+   <div className="flex items-center gap-3">
+  <span className="text-green-700 drop-shadow">
+    +{item.score}
+  </span>
+
+  {item.cursePenalty > 0 && (
+    <span className="text-red-500 drop-shadow">
+      -{item.cursePenalty}
+    </span>
+  )}
+</div>
+  </motion.div>
+))}
 
    {/* Water */}
 {objective?.type === "chamberDrain" && (

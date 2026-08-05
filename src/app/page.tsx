@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useAudio } from "./components/AudioProvider";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import {BookOpen,  Info,Trophy,Gamepad2, Users, MessageCircle, Send} from "lucide-react";
+import {BookOpen,  Info,Trophy,Gamepad2, Users, MessageCircle, Settings} from "lucide-react";
   
 
   
@@ -12,41 +13,24 @@ import {BookOpen,  Info,Trophy,Gamepad2, Users, MessageCircle, Send} from "lucid
 import Image from "next/image";
 
 export default function Home() {
-  const SoccerBall = ({ className }: { className?: string }) => (
-    <svg
-      viewBox="0 0 64 64"
-      className={className}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      {/* Outer circle */}
-      <circle cx="32" cy="32" r="30" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
-      
-      {/* Pentagon pattern - center */}
-      <polygon points="32,12 42,20 38,32 26,32 22,20" fill="#000000" />
-      
-      {/* Hexagon pattern - top right */}
-      <polygon points="45,18 52,22 52,32 45,36 38,32 38,22" fill="#000000" />
-      
-      {/* Hexagon pattern - bottom right */}
-      <polygon points="45,46 52,42 52,32 45,28 38,32 38,42" fill="#000000" />
-      
-      {/* Pentagon pattern - bottom */}
-      <polygon points="32,52 42,44 38,32 26,32 22,44" fill="#000000" />
-      
-      {/* Hexagon pattern - bottom left */}
-      <polygon points="19,46 12,42 12,32 19,28 26,32 26,42" fill="#000000" />
-      
-      {/* Hexagon pattern - top left */}
-      <polygon points="19,18 12,22 12,32 19,36 26,32 26,22" fill="#000000" />
-    </svg>
-  );
+ const { playMusic } = useAudio();
+
+useEffect(() => {
+    playMusic("/audio/worzzlemenu (1).mp3");
+}, []);
+
+  
 
   const router = useRouter();
   const [activePopup, setActivePopup] = useState<string | null>(null);
 
   const openPopup = (name: string) => setActivePopup(name);
   const closePopup = () => setActivePopup(null);
+
+  const {
+  musicVolume,
+  setMusicVolume,
+} = useAudio();
 
   // World Cup theme ends after July 20, 2026
 const today = new Date();
@@ -87,7 +71,7 @@ const isWorldCupTheme = today <= worldCupEnd;
 )}
 
       {/* Version Badge */}
-      <span className="absolute top-5 left-5 text-white/60 text-xs font-semibold">v 1.0.8</span>
+      <span className="absolute top-5 left-5 text-white/60 text-xs font-semibold">v 1.2.0</span>
 
       {/* Main Content */}
       <div className="relative z-20 flex flex-col items-center justify-center min-h-screen p-6">
@@ -164,6 +148,20 @@ const isWorldCupTheme = today <= worldCupEnd;
   <div className="flex items-center justify-center gap-2">
     <BookOpen className="w-5 h-5" />
     <span>How to Play</span>
+  </div>
+</button>
+
+<button
+  onClick={() => openPopup("options")}
+  className={`${
+    isWorldCupTheme
+      ? "soccer-btn"
+      : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
+  } w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
+>
+  <div className="flex items-center justify-center gap-2">
+    <Settings className="w-5 h-5" />
+    <span>Options</span>
   </div>
 </button>
 
@@ -245,6 +243,13 @@ const isWorldCupTheme = today <= worldCupEnd;
     </>
   )}
 
+  {activePopup === "options" && (
+  <>
+    <Settings className="w-8 h-8" />
+    <span>Options</span>
+  </>
+)}
+
     {activePopup === "community" && (
     <>
       <Users className="w-8 h-8" />
@@ -283,6 +288,36 @@ const isWorldCupTheme = today <= worldCupEnd;
     </button>
 
     
+  </div>
+)}
+
+{activePopup === "options" && (
+  <div className="space-y-6 text-left">
+
+    <div>
+      <div className="flex justify-between mb-2">
+        <span className="text-white font-semibold">
+          Music Volume
+        </span>
+
+        <span className="text-cyan-300">
+          {Math.round((musicVolume ?? 0) * 100)}%
+        </span>
+      </div>
+
+      <input
+        type="range"
+        min={0}
+        max={1}
+        step={0.01}
+        value={musicVolume}
+        onChange={(e) =>
+          setMusicVolume?.(Number(e.target.value))
+        }
+        className="w-full accent-cyan-500"
+      />
+    </div>
+
   </div>
 )}
 
