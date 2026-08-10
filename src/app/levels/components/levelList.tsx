@@ -1,24 +1,55 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { loadProgress, saveProgress } from "@/utils/storage";
 import { useRouter } from "next/navigation";
-import { Lock, Play } from "lucide-react";
+import {
+  Lock,
+  Play,
+  Search,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Target,
+  Skull,
+  Flame,
+  AlertTriangle,
+  CheckCircle2,
+} from "lucide-react";
 import { LevelData } from "@/lib/server/levels";
-import { motion } from "framer-motion";
-import { Search } from "lucide-react";
-
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function LevelList() {
   const [levels, setLevels] = useState<LevelData[]>([]);
   const [loading, setLoading] = useState(true);
+
   const [levelFilter, setLevelFilter] = useState<number | "">("");
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Selected level for popup
+  const [selectedLevel, setSelectedLevel] = useState<LevelData | null>(null);
+
   const router = useRouter();
+
+  const LEVELS_PER_PAGE = 10;
+
+  // --------------------------------------------------
+  // Load levels
+  // --------------------------------------------------
 
   useEffect(() => {
     async function fetchLevels() {
       try {
-        const res = await fetch("/api/levels", { cache: "no-store" });
-        if (!res.ok) throw new Error(`Failed to fetch levels (${res.status})`);
+        const res = await fetch("/api/levels", {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          throw new Error(`Failed to fetch levels (${res.status})`);
+        }
+
         const data: LevelData[] = await res.json();
 
         const progress = loadProgress();
@@ -30,6 +61,7 @@ export default function LevelList() {
             ...lvl,
             locked: false,
           }));
+
           setLevels(initialized);
           saveProgress(initialized);
         }
@@ -44,210 +76,865 @@ export default function LevelList() {
     fetchLevels();
   }, []);
 
-  const filteredLevels =
-  levelFilter === ""
-    ? levels
-    : levels.filter((lvl) => lvl.id === levelFilter);
+  // --------------------------------------------------
+  // World Cup theme
+  // --------------------------------------------------
 
+  const today = new Date();
+  const worldCupEnd = new Date("2026-07-20T23:59:59");
+
+  const isWorldCupTheme = today <= worldCupEnd;
+
+  // --------------------------------------------------
+  // Filtering
+  // --------------------------------------------------
+
+  const filteredLevels =
+    levelFilter === ""
+      ? levels
+      : levels.filter((lvl) => lvl.id === levelFilter);
+
+  // --------------------------------------------------
+  // Pagination
+  // --------------------------------------------------
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredLevels.length / LEVELS_PER_PAGE)
+  );
+
+  const startIndex = (currentPage - 1) * LEVELS_PER_PAGE;
+
+  const displayedLevels = filteredLevels.slice(
+    startIndex,
+    startIndex + LEVELS_PER_PAGE
+  );
+
+  // --------------------------------------------------
+  // Reset page when searching
+  // --------------------------------------------------
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [levelFilter]);
+
+  // --------------------------------------------------
+  // Play level
+  // --------------------------------------------------
 
   const handlePlay = (lvlId: number) => {
     const level = levels.find((l) => l.id === lvlId);
+
     if (!level || level.locked) return;
+
     localStorage.setItem("selectedLevel", lvlId.toString());
+
     router.push("/play");
   };
 
-  // World Cup theme ends after July 20, 2026
-const today = new Date();
-const worldCupEnd = new Date("2026-07-20T23:59:59");
+  // --------------------------------------------------
+  // Difficulty helpers
+  // --------------------------------------------------
 
-const isWorldCupTheme = today <= worldCupEnd;
+  const getDifficultyLabel = (difficulty?: string) => {
+    switch (difficulty) {
+      case "SuperDemon":
+        return "SUPER DEMON";
+
+      case "demon":
+        return "DEMON";
+
+      case "Hard Level":
+        return "HARD";
+
+      default:
+        return "CLASSIC";
+    }
+  };
+
+  const getDifficultyIcon = (difficulty?: string) => {
+    switch (difficulty) {
+      case "SuperDemon":
+        return <Skull className="w-5 h-5" />;
+
+      case "demon":
+        return <Flame className="w-5 h-5" />;
+
+      case "Hard Level":
+        return <AlertTriangle className="w-5 h-5" />;
+
+      default:
+        return <CheckCircle2 className="w-5 h-5" />;
+    }
+  };
+
+  // --------------------------------------------------
+  // Circle styling
+  // --------------------------------------------------
+
+  const getCircleStyle = (lvl: LevelData) => {
+    if (lvl.locked) {
+      return `
+        bg-gray-800
+        border-gray-600
+        text-gray-500
+        shadow-none
+      `;
+    }
+
+    switch (lvl.difficulty) {
+      case "SuperDemon":
+        return `
+          bg-gradient-to-br
+          from-black
+          via-fuchsia-950
+          to-purple-950
+          border-fuchsia-500
+          text-fuchsia-200
+          shadow-[0_0_25px_rgba(217,70,239,0.55)]
+          hover:shadow-[0_0_40px_rgba(217,70,239,0.8)]
+          hover:border-fuchsia-300
+        `;
+
+      case "demon":
+        return `
+          bg-gradient-to-br
+          from-red-950
+          via-orange-900
+          to-red-950
+          border-red-500
+          text-red-200
+          shadow-[0_0_20px_rgba(239,68,68,0.45)]
+          hover:shadow-[0_0_35px_rgba(239,68,68,0.7)]
+          hover:border-red-300
+        `;
+
+      case "Hard Level":
+        return `
+          bg-gradient-to-br
+          from-orange-950
+          to-orange-900
+          border-orange-500
+          text-orange-200
+          shadow-[0_0_15px_rgba(249,115,22,0.35)]
+          hover:shadow-[0_0_25px_rgba(249,115,22,0.55)]
+          hover:border-orange-300
+        `;
+
+      default:
+        return isWorldCupTheme
+          ? `
+            soccer-level-circle
+            border-green-500/70
+            text-white
+          `
+          : `
+            bg-gradient-to-br
+            from-gray-900
+            to-gray-800
+            border-gray-600
+            text-yellow-300
+            hover:border-yellow-400
+            hover:shadow-[0_0_20px_rgba(250,204,21,0.25)]
+          `;
+    }
+  };
+
+  // --------------------------------------------------
+  // Popup styling
+  // --------------------------------------------------
+
+  const getPopupStyle = (difficulty?: string) => {
+    switch (difficulty) {
+      case "SuperDemon":
+        return `
+          bg-gradient-to-br
+          from-black
+          via-fuchsia-950/90
+          to-purple-950/90
+          border-fuchsia-500
+          shadow-[0_0_50px_rgba(217,70,239,0.35)]
+        `;
+
+      case "demon":
+        return `
+          bg-gradient-to-br
+          from-red-950
+          via-orange-950
+          to-red-950
+          border-red-600
+          shadow-[0_0_45px_rgba(239,68,68,0.35)]
+        `;
+
+      case "Hard Level":
+        return `
+          bg-gradient-to-br
+          from-orange-950
+          to-orange-900
+          border-orange-600
+          shadow-[0_0_35px_rgba(249,115,22,0.3)]
+        `;
+
+      default:
+        return isWorldCupTheme
+          ? `
+            soccer-container
+            border-green-600/60
+          `
+          : `
+            bg-gray-950
+            border-gray-700
+            shadow-[0_0_35px_rgba(255,255,255,0.08)]
+          `;
+    }
+  };
+
+  // --------------------------------------------------
+  // Objective text
+  // --------------------------------------------------
+
+  const getObjectiveText = (lvl: LevelData) => {
+    const objective = lvl.objective;
+
+    if (!objective) {
+      return "Complete the level.";
+    }
+
+    switch (objective.type) {
+      case "score":
+        return `Reach ${objective.objGoal} points`;
+
+      case "spreadInk":
+        return "Spread the ink around";
+
+      case "defrost":
+        return `Clear ${objective.objGoal} ice`;
+
+      case "lightsUp":
+        return "Turn on the lights";
+
+      case "words":
+        return `Find ${objective.objGoal} words`;
+
+      case "destroy":
+        return `Destroy ${objective.objGoal} ${objective.tileType} tiles`;
+
+      case "collectVelvet":
+        return `Squash ${objective.objGoal} velvets`;
+
+      case "boss":
+        return "Defeat the boss";
+
+      case "chamberDrain":
+        return "Drain the chambers";
+
+      default:
+        return "Complete the objective";
+    }
+  };
+
+  // --------------------------------------------------
+  // Loading
+  // --------------------------------------------------
 
   if (loading) {
     return (
-     <main
-  className={`min-h-screen text-white flex items-center justify-center p-6 ${
-    isWorldCupTheme ? "soccer-pitch-bg" : "bg-black"
-  }`}
->
+      <main
+        className={`min-h-screen text-white flex items-center justify-center p-6 ${
+          isWorldCupTheme ? "soccer-pitch-bg" : "bg-black"
+        }`}
+      >
         <motion.div
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
           className="text-lg font-bold"
         >
-         {` ${isWorldCupTheme ? "⚽ Loading levels..." : "Loading levels..." }`} 
+          {isWorldCupTheme
+            ? "⚽ Loading levels..."
+            : "Loading levels..."}
         </motion.div>
       </main>
     );
   }
 
+  // --------------------------------------------------
+  // Render
+  // --------------------------------------------------
+
   return (
-    <div className="w-full flex flex-col gap-6 items-center">
+    <main
+      className={`relative min-h-screen overflow-hidden text-white ${
+        isWorldCupTheme ? "soccer-pitch-bg" : "bg-black"
+      }`}
+    >
+      {/* ------------------------------------------------ */}
+      {/* Header */}
+      {/* ------------------------------------------------ */}
 
-{/* Sticky Level Filter */}
-<motion.div
-  initial={{ opacity: 0, y: -10 }}
-  animate={{ opacity: 1, y: 0 }}
-  className={`
-    sticky top-0 z-30
-    w-full
-  
-     ${  isWorldCupTheme
-    ? "bg-gradient-to-r from-green-900/80 to-green-800/80 border-yellow-400/50"
-    : "bg-black/90 border-gray-700" }
-    px-4 py-4
-    flex justify-center
-    rounded-lg shadow-lg`}
-  
->
-  <div className="w-full max-w-sm flex items-center gap-3">
-    <label className="text-sm text-white font-semibold whitespace-nowrap">
-      🔍 Level #:
-    </label>
+      <div className="relative z-20 px-4 pt-6 pb-4">
+        <motion.h1
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center text-3xl md:text-4xl font-black"
+        >
+          Select Level
+        </motion.h1>
 
-    <input
-      type="number"
-      min={1}
-      placeholder="Search..."
-      value={levelFilter}
-      onChange={(e) => {
-        const val = e.target.value;
-        setLevelFilter(val === "" ? "" : Number(val));
-      }}
-      className="
-        w-24 rounded-md
-        bg-white/10 border-2 border-yellow-400/50
-        px-3 py-2 text-sm text-white font-semibold
-        focus:outline-none focus:border-yellow-300 focus:bg-white/20
-        placeholder-white/50
-      "
-    />
-  </div>
-</motion.div>
+        <p className="text-center text-white/50 text-sm mt-2">
+          Choose your challenge
+        </p>
+      </div>
 
-{filteredLevels.length === 0 && (
-  <motion.p
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    className="text-lg text-yellow-300 text-center mt-4 font-semibold"
-  >
-    ⚠️ No level found.
-  </motion.p>
-)}
+      {/* ------------------------------------------------ */}
+      {/* Search */}
+      {/* ------------------------------------------------ */}
 
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="
+          relative
+          z-30
+          flex
+          justify-center
+          px-4
+          mb-6
+        "
+      >
+        <div
+          className={`
+            flex
+            items-center
+            gap-2
+            rounded-xl
+            border
+            px-3
+            py-2
+            backdrop-blur-md
+            ${
+              isWorldCupTheme
+                ? "bg-green-950/70 border-green-700/50"
+                : "bg-gray-950/90 border-gray-700"
+            }
+          `}
+        >
+          <Search className="w-4 h-4 text-white/50" />
 
-<div className="h-4" />
+          <input
+            type="number"
+            min={1}
+            placeholder="Level"
+            value={levelFilter}
+            onChange={(e) => {
+              const val = e.target.value;
 
+              setLevelFilter(
+                val === "" ? "" : Number(val)
+              );
+            }}
+            className="
+              w-24
+              bg-transparent
+              outline-none
+              text-sm
+              font-semibold
+              text-white
+              placeholder-white/30
+            "
+          />
+        </div>
+      </motion.div>
+
+      {/* ------------------------------------------------ */}
+      {/* No level */}
+      {/* ------------------------------------------------ */}
+
+      {filteredLevels.length === 0 && (
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="
+            text-lg
+            text-yellow-300
+            text-center
+            mt-10
+            font-semibold
+          "
+        >
+          ⚠️ No level found.
+        </motion.p>
+      )}
+
+      {/* ------------------------------------------------ */}
+      {/* Level circles */}
+      {/* ------------------------------------------------ */}
 
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ staggerChildren: 0.1 }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
+        className="
+          relative
+          z-20
+          max-w-3xl
+          mx-auto
+          px-6
+        "
       >
-        {filteredLevels.map((lvl, idx) => (
-          <motion.div
-            key={lvl.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.05 }}
-            className={`
-              rounded-xl border-2 p-6 flex flex-col items-center justify-between text-center transition-all transform
-              ${lvl.locked 
-                ? "bg-gray-800/50 text-gray-400 border-gray-600 cursor-not-allowed" 
-                : lvl.difficulty === "demon"
-                ? "bg-gradient-to-br from-red-950 via-orange-900 to-red-900 text-red-100 border-red-600 shadow-lg shadow-red-900/50 hover:shadow-red-700/70 hover:border-red-500 hover:scale-105"
-                : lvl.difficulty === "Hard Level"
-                ? "bg-gradient-to-br from-orange-950 to-orange-900 text-orange-100 border-orange-600 hover:border-orange-500 hover:scale-105 shadow-lg shadow-orange-900/30"
-                : isWorldCupTheme
-  ? "soccer-level-card border-green-600/50"
-  : "bg-gray-900 text-white border-gray-700 hover:border-gray-500 hover:scale-105"
+        <div
+          className="
+            grid
+            grid-cols-2
+            sm:grid-cols-5
+            gap-x-5
+            gap-y-8
+            justify-items-center
+          "
+        >
+          {displayedLevels.map((lvl, idx) => (
+            <motion.button
+              key={lvl.id}
+              initial={{
+                opacity: 0,
+                scale: 0.7,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+              }}
+              transition={{
+                delay: idx * 0.05,
+              }}
+              whileHover={
+                lvl.locked
+                  ? {}
+                  : {
+                      scale: 1.08,
+                      y: -3,
+                    }
               }
-            `}
-          >
-            <h2
+              whileTap={
+                lvl.locked
+                  ? {}
+                  : {
+                      scale: 0.92,
+                      y: 3,
+                    }
+              }
+              disabled={lvl.locked}
+              onClick={() => {
+                if (!lvl.locked) {
+                  setSelectedLevel(lvl);
+                }
+              }}
               className={`
-                text-2xl font-bold mb-2
-                ${lvl.difficulty === "Hard Level" ? "text-orange-300" : ""}
-                ${lvl.difficulty === "demon" ? "text-red-300 animate-pulse" : ""}
-                ${!lvl.locked && lvl.difficulty !== "demon" && lvl.difficulty !== "Hard Level" ? "text-yellow-300" : ""}
+                relative
+                w-20
+                h-20
+                sm:w-24
+                sm:h-24
+                rounded-full
+                border-4
+                flex
+                items-center
+                justify-center
+                transition-all
+                ${getCircleStyle(lvl)}
               `}
             >
-               {lvl.name}
-            </h2>
+              {/* Level number */}
 
-            {/* Difficulty Tag */}
-            {!lvl.locked && lvl.difficulty && (
-              <motion.span
-                whileHover={{ scale: 1.1 }}
+              {lvl.locked ? (
+                <Lock className="w-7 h-7" />
+              ) : (
+                <span className="text-2xl sm:text-3xl font-black">
+                  {lvl.id}
+                </span>
+              )}
+
+              {/* Difficulty indicator */}
+
+              {!lvl.locked && lvl.difficulty === "demon" && (
+                <span className="
+                  absolute
+                  -top-2
+                  -right-2
+                  w-7
+                  h-7
+                  rounded-full
+                  bg-red-600
+                  border-2
+                  border-red-300
+                  flex
+                  items-center
+                  justify-center
+                  shadow-lg
+                ">
+                  🔥
+                </span>
+              )}
+
+              {!lvl.locked && lvl.difficulty === "SuperDemon" && (
+                <span className="
+                  absolute
+                  -top-2
+                  -right-2
+                  w-7
+                  h-7
+                  rounded-full
+                  bg-fuchsia-600
+                  border-2
+                  border-fuchsia-300
+                  flex
+                  items-center
+                  justify-center
+                  shadow-lg
+                ">
+                  ☠
+                </span>
+              )}
+
+              {!lvl.locked && lvl.difficulty === "Hard Level" && (
+                <span className="
+                  absolute
+                  -top-2
+                  -right-2
+                  w-7
+                  h-7
+                  rounded-full
+                  bg-orange-600
+                  border-2
+                  border-orange-300
+                  flex
+                  items-center
+                  justify-center
+                  shadow-lg
+                ">
+                  !
+                </span>
+              )}
+            </motion.button>
+          ))}
+        </div>
+
+        {/* ------------------------------------------------ */}
+        {/* Pagination */}
+        {/* ------------------------------------------------ */}
+
+        {totalPages > 1 && (
+          <div className="
+            flex
+            items-center
+            justify-center
+            gap-6
+            mt-10
+            pb-8
+          ">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
+              disabled={currentPage === 1}
+              onClick={() =>
+                setCurrentPage((page) =>
+                  Math.max(page - 1, 1)
+                )
+              }
+              className="
+                w-11
+                h-11
+                rounded-full
+                border
+                border-gray-700
+                bg-gray-900
+                flex
+                items-center
+                justify-center
+                disabled:opacity-30
+                disabled:cursor-not-allowed
+              "
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </motion.button>
+
+            <div className="text-center">
+              <div className="text-sm font-bold">
+                WORLD {currentPage}
+              </div>
+
+              <div className="text-xs text-white/40 mt-1">
+                {startIndex + 1}–
+                {Math.min(
+                  startIndex + LEVELS_PER_PAGE,
+                  filteredLevels.length
+                )}{" "}
+                of {filteredLevels.length}
+              </div>
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.9 }}
+              disabled={currentPage === totalPages}
+              onClick={() =>
+                setCurrentPage((page) =>
+                  Math.min(page + 1, totalPages)
+                )
+              }
+              className="
+                w-11
+                h-11
+                rounded-full
+                border
+                border-gray-700
+                bg-gray-900
+                flex
+                items-center
+                justify-center
+                disabled:opacity-30
+                disabled:cursor-not-allowed
+              "
+            >
+              <ChevronRight className="w-5 h-5" />
+            </motion.button>
+          </div>
+        )}
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+          className="
+            text-center
+            text-sm
+            text-yellow-300
+            font-bold
+            pb-8
+          "
+        >
+          ⭐ NEW LEVELS ARE COMING SOON! ⭐
+        </motion.p>
+      </motion.div>
+
+      {/* ================================================= */}
+      {/* LEVEL POPUP */}
+      {/* ================================================= */}
+
+      <AnimatePresence>
+        {selectedLevel && (
+          <motion.div
+            className="
+              fixed
+              inset-0
+              z-50
+              flex
+              items-center
+              justify-center
+              p-4
+              bg-black/75
+              backdrop-blur-sm
+            "
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedLevel(null)}
+          >
+            <motion.div
+              initial={{
+                opacity: 0,
+                scale: 0.8,
+                y: 20,
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                scale: 0.8,
+                y: 20,
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 300,
+                damping: 24,
+              }}
+              onClick={(e) => e.stopPropagation()}
+              className={`
+                relative
+                w-full
+                max-w-md
+                rounded-3xl
+                border-2
+                p-7
+                text-center
+                ${getPopupStyle(selectedLevel.difficulty)}
+              `}
+            >
+              {/* Close */}
+
+              <button
+                onClick={() => setSelectedLevel(null)}
+                className="
+                  absolute
+                  top-4
+                  right-4
+                  w-9
+                  h-9
+                  rounded-full
+                  bg-black/30
+                  border
+                  border-white/10
+                  flex
+                  items-center
+                  justify-center
+                  hover:bg-black/50
+                  transition
+                "
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              {/* Level number */}
+
+             
+
+              {/* Name */}
+
+              <h2
                 className={`
-                  text-xs font-bold uppercase mt-2 px-3 py-1 rounded-full
-                  ${lvl.difficulty === "Hard Level" ? "bg-orange-600 text-white" : ""}
-                  ${lvl.difficulty === "demon" ? "bg-red-600 text-white animate-pulse" : ""}
-                  ${!lvl.difficulty || (lvl.difficulty !== "Hard Level" && lvl.difficulty !== "demon") ? "bg-green-600 text-white" : ""}
+                  text-3xl
+                  md:text-4xl
+                  font-black
+                  mb-4
+                  ${
+                    selectedLevel.difficulty === "SuperDemon"
+                      ? "text-fuchsia-300"
+                      : selectedLevel.difficulty === "demon"
+                      ? "text-red-300"
+                      : selectedLevel.difficulty === "Hard Level"
+                      ? "text-orange-300"
+                      : "text-yellow-300"
+                  }
                 `}
               >
-                {lvl.difficulty === "demon" ? "🔥 DEMON" : lvl.difficulty === "Hard Level" ? "⚠️ HARD" : "✅ NORMAL"}
-              </motion.span>
-            )}
+                {selectedLevel.name}
+              </h2>
 
-            {lvl.locked ? (
-              <div className="mt-4 flex items-center gap-2 text-gray-400 font-semibold">
-                <Lock className="w-5 h-5" /> Locked
-              </div>
-            ) : (
-              <>
-                <p className="text-sm text-white/80 mt-3 font-semibold">
-                  {lvl.objective?.type === "score" &&
-                    `🎯 Reach ${lvl.objective.objGoal} points`}
-                      {lvl.objective?.type === "spreadInk" &&
-                    `🖤 Spread the ink around`}
-                    {lvl.objective?.type === "defrost" &&
-                    `❄️ Clear ${lvl.objective.objGoal} ice`}
-                     {lvl.objective?.type === "lightsUp" &&
-                    `💡 Turn on the lights!`}
-                  {lvl.objective?.type === "words" &&
-                    `📝 Find ${lvl.objective.objGoal} words`}
-                  {lvl.objective?.type === "destroy" &&
-                    `💥 Destroy ${lvl.objective.objGoal} ${lvl.objective.tileType} tiles`}
-                     {lvl.objective?.type === "collectVelvet" &&
-                    `✨ Squash ${lvl.objective.objGoal} velvets!`}
-                     {lvl.objective?.type === "boss" &&
-                    `👹 Defeat the boss!`}
-                      {lvl.objective?.type === "chamberDrain" &&
-                    `Drain the chambers!`}
-                </p>
+              {/* Difficulty */}
 
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => handlePlay(lvl.id)}
+              <div className="
+                flex
+                justify-center
+                mb-7
+              ">
+                <div
                   className={`
-                    mt-4 flex items-center gap-2 font-bold px-6 py-3 rounded-lg transition-all transform
-                    ${lvl.difficulty === 'demon' 
-                      ? 'bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white shadow-lg shadow-red-600/50' 
-                      : lvl.difficulty === 'Hard Level'
-                      ? 'bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white shadow-lg shadow-orange-600/50'
-                      : 'bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white shadow-lg shadow-green-600/50'
+                    inline-flex
+                    items-center
+                    gap-2
+                    px-4
+                    py-2
+                    rounded-full
+                    text-xs
+                    font-black
+                    tracking-wider
+                    ${
+                      selectedLevel.difficulty === "SuperDemon"
+                        ? "bg-fuchsia-600/30 text-fuchsia-200 border border-fuchsia-500"
+                        : selectedLevel.difficulty === "demon"
+                        ? "bg-red-600/30 text-red-200 border border-red-500"
+                        : selectedLevel.difficulty === "Hard Level"
+                        ? "bg-orange-600/30 text-orange-200 border border-orange-500"
+                        : "bg-green-600/30 text-green-200 border border-green-500"
                     }
                   `}
                 >
-                  <Play className="w-4 h-4" /> Play
-                </motion.button>
-              </>
-            )}
+                  {getDifficultyIcon(selectedLevel.difficulty)}
+
+                  {getDifficultyLabel(
+                    selectedLevel.difficulty
+                  )}
+                </div>
+              </div>
+
+              {/* Objective */}
+
+              <div className="
+                rounded-2xl
+                border
+                border-white/10
+                bg-black/25
+                p-5
+                mb-7
+              ">
+                <div className="
+                  flex
+                  items-center
+                  justify-center
+                  gap-2
+                  text-xs
+                  uppercase
+                  tracking-widest
+                  text-white/40
+                  font-bold
+                  mb-3
+                ">
+                  <Target className="w-4 h-4" />
+                  Objective
+                </div>
+
+                <p className="
+                  text-lg
+                  font-bold
+                  text-white
+                ">
+                  {getObjectiveText(selectedLevel)}
+                </p>
+              </div>
+
+              {/* Play */}
+
+              <motion.button
+                whileHover={{
+                  scale: 1.04,
+                  y: -2,
+                }}
+                whileTap={{
+                  scale: 0.94,
+                  y: 3,
+                }}
+                onClick={() =>
+                  handlePlay(selectedLevel.id)
+                }
+                className={`
+                  w-full
+                  py-4
+                  rounded-xl
+                  flex
+                  items-center
+                  justify-center
+                  gap-3
+                  font-black
+                  text-lg
+                  shadow-xl
+                  ${
+                    selectedLevel.difficulty === "SuperDemon"
+                      ? "bg-gradient-to-r from-fuchsia-700 to-purple-700 hover:from-fuchsia-600 hover:to-purple-600 text-white shadow-fuchsia-900/50"
+                      : selectedLevel.difficulty === "demon"
+                      ? "bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white shadow-red-900/50"
+                      : selectedLevel.difficulty === "Hard Level"
+                      ? "bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white shadow-orange-900/50"
+                      : "bg-gradient-to-r from-green-600 to-green-500 hover:from-green-500 hover:to-green-400 text-white shadow-green-900/50"
+                  }
+                `}
+              >
+                <Play className="w-5 h-5 fill-current" />
+                PLAY LEVEL
+              </motion.button>
+            </motion.div>
           </motion.div>
-        ))}
-      </motion.div>
-      
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
-        className="text-sm text-yellow-300 whitespace-nowrap font-bold mt-6"
-      >
-        ⭐ NEW LEVELS ARE COMING SOON! ⭐
-      </motion.p>
-    </div>
+        )}
+      </AnimatePresence>
+    </main>
   );
 }

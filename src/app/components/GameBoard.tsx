@@ -2928,8 +2928,10 @@ const handleScramble = () => {
       isBossLevel
         ? "bg-gradient-to-r from-red-950 via-black to-red-900 border-red-700 shadow-lg shadow-red-900/60"
         : level.difficulty === "demon"
+        
         ? "bg-gradient-to-r from-red-950 via-orange-950 to-red-900 border-red-700 text-red-100 shadow-lg shadow-red-900/60 animate-pulse"
         : level.difficulty === "Hard Level"
+        
         ? "bg-red-950 border-red-700"
         : "bg-neutral-950 border-neutral-800"
     }

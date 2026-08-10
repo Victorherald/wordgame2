@@ -7,7 +7,7 @@ export type Objective =
   | { type: 'words'; objGoal: number; minLength?: number }
   | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' | 'locked' | 'bone'};
 
-export type Difficulty = "hard" | "demon";
+export type Difficulty = "hard" | "demon" | "Superdemon";
   
 
 export type LevelData = {
