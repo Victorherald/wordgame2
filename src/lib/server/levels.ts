@@ -12734,7 +12734,7 @@ export const levels: LevelData[] = [
     id: 452,
      name: "Level 452",
      
-     objective: { type: 'lightsUp' ,  objGoal: 4, tileType: "bulb" },
+     objective: { type: 'lightsUp' ,  objGoal: 4, tileType: "bulb" },`1`1 ``
      
      moves: 40,
   
