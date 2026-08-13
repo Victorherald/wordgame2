@@ -12729,54 +12729,49 @@ export const levels: LevelData[] = [
     ],
    },
 
-   
-    {
-    id: 452,
-     name: "Level 452",
-     
-     objective: { type: 'lightsUp' ,  objGoal: 4, tileType: "bulb" },`1`1 ``
-     
-     moves: 40,
-  
-       waterHeight: 6,
-      warpTurns: 35,
-      boulderHP: 2,
-     
-      fridgeCharge:0,
-      
-      fridgeChargeMax: 5, 
-      fridgeHP: 8,
-     
-    lockTurns: 13,       
-  dullTurns: 20,
-      boneUnripeTurns: 6,
-      boneRipeTurns: 5,
-      boneTurns: 6,
-     allowHardLetters: false,
-     locked: true,
-    
-       
-    board: [
-     
-        ["boulder", "boulder", "removed", "removed", "removed", "removed", "exclamator", "bulb"],
-        ["boulder", "boulder", "boulder", "removed", "removed", "normal", "normal", "exclamator"],
-        ["bulb", "boulder", "boulder", "removed", "removed", "normal", "normal", "normal"],
-        ["boulder", "boulder", "boulder", "boulder", "normal", "normal", "normal", "normal"],
-        ["boulder", "boulder", "boulder", "boulder", "normal", "normal", "normal", "normal"],
-        ["bulb", "boulder", "boulder", "boulder", "normal", "normal", "normal", "normal"],
-        ["boulder", "boulder", "boulder", "removed", "removed", "normal", "normal", "exclamator"],
-        ["boulder", "normal", "removed", "removed", "removed", "removed", "exclamator", "bulb"]
-    ],
-    groundLayout: [
-  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
-  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
-  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
-  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
-  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
-  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
-  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
-  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
-    ],
-   },
-];
+ {
+  id: 452,
+  name: "Level 452",
 
+  objective: { type: 'lightsUp', objGoal: 4, tileType: "bulb" },
+
+  moves: 40,
+
+  waterHeight: 6,
+  warpTurns: 35,
+  boulderHP: 2,
+
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 8,
+
+  lockTurns: 13,
+  dullTurns: 20,
+  boneUnripeTurns: 6,
+  boneRipeTurns: 5,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [
+    ["boulder", "boulder", "removed", "removed", "removed", "removed", "exclamator", "bulb"],
+    ["boulder", "boulder", "boulder", "removed", "removed", "normal", "normal", "exclamator"],
+    ["bulb", "boulder", "boulder", "removed", "removed", "normal", "normal", "normal"],
+    ["boulder", "boulder", "boulder", "boulder", "normal", "normal", "normal", "normal"],
+    ["boulder", "boulder", "boulder", "boulder", "normal", "normal", "normal", "normal"],
+    ["bulb", "boulder", "boulder", "boulder", "normal", "normal", "normal", "normal"],
+    ["boulder", "boulder", "boulder", "removed", "removed", "normal", "normal", "exclamator"],
+    ["boulder", "normal", "removed", "removed", "removed", "removed", "exclamator", "bulb"]
+  ],
+    groundLayout: [
+    ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+    ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+    ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+    ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+    ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+    ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+    ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+    ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ],
+},
+];
