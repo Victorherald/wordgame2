@@ -146,6 +146,12 @@ type GroundCell = {
 };
 
 
+type Belt = {
+  path: BeltPath[];
+  loop: boolean;
+  direction: "forward" | "backward";
+};
+
 
 
 const specialTileSettings = {
@@ -183,6 +189,26 @@ const specialTileSettings = {
    allowVelvetTiles: true,
   velvetSpawnChance: 0.12 // 12% chance
 };
+
+
+// belt loop constant
+
+type BeltPath = {
+  row: number;
+  col: number;
+};
+
+const beltPath: BeltPath[] = [
+  { row: 2, col: 1 },
+  { row: 2, col: 2 },
+  { row: 2, col: 3 },
+  { row: 2, col: 4 },
+  { row: 3, col: 4 },
+  { row: 4, col: 4 },
+  { row: 4, col: 3 },
+  { row: 4, col: 2 },
+  { row: 4, col: 1 },
+];
 
 export function LetterBoard({ level,   objective,  levelName, layout, moves = 15}: LetterBoardProps) {
   const [grid, setGrid] = useState<Tile[][]>([]);
@@ -2067,11 +2093,15 @@ const validTiles = selected.filter(
 let points = validTiles.length * 100;
 
  
-
 let cursePenalty = 0;
 
-if (wordsIncludesCursed) {
-  cursePenalty = 150;
+const cursedTileCount = selected.filter(({ row, col }) => {
+  const tile = grid[row][col];
+  return tile?.isCursed;
+}).length;
+
+if (cursedTileCount > 0) {
+  cursePenalty = cursedTileCount * 150;
   points -= cursePenalty;
 }
 
@@ -2571,6 +2601,27 @@ for (let r = 0; r < rows; r++) {
     }
   }
 }
+
+const moveBelt = () => {
+  const newGrid = grid.map(row => [...row]);
+
+  const beltTiles = beltPath.map(({ row, col }) => {
+    return grid[row][col];
+  });
+
+  beltPath.forEach(({ row, col }, index) => {
+    const nextIndex = index + 1;
+
+    if (nextIndex < beltPath.length) {
+      const destination = beltPath[nextIndex];
+
+      newGrid[destination.row][destination.col] =
+        beltTiles[index];
+    }
+  });
+
+  setGrid(newGrid);
+};
 
 
 
@@ -3706,6 +3757,8 @@ const exclamated = tile?.isExclamator
     </svg>
   </div>
 )}
+
+
 
 
 
