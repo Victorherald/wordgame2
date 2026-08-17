@@ -5,12 +5,20 @@ import { useAudio } from "./components/AudioProvider";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {BookOpen,  Info,Trophy,Gamepad2, Users, MessageCircle, Settings} from "lucide-react";
+  import '../app/animations/interface.css';
+  import { BoulevardBackground } from "../app/components/button/boulevardHouses";
+
+import { NeonButton } from "../app/components/button/neonButton";
+
+import { Lobster } from "next/font/google";
+
+const lobster = Lobster({
+  subsets: ["latin"],
+  weight: "400",
+});
+  
   
 
-  
-  
-
-import Image from "next/image";
 
 export default function Home() {
  const { playMusic } = useAudio();
@@ -23,9 +31,14 @@ useEffect(() => {
 
   const router = useRouter();
   const [activePopup, setActivePopup] = useState<string | null>(null);
+  const [neonPhase, setNeonPhase] =
+  useState<"purple" | "green">("purple");
 
   const openPopup = (name: string) => setActivePopup(name);
   const closePopup = () => setActivePopup(null);
+
+
+  
 
   const {
   musicVolume,
@@ -34,41 +47,163 @@ useEffect(() => {
 
   // World Cup theme ends after July 20, 2026
 const today = new Date();
+
 const worldCupEnd = new Date("2026-07-20T23:59:59");
+const blvdEnd = new Date("2026-09-30T23:59:59");
 
 const isWorldCupTheme = today <= worldCupEnd;
+
+const BlvdTheme =
+  !isWorldCupTheme &&
+  today <= blvdEnd;
+
+  useEffect(() => {
+  if (!BlvdTheme) return;
+
+  const interval = setInterval(() => {
+    setNeonPhase((prev) =>
+      prev === "purple" ? "green" : "purple"
+    );
+  }, 900);
+
+  return () => clearInterval(interval);
+}, [BlvdTheme]);
 
   return (
   <div
   className={`relative min-h-screen overflow-hidden ${
-    isWorldCupTheme
+   isWorldCupTheme
       ? "soccer-pitch-bg"
+      : BlvdTheme
+      ? "bg-[#030306]"
       : "bg-black"
   }`}
 >
-      {/* Soccer Ball Background Pattern */}
-     {isWorldCupTheme && (
-  <div className="absolute inset-0 opacity-10 pointer-events-none">
-    <div>
-  
-      <Image   className="absolute top-10 right-10 w-32 h-32 soccer-spin"
-  src="/images/soccer-ball.png"
-  alt="Tile"
-  width={60}
-  height={64}
-/>
-    </div>
 
-    <div className="absolute bottom-20 left-10 w-24 h-24 soccer-bounce">
-     <Image  
-  src="/images/soccer-ball.png"
-  alt="Tile"
-  width={60}
-  height={64}
-/>
-    </div>
+  {BlvdTheme && <BoulevardBackground />}
+
+{BlvdTheme && (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+
+    {/* Purple street glow */}
+    <div
+      className="
+        absolute
+        top-[15%]
+        left-[10%]
+        w-[320px]
+        h-[320px]
+        rounded-full
+        bg-purple-700/10
+        blur-[120px]
+      "
+    />
+
+    {/* Green street glow */}
+    <div
+      className="
+        absolute
+        bottom-[10%]
+        right-[10%]
+        w-[320px]
+        h-[320px]
+        rounded-full
+        bg-green-500/10
+        blur-[120px]
+      "
+    />
+
+    {/* subtle boulevard line */}
+    <div
+      className="
+        absolute
+        left-1/2
+        top-0
+        bottom-0
+        w-px
+        bg-gradient-to-b
+        from-transparent
+        via-purple-500/10
+        to-transparent
+      "
+    />
+
   </div>
 )}
+
+
+      {/* Soccer Ball Background Pattern */}
+    {/* Puzzlevard ambient neon background */}
+{BlvdTheme && (
+  <>
+    {/* Very subtle purple glow */}
+    <div
+      className="
+        absolute
+        -top-40
+        -left-40
+        w-[500px]
+        h-[500px]
+        rounded-full
+        bg-purple-900/10
+        blur-[140px]
+        pointer-events-none
+      "
+    />
+
+    {/* Very subtle green glow */}
+    <div
+      className="
+        absolute
+        -bottom-40
+        -right-40
+        w-[500px]
+        h-[500px]
+        rounded-full
+        bg-green-900/10
+        blur-[140px]
+        pointer-events-none
+      "
+    />
+
+    {/* Dim boulevard light strip */}
+    <div
+      className="
+        absolute
+        left-1/2
+        top-0
+        -translate-x-1/2
+        w-[2px]
+        h-full
+        bg-gradient-to-b
+        from-transparent
+        via-fuchsia-900/20
+        to-transparent
+        blur-[2px]
+        pointer-events-none
+      "
+    />
+
+    {/* Horizontal street glow */}
+    <div
+      className="
+        absolute
+        left-0
+        right-0
+        bottom-[18%]
+        h-[2px]
+        bg-gradient-to-r
+        from-transparent
+        via-red-900/25
+        to-transparent
+        blur-[3px]
+        pointer-events-none
+      "
+    />
+  </>
+)}
+
+
 
       {/* Version Badge */}
       <span className="absolute top-5 left-5 text-white/60 text-xs font-semibold">v 1.2.0</span>
@@ -81,37 +216,126 @@ const isWorldCupTheme = today <= worldCupEnd;
   initial={{ scale: 0.8, opacity: 0 }}
   animate={{ scale: 1, opacity: 1 }}
   transition={{ duration: 0.6 }}
-  className="text-center mb-8"
+  className="relative text-center mb-8"
 >
-  <div className="flex items-center justify-center gap-3 mb-2">
-    {isWorldCupTheme && (
-      <Trophy className="w-8 h-8 text-yellow-300" />
-    )}
+ {BlvdTheme ? (
+  /* BOULEVARD SIGN */
+  <div className="mb-4">
 
-    <h1
+    <div className="neon-sign">
+
+      <motion.div
+        animate={{
+          opacity: neonPhase === "purple" ? 1 : 0.15,
+        }}
+        transition={{ duration: 0.15 }}
+        className="neon-word purple"
+      >
+        {"WOR".split("").map((letter, index) => (
+          <span
+            key={index}
+            className="led-letter"
+          >
+            {letter}
+          </span>
+        ))}
+      </motion.div>
+
+      <motion.div
+        animate={{
+          opacity: neonPhase === "green" ? 1 : 0.15,
+        }}
+        transition={{ duration: 0.15 }}
+        className="neon-word green"
+      >
+        {"ZZLE".split("").map((letter, index) => (
+          <span
+            key={index}
+            className="led-letter"
+          >
+            {letter}
+          </span>
+        ))}
+        
+      </motion.div>
+
+      {BlvdTheme && (
+  <motion.div
+    initial={{ opacity: 0, x: 10, y: 5 }}
+    animate={{ opacity: 1, x: 0, y: 0 }}
+    transition={{ duration: 0.8, delay: 0.3 }}
+    className={`
+      ${lobster.className}
+      absolute
+      right-[-18px]
+ 
+      top-[-20px]
+      rotate-[-8deg]
+      text-3xl
+      md:text-4xl
+      text-red-300
+      pointer-events-none
+      select-none
+      whitespace-nowrap
+    `}
+    style={{
+      textShadow: `
+        0 0 4px rgba(252, 0, 0, 0.9),
+        0 0 10px rgba(243, 6, 6, 0.8),
+        0 0 22px rgba(209, 0, 0, 0.55)
+      `,
+    }}
+  >
+    Puzzlevard
+  </motion.div>
+)}
+
+    </div>
+
+    
+
+
+    <p className="mt-5 text-white/45 text-sm tracking-[0.35em] uppercase">
+      The Ultimate Word Puzzle Game
+    </p>
+
+  </div>
+) : (
+  /* YOUR EXISTING TITLE */
+  <>
+    <div className="flex items-center justify-center gap-3 mb-2">
+
+      {isWorldCupTheme && (
+        <Trophy className="w-8 h-8 text-yellow-300" />
+      )}
+
+      <h1
+        className={
+          isWorldCupTheme
+            ? "soccer-title"
+            : "text-5xl md:text-6xl font-extrabold text-white"
+        }
+      >
+        Worzzle
+      </h1>
+
+      {isWorldCupTheme && (
+        <Trophy className="w-8 h-8 text-yellow-300" />
+      )}
+
+    </div>
+
+    <p
       className={
         isWorldCupTheme
-          ? "soccer-title"
-          : "text-5xl md:text-6xl font-extrabold text-white"
+          ? "soccer-subtitle"
+          : "text-xl text-gray-400 font-semibold"
       }
     >
-      Worzzle
-    </h1>
-
-    {isWorldCupTheme && (
-      <Trophy className="w-8 h-8 text-yellow-300" />
-    )}
-  </div>
-
-  <p
-    className={
-      isWorldCupTheme
-        ? "soccer-subtitle"
-        : "text-xl text-gray-400 font-semibold"
-    }
-  >
-    The Ultimate Word Puzzle Game
-  </p>
+      The Ultimate Word Puzzle Game
+    </p>
+  </>
+)}
 </motion.div>
 
        
@@ -123,75 +347,68 @@ const isWorldCupTheme = today <= worldCupEnd;
           transition={{ delay: 0.4 }}
           className="flex flex-col md:flex-row gap-6 items-center"
         >
-        <button
-  onClick={() => router.push("/levels")}
-  className={`${
-    isWorldCupTheme
-      ? "soccer-btn"
-      : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
-  } w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
->
-  <div className="flex items-center justify-center gap-2">
-    <Gamepad2 className="w-5 h-5" />
-    <span>Play Game</span>
-  </div>
-</button>
 
-         <button
+
+       <NeonButton
   onClick={() => openPopup("help")}
-  className={`${
-    isWorldCupTheme
-      ? "soccer-btn"
-      : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
-  } w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
+  color="purple"
+  seasonal={BlvdTheme}
 >
   <div className="flex items-center justify-center gap-2">
     <BookOpen className="w-5 h-5" />
     <span>How to Play</span>
   </div>
-</button>
+</NeonButton>
 
-<button
+
+
+
+
+<NeonButton
   onClick={() => openPopup("options")}
-  className={`${
-    isWorldCupTheme
-      ? "soccer-btn"
-      : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
-  } w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
+  color="green"
+  seasonal={BlvdTheme}
 >
   <div className="flex items-center justify-center gap-2">
     <Settings className="w-5 h-5" />
     <span>Options</span>
   </div>
-</button>
+</NeonButton>
 
-        <button
+  <NeonButton
+  onClick={() => router.push("/levels")}
+  color="green"
+  seasonal={BlvdTheme}
+  featured
+>
+  <div className="flex items-center justify-center gap-2">
+    <Gamepad2 className="w-5 h-5" />
+    <span>Play Game</span>
+  </div>
+</NeonButton>
+
+      <NeonButton
   onClick={() => openPopup("about")}
-  className={`${
-    isWorldCupTheme
-      ? "soccer-btn"
-      : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
-  } w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
+  color="purple"
+  seasonal={BlvdTheme}
 >
   <div className="flex items-center justify-center gap-2">
     <Info className="w-5 h-5" />
-    <span>About</span>
+    <span>Options</span>
   </div>
-</button>
+</NeonButton>
+ 
 
-<button
+<NeonButton
   onClick={() => openPopup("community")}
-  className={`${
-    isWorldCupTheme
-      ? "soccer-btn"
-      : "bg-gray-900 border border-gray-700 hover:bg-gray-800 text-white"
-  } w-48 py-4 text-lg rounded-lg shadow-lg hover:shadow-xl transition-all`}
+  color="green"
+  seasonal={BlvdTheme}
 >
   <div className="flex items-center justify-center gap-2">
-    <Users className="w-5 h-5" />
+    <Settings className="w-5 h-5" />
     <span>Community</span>
   </div>
-</button>
+</NeonButton>
         </motion.div>
 
         {/* Footer */}

@@ -1,0 +1,290 @@
+.neon-popup {
+  position: relative;
+
+  background: rgba(8, 8, 12, 0.82);
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 0 40px rgba(168,85,247,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+.neon-sign {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  gap: 0.08em;
+
+  padding: 18px 26px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.04),
+      rgba(255,255,255,0.01)
+    );
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  border-radius: 18px;
+
+  box-shadow:
+    inset 0 0 30px rgba(255,255,255,0.025),
+    0 20px 60px rgba(0,0,0,0.7);
+}
+
+.neon-word {
+  display: flex;
+  gap: 0.06em;
+
+  font-family: monospace;
+  font-weight: 900;
+}
+
+.neon-word.purple {
+  color: #d946ef;
+
+  text-shadow:
+    0 0 4px #d946ef,
+    0 0 10px #d946ef,
+    0 0 22px rgba(217,70,239,0.9),
+    0 0 45px rgba(217,70,239,0.55);
+}
+
+.neon-word.green {
+  color: #39ff88;
+
+  text-shadow:
+    0 0 4px #39ff88,
+    0 0 10px #39ff88,
+    0 0 22px rgba(57,255,136,0.9),
+    0 0 45px rgba(57,255,136,0.55);
+}
+
+.led-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: clamp(3.2rem, 9vw, 6.5rem);
+
+  line-height: 0.9;
+
+  -webkit-text-stroke: 1px currentColor;
+}
+
+
+
+.neon-button {
+  position: relative;
+
+  background: rgba(255,255,255,0.035);
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  backdrop-filter: blur(12px);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 12px 35px rgba(0,0,0,0.35);
+
+  overflow: hidden;
+}
+
+.neon-button::before {
+  content: "";
+
+  position: absolute;
+
+  inset: -2px;
+
+  border-radius: inherit;
+
+  opacity: 0;
+
+  animation: neonBorderSpin 2.5s linear infinite;
+
+  transition: opacity 0.2s ease;
+
+  z-index: -1;
+}
+
+.neon-button:hover::before {
+  opacity: 1;
+}
+
+.neon-button-purple::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 280deg,
+    #d946ef 320deg,
+    #a855f7 345deg,
+    transparent 360deg
+  );
+}
+
+.neon-button-green::before {
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 280deg,
+    #39ff88 320deg,
+    #22c55e 345deg,
+    transparent 360deg
+  );
+}
+
+@keyframes neonBorderSpin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================
+   BOULEVARD NEON CHASER BUTTON
+========================================= */
+
+.neon-glass-button {
+  --neon-color: #c026ff;
+
+  position: relative;
+  isolation: isolate;
+
+  background: rgba(12, 12, 20, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  color: white;
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+
+  overflow: visible;
+}
+
+/* Keep the actual button above the neon */
+.neon-glass-button > * {
+  position: relative;
+  z-index: 3;
+}
+
+
+/* =========================================
+   NEON CHASER
+========================================= */
+
+.neon-glass-button::before {
+  content: "";
+
+  position: absolute;
+
+  width: 45px;
+  height: 3px;
+
+  top: -2px;
+  left: 0;
+
+  border-radius: 999px;
+
+  background: var(--neon-color);
+
+  box-shadow:
+    0 0 5px var(--neon-color),
+    0 0 12px var(--neon-color),
+    0 0 25px var(--neon-color),
+    0 0 40px var(--neon-color);
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  z-index: 2;
+}
+
+
+/* =========================================
+   SECOND GLOW LAYER
+========================================= */
+
+.neon-glass-button::after {
+  content: "";
+
+  position: absolute;
+
+  inset: -6px;
+
+  border-radius: inherit;
+
+  background: transparent;
+
+  box-shadow:
+    0 0 18px color-mix(
+      in srgb,
+      var(--neon-color) 25%,
+      transparent
+    );
+
+  opacity: 0;
+
+  pointer-events: none;
+
+  z-index: -1;
+}
+
+
+/* =========================================
+   HOVER
+========================================= */
+
+.neon-glass-button:hover {
+  transform: scale(1.045);
+
+  background: rgba(18, 18, 30, 0.92);
+}
+
+.neon-glass-button:hover::before {
+  opacity: 1;
+
+  animation: neon-chase 2.4s linear infinite;
+}
+
+.neon-glass-button:hover::after {
+  opacity: 1;
+}
+
+
+/* =========================================
+   PRESS
+========================================= */
+
+.neon-glass-button:active {
+  transform: scale(0.97) translateY(3px);
+}
+
+
+/* =========================================
+   COLORS
+========================================= */
+
+.neon-purple {
+  --neon-color: #cd55fc;
+}
+
+.neon-green {
+  --neon-color: #57ff9a;
+}
+
+

@@ -13217,4 +13217,124 @@ export const levels: LevelData[] = [
   
   ],
 },
+
+
+{
+  id: 463,
+  name: "Level 463",
+
+  objective: { type: 'defrost' , objGoal: 14, tileType: "ice"},
+
+  moves: 25,
+
+  waterHeight: 4,
+  warpTurns: 35,
+  boulderHP: 2,
+
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 8,
+
+  cursedTurns: 15,
+  lockTurns: 8,
+  boneUnripeTurns: 4,
+  boneRipeTurns: 6,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [
+        ["normal", "ice", "removed", "removed", "removed", "removed", "ice", "normal"],
+        ["normal", "normal", "ice", "removed", "removed", "ice", "normal", "normal"],
+        ["normal", "normal", "ice", "removed", "removed", "ice", "normal", "normal"],
+        ["ice", "normal", "normal", "ice", "ice", "normal", "normal", "ice"],
+        ["removed", "ice", "normal", "normal", "normal", "normal", "ice", "removed"],
+        ["removed", "removed", "ice", "normal", "normal", "ice", "removed", "removed"],
+        ["removed", "removed", "removed", "normal", "normal", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "fridge", "normal", "removed", "removed", "removed"]
+  ],
+    groundLayout: [
+  
+  ],
+},
+
+
+{
+  id: 464,
+  name: "Level 464",
+
+  objective: { type: 'lightsUp' , objGoal: 2, tileType: "bulb"},
+
+  moves: 25,
+
+  waterHeight: 4,
+  warpTurns: 35,
+  boulderHP: 2,
+  difficulty: "Hard Level",
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 8,
+
+  cursedTurns: 15,
+  lockTurns: 8,
+  boneUnripeTurns: 4,
+  boneRipeTurns: 6,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [
+        ["removed", "removed", "removed", "normal", "normal", "normal", "infected", "bulb"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "infected", "infected"],
+        ["removed", "normal", "infected", "infected", "infected", "infected", "normal", "normal"],
+        ["normal", "normal", "infected", "removed", "removed", "infected", "normal", "normal"],
+        ["normal", "normal", "infected", "removed", "removed", "infected", "normal", "normal"],
+        ["normal", "normal", "infected", "infected", "infected", "infected", "normal", "removed"],
+        ["infected", "infected", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["bulb", "infected", "normal", "normal", "normal", "removed", "removed", "removed"]
+  ],
+    groundLayout: [
+  
+  ],
+},
+
+
+{
+  id: 465,
+  name: "Level 465",
+
+  objective: { type: 'chamberDrain' , objGoal: 8},
+
+  moves: 35,
+
+  waterHeight: 8,
+  warpTurns: 20,
+  boulderHP: 2,
+
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 8,
+
+  cursedTurns: 15,
+  lockTurns: 8,
+  boneUnripeTurns: 4,
+  boneRipeTurns: 6,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [
+        ["warped", "chamber", "chamber", "chamber", "chamber", "removed", "normal", "warped"],
+        ["warped", "removed", "removed", "fire", "normal", "removed", "normal", "warped"],
+        ["warped", "removed", "fire", "normal", "normal", "removed", "normal", "warped"],
+        ["warped", "fire", "normal", "normal", "normal", "removed", "normal", "warped"],
+        ["warped", "normal", "removed", "normal", "normal", "normal", "ice", "warped"],
+        ["warped", "normal", "removed", "normal", "normal", "ice", "removed", "warped"],
+        ["warped", "normal", "removed", "normal", "ice", "removed", "removed", "warped"],
+        ["warped", "normal", "removed", "chamber", "chamber", "chamber", "chamber", "warped"]
+  ],
+    groundLayout: [
+  
+  ],
+},
 ];
