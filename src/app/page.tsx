@@ -32,7 +32,7 @@ useEffect(() => {
   const router = useRouter();
   const [activePopup, setActivePopup] = useState<string | null>(null);
   const [neonPhase, setNeonPhase] =
-  useState<"purple" | "green">("purple");
+  useState<"purple" | "green" | "yellow">("yellow");
 
   const openPopup = (name: string) => setActivePopup(name);
   const closePopup = () => setActivePopup(null);
@@ -62,7 +62,7 @@ const BlvdTheme =
 
   const interval = setInterval(() => {
     setNeonPhase((prev) =>
-      prev === "purple" ? "green" : "purple"
+      prev === "purple" ? "green" : "purple" 
     );
   }, 900);
 
@@ -113,20 +113,7 @@ const BlvdTheme =
       "
     />
 
-    {/* subtle boulevard line */}
-    <div
-      className="
-        absolute
-        left-1/2
-        top-0
-        bottom-0
-        w-px
-        bg-gradient-to-b
-        from-transparent
-        via-purple-500/10
-        to-transparent
-      "
-    />
+  
 
   </div>
 )}
@@ -377,7 +364,7 @@ const BlvdTheme =
 
   <NeonButton
   onClick={() => router.push("/levels")}
-  color="green"
+  color="yellow"
   seasonal={BlvdTheme}
   featured
 >
@@ -394,7 +381,7 @@ const BlvdTheme =
 >
   <div className="flex items-center justify-center gap-2">
     <Info className="w-5 h-5" />
-    <span>Options</span>
+    <span>About</span>
   </div>
 </NeonButton>
  

@@ -9,13 +9,15 @@ export function NeonButton({
 }: {
   children: React.ReactNode;
   onClick: () => void;
-  color?: "green" | "purple";
+  color?: "green" | "purple" | "yellow";
   seasonal?: boolean;
   featured?: boolean;
 }) {
   const neonColor =
     color === "green"
       ? "#22c55e"
+      : color === "yellow"
+      ? "#f1dd00"
       : "#d946ef";
 
   const glowClass =
@@ -128,6 +130,8 @@ export function NeonButton({
         />
       )}
 
+      
+
       {/* Subtle permanent glow */}
 {featured && (
   <div
@@ -139,8 +143,8 @@ export function NeonButton({
       opacity-30
       pointer-events-none
       ${
-        color === "green"
-          ? "bg-green-400"
+        color === "yellow"
+          ? "bg-yellow-400"
           : "bg-fuchsia-500"
       }
     `}

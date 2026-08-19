@@ -3197,7 +3197,7 @@ const handleScramble = () => {
           ? "Water Remaining"
           : objective.type === "defrost"
           ? "Ice cleared"
-          : `Destroy ${objective.tileType} tiles`
+          : `Interact with ${objective.objGoal} ${objective.tileType} tiles`
       }: ${
         objective.type === "chamberDrain"
           ? waterHeight
@@ -4172,7 +4172,7 @@ const exclamated = tile?.isExclamator
             {objective.type === "words" &&
               `Find ${objective.objGoal} words of ${objective.minLength} letters`}
             {objective.type === "destroy" &&
-              `Destroy ${objective.objGoal} ${objective.tileType} tiles`}
+              `Interact with ${objective.objGoal} ${objective.tileType} tiles`}
             {objective.type === "lightsUp" && `Turn on all the lights!`}
              {objective.type === "chamberDrain" && `Drain the water off the chamber!`}
             {objective.type === "collectVelvet" && `Crush the velvets!`}
@@ -4283,7 +4283,7 @@ const exclamated = tile?.isExclamator
       <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3 mt-3 sm:mt-4">
         
         <button
-          onClick={ onclick=() => window.location.reload()}
+          onClick={()=> window.location.reload()}
           className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
         >
           Retry
@@ -4291,20 +4291,11 @@ const exclamated = tile?.isExclamator
 
         {gameResult === "win" && (
           <button
-          onClick={async () => {
-            const nextLevel = levelId + 1;
-      
-            const res = await fetch(`/api/levels/exists?id=${nextLevel}`);
-            const { exists } = await res.json();
-      
-            if (!exists) {
-              router.push("/levels"); // or /victory
-              return;
-            }
-      
-            localStorage.setItem("currentLevel", nextLevel.toString());
-            router.push(`/levels`);
-          }}
+          onClick={() => {
+        localStorage.removeItem("selectedLevel");
+      localStorage.removeItem("currentLevel");
+      router.push("/levels");
+    }}
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
           >
             Back to Levels Menu

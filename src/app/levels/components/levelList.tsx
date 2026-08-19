@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import { loadProgress, saveProgress } from "@/utils/storage";
 import { useRouter } from "next/navigation";
 import {
@@ -8,6 +9,7 @@ import {
   Play,
   Search,
   ChevronLeft,
+  ArrowLeft,
   ChevronRight,
   X,
   Target,
@@ -28,12 +30,22 @@ export default function LevelList() {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
 
+
+
   // Selected level for popup
   const [selectedLevel, setSelectedLevel] = useState<LevelData | null>(null);
 
   const router = useRouter();
 
   const LEVELS_PER_PAGE = 10;
+
+
+
+  const today = new Date();
+
+const blvdEnd = new Date("2026-09-30T23:59:59");
+
+const isBlvdTheme = today <= blvdEnd;
 
   // --------------------------------------------------
   // Load levels
@@ -80,7 +92,6 @@ export default function LevelList() {
   // World Cup theme
   // --------------------------------------------------
 
-  const today = new Date();
   const worldCupEnd = new Date("2026-07-20T23:59:59");
 
   const isWorldCupTheme = today <= worldCupEnd;
@@ -317,7 +328,7 @@ export default function LevelList() {
         return `Find ${objective.objGoal} words`;
 
       case "destroy":
-        return `Destroy ${objective.objGoal} ${objective.tileType} tiles`;
+        return `Interact with ${objective.objGoal} ${objective.tileType} tiles`;
 
       case "collectVelvet":
         return `Squash ${objective.objGoal} velvets`;
@@ -332,6 +343,62 @@ export default function LevelList() {
         return "Complete the objective";
     }
   };
+
+  //blvd design
+
+  const getLevelStyle = (lvl: LevelData) => {
+  if (!isBlvdTheme) {
+    return {
+      border: "border-gray-700",
+      text: "text-white",
+      glow: "",
+      bg: "bg-gray-900",
+    };
+  }
+
+  if (lvl.locked) {
+    return {
+      border: "border-gray-700",
+      text: "text-gray-500",
+      glow: "",
+      bg: "bg-gray-950",
+    };
+  }
+
+  switch (lvl.difficulty) {
+    case "SuperDemon":
+      return {
+        border: "border-fuchsia-400",
+        text: "text-fuchsia-200",
+        glow: "shadow-[0_0_12px_#d946ef,0_0_30px_#d946ef,0_0_55px_rgba(217,70,239,0.5)]",
+        bg: "bg-fuchsia-950/40",
+      };
+
+    case "demon":
+      return {
+        border: "border-red-500",
+        text: "text-red-200",
+        glow: "shadow-[0_0_12px_#ef4444,0_0_30px_#ef4444,0_0_55px_rgba(239,68,68,0.45)]",
+        bg: "bg-red-950/40",
+      };
+
+    case "Hard Level":
+      return {
+        border: "border-orange-400",
+        text: "text-orange-200",
+        glow: "shadow-[0_0_10px_#f97316,0_0_28px_#f97316,0_0_50px_rgba(249,115,22,0.4)]",
+        bg: "bg-orange-950/40",
+      };
+
+    default:
+      return {
+        border: "border-green-400",
+        text: "text-green-200",
+        glow: "shadow-[0_0_10px_#22c55e,0_0_25px_#22c55e,0_0_45px_rgba(34,197,94,0.35)]",
+        bg: "bg-green-950/30",
+      };
+  }
+};
 
   // --------------------------------------------------
   // Loading
@@ -362,11 +429,16 @@ export default function LevelList() {
   // --------------------------------------------------
 
   return (
+
+
     <main
       className={`relative min-h-screen overflow-hidden text-white ${
         isWorldCupTheme ? "soccer-pitch-bg" : "bg-black"
       }`}
     >
+
+
+      
       {/* ------------------------------------------------ */}
       {/* Header */}
       {/* ------------------------------------------------ */}
@@ -388,6 +460,51 @@ export default function LevelList() {
       {/* ------------------------------------------------ */}
       {/* Search */}
       {/* ------------------------------------------------ */}
+
+      <motion.button
+  initial={{ opacity: 0, x: -15 }}
+  animate={{ opacity: 1, x: 0 }}
+  whileHover={{ scale: 1.04, x: -2 }}
+  whileTap={{ scale: 0.96 }}
+  onClick={() => router.push("/")}
+  className={`
+    fixed
+    top-5
+    left-5
+    z-40
+    flex
+    items-center
+    gap-2
+    px-4
+    py-2
+    rounded-lg
+    font-semibold
+    transition-all
+
+    ${
+      isBlvdTheme
+        ? `
+          bg-black/70
+          text-green-300
+          border
+          border-green-500/50
+          shadow-[0_0_10px_rgba(34,197,94,0.2)]
+          hover:border-green-400
+          hover:shadow-[0_0_18px_rgba(34,197,94,0.4)]
+        `
+        : `
+          bg-gray-900
+          text-white
+          border
+          border-gray-700
+          hover:bg-gray-800
+        `
+    }
+  `}
+>
+  <ArrowLeft className="w-4 h-4" />
+  Back
+</motion.button>
 
       <motion.div
         initial={{ opacity: 0, y: -10 }}
