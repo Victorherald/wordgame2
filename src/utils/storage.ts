@@ -2,7 +2,7 @@
 
 import { LevelData } from "@/lib/server/levels";
 
-const STORAGE_KEY = "worzzle_progress";
+const STORAGE_KEY = "Wordigon_progress";
 
 export function loadProgress(): LevelData[] | null {
   if (typeof window === "undefined") return null;

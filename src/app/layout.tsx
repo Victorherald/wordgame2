@@ -28,7 +28,7 @@ const worldCupEnd = new Date("2026-07-20T23:59:59");
 const isWorldCupTheme = today <= worldCupEnd;
 
 export const metadata: Metadata = {
-  title:  ` ${isWorldCupTheme ? "Worzzle (World Cup Edition)" : "Worzzle"}`,
+  title:  ` ${isWorldCupTheme ? "Wordigon (World Cup Edition)" : "Wordigon"}`,
   description: "Soccer themed word puzzle game",
 };
 

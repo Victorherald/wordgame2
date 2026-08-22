@@ -24,7 +24,7 @@ export default function Home() {
  const { playMusic } = useAudio();
 
 useEffect(() => {
-    playMusic("/audio/worzzlemenu (1).mp3");
+    playMusic("/audio/Wordigonmenu (1).mp3");
 }, []);
 
   
@@ -218,7 +218,7 @@ const BlvdTheme =
         transition={{ duration: 0.15 }}
         className="neon-word purple"
       >
-        {"WOR".split("").map((letter, index) => (
+        {"WORD".split("").map((letter, index) => (
           <span
             key={index}
             className="led-letter"
@@ -235,7 +235,7 @@ const BlvdTheme =
         transition={{ duration: 0.15 }}
         className="neon-word green"
       >
-        {"ZZLE".split("").map((letter, index) => (
+        {"IGON".split("").map((letter, index) => (
           <span
             key={index}
             className="led-letter"
@@ -303,7 +303,7 @@ const BlvdTheme =
             : "text-5xl md:text-6xl font-extrabold text-white"
         }
       >
-        Worzzle
+        Wordigon
       </h1>
 
       {isWorldCupTheme && (
@@ -443,7 +443,7 @@ const BlvdTheme =
   {activePopup === "about" && (
     <>
       <Info className="w-8 h-8" />
-      <span>About Worzzle</span>
+      <span>About Wordigon</span>
     </>
   )}
 
@@ -467,13 +467,13 @@ const BlvdTheme =
                   "Form words by selecting adjacent tiles on the soccer pitch. Match longer words to earn more points and advance through the levels. The longer the word, the bigger your score!"}
 
                 {activePopup === "about" &&
-                  "Worzzle is a word-forming puzzle game inspired by Bookworm Adventures and Scrabble. This special World Cup edition brings the excitement of soccer to your word game experience!"}
+                  "Wordigon is a word-forming puzzle game inspired by Bookworm Adventures and Scrabble. This special World Cup edition brings the excitement of soccer to your word game experience!"}
               </p>
 
                {activePopup === "community" && (
   <div className="space-y-4 mb-6">
     <p className="text-white/80">
-      Join the Worzzle community to report bugs, suggest ideas,
+      Join the Wordigon community to report bugs, suggest ideas,
       compete with other players and stay updated!
     </p>
 

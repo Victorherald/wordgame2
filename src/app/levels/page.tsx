@@ -13,7 +13,7 @@ const worldCupEnd = new Date("2026-07-20T23:59:59");
  const { playMusic } = useAudio();
 
 useEffect(() => {
-    playMusic("/audio/worzzlemenu (1).mp3");
+    playMusic("/audio/Wordigonmenu (1).mp3");
 }, []);
 
 const isWorldCupTheme = today <= worldCupEnd;

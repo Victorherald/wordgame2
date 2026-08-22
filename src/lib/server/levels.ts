@@ -13553,4 +13553,88 @@ export const levels: LevelData[] = [
 
   
 },
+
+
+{
+  id: 471,
+  name: "Level 471",
+
+  objective: { type: 'destroy' , objGoal: 8, tileType: "warped"},
+
+  moves: 40,
+
+  waterHeight: 8,
+
+  boulderHP: 2,
+
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 8,
+
+  warpTurns: 24,
+  lockTurns: 8,
+  boneUnripeTurns: 7,
+  boneRipeTurns: 3,
+  boneTurns: 6,
+  allowHardLetters: true,
+  locked: true,
+
+  board: [ 
+        ["warped", "removed", "normal", "removed", "normal", "normal", "removed", "warped"],
+        ["warped", "normal", "normal", "normal", "normal", "normal", "normal", "warped"],
+        ["warped", "removed", "normal", "normal", "removed", "normal", "removed", "warped"],
+        ["warped", "normal", "normal", "normal", "normal", "normal", "normal", "warped"],
+        ["warped", "normal", "normal", "normal", "normal", "normal", "normal", "warped"],
+        ["warped", "removed", "normal", "removed", "normal", "normal", "removed", "warped"],
+        ["warped", "normal", "normal", "normal", "normal", "normal", "normal", "warped"],
+        ["warped", "removed", "normal", "normal", "removed", "normal", "removed", "warped"]
+  ],
+    groundLayout: [
+  
+  ],
+
+  
+},
+
+
+{
+  id: 472,
+  name: "Level 472",
+
+  objective: { type: 'chamberDrain' , objGoal: 6 },
+
+  moves: 40,
+
+  waterHeight: 6,
+
+  boulderHP: 2,
+
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 8,
+
+  warpTurns: 24,
+  lockTurns: 8,
+  boneUnripeTurns: 7,
+  boneRipeTurns: 3,
+  boneTurns: 6,
+  allowHardLetters: true,
+  locked: true,
+
+  board: [ 
+        ["chamber", "ice", "ltrO", "ice", "chamber", "ice", "ice", "chamber"],
+        ["ice", "ltrN", "normal", "ltrT", "ice", "normal", "normal", "ice"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["ice", "normal", "normal", "ice", "ltrT", "normal", "ltrN", "ice"],
+        ["chamber", "ice", "ice", "chamber", "ice", "ltrO", "ice", "chamber"]
+  ],
+    groundLayout: [
+  
+  ],
+
+  
+},
 ];
