@@ -30,7 +30,7 @@ type Objective = {
 export type LevelData = {
   id: number;
   name: string;
-  
+  timeLimit?: number;
   difficulty?: Difficulty;
   fridgeHP?: number;
   fridgeCharge?: number;
@@ -13561,7 +13561,7 @@ export const levels: LevelData[] = [
 
   objective: { type: 'destroy' , objGoal: 8, tileType: "warped"},
 
-  moves: 40,
+  timeLimit: 60,
 
   waterHeight: 8,
 
@@ -13603,7 +13603,7 @@ export const levels: LevelData[] = [
 
   objective: { type: 'chamberDrain' , objGoal: 6 },
 
-  moves: 40,
+  timeLimit: 90,
 
   waterHeight: 6,
 
@@ -13630,6 +13630,90 @@ export const levels: LevelData[] = [
         ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
         ["ice", "normal", "normal", "ice", "ltrT", "normal", "ltrN", "ice"],
         ["chamber", "ice", "ice", "chamber", "ice", "ltrO", "ice", "chamber"]
+  ],
+    groundLayout: [
+  
+  ],
+
+  
+},
+
+
+{
+  id: 473,
+  name: "Level 473",
+
+  objective: { type: 'score' , objGoal: 8400 },
+
+  timeLimit: 40,
+
+  waterHeight: 6,
+
+  boulderHP: 2,
+
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 8,
+
+  warpTurns: 24,
+  lockTurns: 8,
+  boneUnripeTurns: 7,
+  boneRipeTurns: 3,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "removed", "removed", "removed", "normal", "normal", "removed", "normal"],
+        ["normal", "exclamator", "normal", "normal", "normal", "removed", "normal", "normal"],
+        ["normal", "exclamator", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "exclamator", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "exclamator", "removed", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "removed", "normal", "normal", "removed", "removed", "removed", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+  ],
+    groundLayout: [
+  
+  ],
+
+  
+},
+
+
+{
+  id: 474,
+  name: "Level 474",
+
+  objective: { type: 'chamberDrain' , objGoal: 16 },
+
+  timeLimit: 120,
+
+  waterHeight: 16,
+
+  boulderHP: 2,
+
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 8,
+
+  warpTurns: 24,
+  lockTurns: 8,
+  boneUnripeTurns: 7,
+  boneRipeTurns: 3,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["normal", "normal", "chamber", "removed", "chamber", "normal", "normal", "normal"],
+        ["normal", "exclamator", "chamber", "removed", "chamber", "exclamator", "normal", "normal"],
+        ["normal", "normal", "chamber", "removed", "chamber", "normal", "normal", "normal"],
+        ["exclamator", "normal", "chamber", "removed", "chamber", "exclamator", "normal", "normal"],
+        ["exclamator", "normal", "chamber", "removed", "chamber", "normal", "normal", "normal"],
+        ["normal", "normal", "chamber", "removed", "chamber", "normal", "normal", "normal"],
+        ["normal", "exclamator", "chamber", "removed", "chamber", "exclamator", "normal", "normal"],
+        ["normal", "normal", "chamber", "removed", "chamber", "normal", "normal", "normal"]
   ],
     groundLayout: [
   

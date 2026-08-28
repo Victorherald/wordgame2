@@ -6,6 +6,7 @@ import { WordDisplay } from '../components/WordDisp';
 import Particles from "react-tsparticles";
 import { loadFull } from "tsparticles";
 import { Boulder } from "../components/Boulder";
+import { TimeDisplay } from "../components/TimeCount";
 import { SpiralSVG } from './SpiralSVG';
 import { AnimatePresence, motion} from "framer-motion";
 import { BookTile } from "../components/Books";
@@ -220,17 +221,55 @@ export function LetterBoard({ level,   objective,  levelName, layout, moves = 15
   const [objMet, setObjMet] = useState(0);
  const [movesLeft, setMovesLeft] = useState(moves);
 const [isGameOver, setIsGameOver] = useState(false);
-const [gameResult, setGameResult] = useState<'win' | 'fire' | 'fail' | 'lowScore' | null>(null);
+const [gameResult, setGameResult] = useState<'win' | 'fire' | 'fail' | 'lowScore' | 'timeout' |  null>(null);
 const [tutorialActive, setTutorialActive] = useState(false);
 const [showTutorialPopup, setShowTutorialPopup] = useState(false);
 const [ground, setGround] = useState<GroundCell[][]>([]);
 const [bookFlipTick, setBookFlipTick] = useState(0);
 const [bookTrigger, setBookTrigger] = useState(0);
-
+const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
 const [bossHp, setBossHp] = useState(objective?.bossHp ?? 100);
 const [bossMaxHp] = useState(objective?.bossMaxHp ?? 100);
 const [bossColor, setBossColor] = useState<string>(objective?.bossColor ?? "red");
+
+
+
+  //initialize timeLeft based on level's timeLimit
+
+  useEffect(() => {
+  if (level?.timeLimit !== undefined) {
+    setTimeLeft(level.timeLimit);
+  } else {
+    setTimeLeft(null);
+  }
+}, [level?.id, level?.timeLimit]);
+
+
+useEffect(() => {
+  // No timer for this level
+  if (timeLeft === null) return;
+
+  // Don't continue after game has ended
+  if (isGameOver) return;
+
+  // Time has run out
+  if (timeLeft <= 0) {
+    setGameResult("timeout");
+    setIsGameOver(true);
+    return;
+  }
+
+  const timer = setInterval(() => {
+    setTimeLeft((prev) => {
+      if (prev === null) return null;
+
+      return prev - 1;
+    });
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [timeLeft, isGameOver]);
 
 type FloatingScore = {
   id: number;
@@ -319,6 +358,7 @@ useEffect(() => {
     setGameResult("win");
     return;
   }
+
 
   // LOSS
   if (movesLeft <= 0) {
@@ -3015,10 +3055,18 @@ const handleScramble = () => {
           <span className="text-white text-xs font-bold">{movesLeft}</span>
         </>
       ) : (
-        <span className="text-orange-400 text-xs font-bold">
-          Moves: {movesLeft}
+        <span>
+        {timeLeft !== null ? (
+  <TimeDisplay timeLeft={timeLeft} />
+) : (
+  <MovesDisplay movesLeft={movesLeft} />
+)}
         </span>
+
+        
       )}
+
+      
     </div>
   </div>
 
@@ -3215,7 +3263,13 @@ const handleScramble = () => {
     </div>
   )}
  {/* ===== MOVES ===== */}
-<MovesDisplay movesLeft={movesLeft} />
+  <span className="text-orange-400 text-xs font-bold">
+        {timeLeft !== null ? (
+  <TimeDisplay timeLeft={timeLeft} />
+) : (
+  <MovesDisplay movesLeft={movesLeft} />
+)}
+        </span>
 
 {/* ===== SCORE + CONTROLS ===== */}
 <div className="flex flex-col gap-3 flex-grow overflow-hidden">
@@ -4265,7 +4319,7 @@ const exclamated = tile?.isExclamator
       <h2 className="text-lg sm:text-xl font-semibold text-white">
         {gameResult === "win"
           ? "Level Complete!"
-          : gameResult === "fail" || gameResult === "fire"
+          : gameResult === "fail" || gameResult === "fire" || gameResult === "timeout"
           ? "Game Over"
           : null}
       </h2>
@@ -4277,6 +4331,8 @@ const exclamated = tile?.isExclamator
           ? "Tiles are ignited!"
           : gameResult === "fail"
           ? "You ran out of moves!"
+          : gameResult === "timeout"
+          ? "You ran out of time!"
           : null}
       </p>
 
