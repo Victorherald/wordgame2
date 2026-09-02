@@ -237,6 +237,8 @@ const [bossColor, setBossColor] = useState<string>(objective?.bossColor ?? "red"
 
   //initialize timeLeft based on level's timeLimit
 
+  const isTimedLevel = level?.timeLimit !== undefined;
+
   useEffect(() => {
   if (level?.timeLimit !== undefined) {
     setTimeLeft(level.timeLimit);
@@ -2228,7 +2230,9 @@ else if (objective?.type === "defrost")
     
 if (objective) {
   let updatedObjMet = objMet;
-  setMovesLeft(prev => prev- 1);
+ if (!isTimedLevel) {
+  setMovesLeft(prev => prev - 1);
+}
 
   const allDestroyedPositions = [
   ...selected,
@@ -2970,7 +2974,9 @@ const handleScramble = () => {
   const scrambled = scrambleGrid(grid);
 
   setGrid(scrambled);
+  if (!isTimedLevel) {
   setMovesLeft(prev => prev - 3);
+}
 
   // Reset word state immediately
   setSelected([]);

@@ -18,7 +18,7 @@ export function MovesDisplay({ movesLeft }: MovesDisplayProps) {
   return (
     <div
       className={`
-        text-center font-bold px-4 py-3 rounded-lg border-2 transition-all duration-300
+      text-center font-bold px-4 py-3 max-sm:px-2.5 max-sm:py-2 rounded-lg max-sm:rounded-md border-2 transition-all duration-300
         ${
           isWorldCupTheme
             ? `soccer-moves ${
@@ -34,21 +34,9 @@ export function MovesDisplay({ movesLeft }: MovesDisplayProps) {
         }
       `}
     >
-      <div className="text-xs uppercase tracking-widest text-white/70 mb-1">
-        Moves Left
-      </div>
+     <div className="text-xs max-sm:text-[9px] uppercase tracking-widest text-white/70 mb-1 max-sm:mb-0.5"> Moves Left </div>
 
-      <div
-        className={`text-2xl ${
-          isWorldCupTheme
-            ? "text-yellow-400 soccer-glow-text"
-            : isLow
-            ? "text-red-400"
-            : "text-green-400"
-        }`}
-      >
-        {movesLeft}
-      </div>
+     <div className={`text-2xl max-sm:text-lg ${ isWorldCupTheme ? 'text-yellow-400 soccer-glow-text' : isLow ? 'text-red-400' : 'text-green-400' }`} > {movesLeft} </div>
     </div>
   );
 }

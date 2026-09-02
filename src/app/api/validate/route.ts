@@ -1,36 +1,34 @@
 import { NextResponse } from "next/server";
+import { wordSet } from "@/lib/server/wordList";
 
 export async function POST(req: Request) {
   try {
+    const start = Date.now();
+
     const { word } = await req.json();
 
-    if (!word) {
-      return NextResponse.json({ valid: false, error: "No word provided" });
+    if (!word || typeof word !== "string") {
+      return NextResponse.json({
+        valid: false,
+        error: "No word provided",
+      });
     }
 
-    const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${word.toLowerCase()}`;
+    const normalizedWord = word.trim().toLowerCase();
 
-    const res = await fetch(url, { cache: "no-store" });
+    const valid = wordSet.has(normalizedWord);
 
-    // If it returns 404 → word does NOT exist
-    if (res.status === 404) {
-      return NextResponse.json({ valid: false });
-    }
-
-    // If any other error, also invalid
-    if (!res.ok) {
-      return NextResponse.json({ valid: false });
-    }
-
-    const data = await res.json();
-
-    // Valid if results exist
-    const valid = Array.isArray(data) && data.length > 0;
+    console.log(
+      `Word validation for "${normalizedWord}": ${Date.now() - start}ms`
+    );
 
     return NextResponse.json({ valid });
-
   } catch (error) {
     console.error("Validation error:", error);
-    return NextResponse.json({ valid: false, error: "Server error" });
+
+    return NextResponse.json({
+      valid: false,
+      error: "Server error",
+    });
   }
 }
