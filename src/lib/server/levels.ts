@@ -14780,11 +14780,11 @@ export const levels: LevelData[] = [
   id: 500,
   name: "Level 500",
 
-  objective: { type: 'chamberDrain' , objGoal: 12},
+  objective: { type: 'chamberDrain' , objGoal: 14},
 
   moves: 50,
   
-  waterHeight: 12,
+  waterHeight: 14,
 
   boulderHP: 2,
   
