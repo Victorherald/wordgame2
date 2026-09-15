@@ -5537,8 +5537,8 @@ export const levels: LevelData[] = [
   {
     id: 236,
     name: "Level 236",
-    objective: { type: 'destroy', tileType: 'dull', objGoal: 1 },
-    moves: 14,
+    objective: { type: 'score', objGoal:  9000},
+    moves: 16,
    
     allowHardLetters: false,
     locked: false,
@@ -14696,7 +14696,7 @@ export const levels: LevelData[] = [
 
   objective: { type: 'destroy' , objGoal: 2, tileType: 'fire'},
 
-  timeLimit: 15,
+  timeLimit: 25,
   
   waterHeight: 12,
 
@@ -14711,7 +14711,7 @@ export const levels: LevelData[] = [
 
   
   boneRipeTurns: 5,
-  boneTurns: 10,
+  boneTurns: 4,
   allowHardLetters: false,
   locked: true,
 
@@ -14795,7 +14795,6 @@ export const levels: LevelData[] = [
   lockTurns: 50,
   dullTurns: 50,
   cursedTurns: 50,
-  
   boneRipeTurns: 5,
   boneTurns: 10,
   allowHardLetters: false,

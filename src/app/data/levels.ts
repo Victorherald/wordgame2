@@ -23,6 +23,7 @@ export type LevelData = {
   shouldFireSpawn?: boolean;
   cursedTurns?: number;
   shouldLockSpawn?: boolean;
+  shouldMysterySpawn?: boolean;
   lockTurns?: number;
   allowHardLetters?: boolean;
   warpTurns?: number;

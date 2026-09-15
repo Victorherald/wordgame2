@@ -3039,15 +3039,17 @@ const handleScramble = () => {
     <div
       className={`
         text-xs font-bold
-        ${
-          isBossLevel
-            ? "text-red-400"
-            : level.difficulty === "demon"
-            ? "text-orange-300"
-            : level.difficulty === "Hard Level"
-            ? "text-red-400"
-            : "text-white"
-        }
+          ${
+            isBossLevel
+              ? "text-red-400"
+              : level.difficulty === "demon"
+              ? "text-orange-300"
+              : level.difficulty === "SuperDemon"
+              ? "text-fuchsia-400"
+              : level.difficulty === "Hard Level"
+              ? "text-red-400"
+              : "text-white"
+          }
       `}
     >
       {isBossLevel ? `BOSS: ${levelName}` : levelName || "Level"}
@@ -3146,8 +3148,11 @@ const handleScramble = () => {
       className={`
         font-bold text-sm
         ${
+            level.difficulty === "SuperDemon"
+            ? "text-purple-300" :
           level.difficulty === "demon"
             ? "text-red-300"
+            
             : level.difficulty === "Hard Level"
             ? "text-orange-400"
             : "text-green-400"
@@ -3183,8 +3188,12 @@ const handleScramble = () => {
         ? "bg-gradient-to-b from-red-950 via-black to-neutral-950 border border-red-700 shadow-[0_0_25px_rgba(255,0,0,0.4)]"
         : level.difficulty === "demon"
         ? "bg-orange-950 border border-orange-700"
+           : level.difficulty === "SuperDemon"
+        ? "bg-gradient-to-b from-black via-fuchsia-950/70 to-purple-950/80 border border-fuchsia-500/80 shadow-[0_0_30px_rgba(217,70,239,0.35),inset_0_0_25px_rgba(168,85,247,0.12)]"
+
         : level.difficulty === "Hard Level"
         ? "bg-red-950 border border-red-700"
+
         : isWorldCupTheme
         ? "bg-green-900/30 border-2 border-yellow-400/50 shadow-lg"
         : "bg-neutral-900 border border-neutral-700 shadow-lg"
@@ -3201,6 +3210,8 @@ const handleScramble = () => {
               ? "text-red-500 animate-pulse drop-shadow-[0_0_10px_rgba(255,0,0,0.8)]"
               : level.difficulty === "demon"
               ? "text-orange-500"
+              : level.difficulty === "SuperDemon"
+              ? "text-fushia-500"
               : level.difficulty === "Hard Level"
               ? "text-red-600"
               : "text-yellow-400"
@@ -4198,6 +4209,8 @@ const exclamated = tile?.isExclamator
         className={`${
           level.difficulty === "Hard Level"
             ? "bg-neutral-900 border border-red-700"
+            : level.difficulty === "SuperDemon"
+            ? "bg-neutral-900 border border-purple-700"
             : level.difficulty === "demon"
             ? "bg-neutral-900 border border-orange-700"
             : "bg-neutral-900 border border-neutral-700"
@@ -4219,7 +4232,7 @@ const exclamated = tile?.isExclamator
         <p className="text-red-900">
           {`${level.difficulty === "Hard Level" ? "Hard Level" : ""} ${
             level.difficulty === "demon" ? "Demon Level" : ""
-          }`}
+          } ${level.difficulty === "SuperDemon" ? "Super Demon Level" : ""}`}
         </p>
 
         

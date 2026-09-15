@@ -21,6 +21,13 @@ import {
 import { LevelData } from "@/lib/server/levels";
 import { motion, AnimatePresence } from "framer-motion";
 
+import { Eater } from "next/font/google";
+
+const eater = Eater({
+  subsets: ["latin"],
+  weight: "400",
+});
+
 export default function LevelList() {
   const [levels, setLevels] = useState<LevelData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,11 +48,6 @@ export default function LevelList() {
 
 
 
-  const today = new Date();
-
-const blvdEnd = new Date("2026-09-30T23:59:59");
-
-const isBlvdTheme = today <= blvdEnd;
 
   // --------------------------------------------------
   // Load levels
@@ -88,13 +90,27 @@ const isBlvdTheme = today <= blvdEnd;
     fetchLevels();
   }, []);
 
-  // --------------------------------------------------
-  // World Cup theme
-  // --------------------------------------------------
+ // --------------------------------------------------
+// Seasonal theme
+// --------------------------------------------------
 
-  const worldCupEnd = new Date("2026-07-20T23:59:59");
+const today = new Date();
 
-  const isWorldCupTheme = today <= worldCupEnd;
+const worldCupEnd = new Date("2026-07-20T23:59:59");
+const blvdEnd = new Date("2026-01-30T23:59:59");
+
+const halloweenStart = new Date("2026-10-01T00:00:00");
+const halloweenEnd = new Date("2026-11-01T00:00:00");
+
+const isWorldCupTheme = today <= worldCupEnd;
+
+const isBlvdTheme =
+  !isWorldCupTheme &&
+  today <= blvdEnd;
+
+const isHalloweenTheme =
+  today >= halloweenStart &&
+  today < halloweenEnd;
 
   // --------------------------------------------------
   // Filtering
@@ -162,6 +178,9 @@ const isBlvdTheme = today <= blvdEnd;
         return "CLASSIC";
     }
   };
+  
+
+  
 
   const getDifficultyIcon = (difficulty?: string) => {
     switch (difficulty) {
@@ -256,6 +275,51 @@ const isBlvdTheme = today <= blvdEnd;
   // --------------------------------------------------
 
   const getPopupStyle = (difficulty?: string) => {
+
+if (isHalloweenTheme) {
+  switch (difficulty) {
+    case "SuperDemon":
+      return `
+        bg-gradient-to-br
+        from-black
+        via-purple-950/95
+        to-[#160719]
+        border-purple-500
+        shadow-[0_0_50px_rgba(168,85,247,0.4)]
+      `;
+
+    case "demon":
+      return `
+        bg-gradient-to-br
+        from-[#180706]
+        via-red-950/95
+        to-orange-950/95
+        border-orange-500
+        shadow-[0_0_50px_rgba(249,115,22,0.4)]
+      `;
+
+    case "Hard Level":
+      return `
+        bg-gradient-to-br
+        from-[#170b06]
+        to-orange-950/95
+        border-orange-500
+        shadow-[0_0_40px_rgba(249,115,22,0.3)]
+      `;
+
+    default:
+      return `
+        bg-gradient-to-br
+        from-[#100711]
+        via-[#1b0d19]
+        to-[#241108]
+        border-purple-500/70
+        shadow-[0_0_40px_rgba(168,85,247,0.3)]
+      `;
+  }
+}
+
+
     switch (difficulty) {
       case "SuperDemon":
         return `
@@ -432,10 +496,28 @@ const isBlvdTheme = today <= blvdEnd;
 
 
     <main
-      className={`relative min-h-screen overflow-hidden text-white ${
-        isWorldCupTheme ? "soccer-pitch-bg" : "bg-black"
-      }`}
+    className={`relative min-h-screen overflow-hidden text-white ${
+  isWorldCupTheme
+    ? "soccer-pitch-bg"
+    : isHalloweenTheme
+    ? "bg-[#09040d]"
+    : isBlvdTheme
+    ? "bg-black"
+    : "bg-black"
+}`}
     >
+
+      {isHalloweenTheme && (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="absolute -top-40 -left-40 w-[450px] h-[450px] rounded-full bg-purple-900/25 blur-[140px]" />
+
+    <div className="absolute -bottom-40 -right-40 w-[450px] h-[450px] rounded-full bg-orange-600/20 blur-[140px]" />
+
+    <div className="absolute top-[20%] right-[15%] w-[250px] h-[250px] rounded-full bg-orange-500/10 blur-[100px]" />
+
+    <div className="absolute bottom-[15%] left-[10%] w-[250px] h-[250px] rounded-full bg-purple-600/10 blur-[100px]" />
+  </div>
+)}
 
 
       
@@ -444,17 +526,39 @@ const isBlvdTheme = today <= blvdEnd;
       {/* ------------------------------------------------ */}
 
       <div className="relative z-20 px-4 pt-6 pb-4">
-        <motion.h1
-          initial={{ opacity: 0, y: -15 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center text-3xl md:text-4xl font-black"
-        >
-          Select Level
-        </motion.h1>
+      <motion.h1
+  initial={{ opacity: 0, y: -15 }}
+  animate={{ opacity: 1, y: 0 }}
+  className={`text-center text-3xl md:text-4xl ${
+    isHalloweenTheme
+      ? `${eater.className} text-orange-400`
+      : "font-black"
+  }`}
+  style={
+    isHalloweenTheme
+      ? {
+          textShadow:
+            "0 0 8px rgba(249,115,22,0.7), 0 0 22px rgba(168,85,247,0.45)",
+        }
+      : undefined
+  }
+>
+ Select Level
+</motion.h1>
 
-        <p className="text-center text-white/50 text-sm mt-2">
-          Choose your challenge
-        </p>
+<p
+  className={`text-center text-sm mt-2 ${
+    isHalloweenTheme
+      ? `${eater.className} text-purple-300/70`
+      : "text-white/50"
+  }`}
+>
+  {isHalloweenTheme
+    ? "Choose your challenge... if you dare"
+    : "Choose your challenge"}
+</p>
+
+      
       </div>
 
       {/* ------------------------------------------------ */}
@@ -467,40 +571,51 @@ const isBlvdTheme = today <= blvdEnd;
   whileHover={{ scale: 1.04, x: -2 }}
   whileTap={{ scale: 0.96 }}
   onClick={() => router.push("/")}
-  className={`
-    fixed
-    top-5
-    left-5
-    z-40
-    flex
-    items-center
-    gap-2
-    px-4
-    py-2
-    rounded-lg
-    font-semibold
-    transition-all
+ className={`
+  fixed
+  top-5
+  left-5
+  z-40
+  flex
+  items-center
+  gap-2
+  px-4
+  py-2
+  rounded-lg
+  font-semibold
+  transition-all
 
-    ${
-      isBlvdTheme
-        ? `
-          bg-black/70
-          text-green-300
-          border
-          border-green-500/50
-          shadow-[0_0_10px_rgba(34,197,94,0.2)]
-          hover:border-green-400
-          hover:shadow-[0_0_18px_rgba(34,197,94,0.4)]
-        `
-        : `
-          bg-gray-900
-          text-white
-          border
-          border-gray-700
-          hover:bg-gray-800
-        `
-    }
-  `}
+  ${
+    isHalloweenTheme
+      ? `
+        ${eater.className}
+        bg-[#2a160f]
+        text-orange-300
+        border
+        border-orange-500/60
+        shadow-[0_0_14px_rgba(249,115,22,0.25)]
+        hover:border-orange-400
+        hover:shadow-[0_0_22px_rgba(249,115,22,0.45)]
+      `
+      : isBlvdTheme
+      ? `
+        bg-black/70
+        text-green-300
+        border
+        border-green-500/50
+        shadow-[0_0_10px_rgba(34,197,94,0.2)]
+        hover:border-green-400
+        hover:shadow-[0_0_18px_rgba(34,197,94,0.4)]
+      `
+      : `
+        bg-gray-900
+        text-white
+        border
+        border-gray-700
+        hover:bg-gray-800
+      `
+  }
+`}
 >
   <ArrowLeft className="w-4 h-4" />
   Back
@@ -528,11 +643,17 @@ const isBlvdTheme = today <= blvdEnd;
             px-3
             py-2
             backdrop-blur-md
-            ${
-              isWorldCupTheme
-                ? "bg-green-950/70 border-green-700/50"
-                : "bg-gray-950/90 border-gray-700"
-            }
+         ${
+  isHalloweenTheme
+    ? `
+      bg-[#1b0c16]/90
+      border-purple-500/50
+      shadow-[0_0_18px_rgba(168,85,247,0.15)]
+    `
+    : isWorldCupTheme
+    ? "bg-green-950/70 border-green-700/50"
+    : "bg-gray-950/90 border-gray-700"
+}
           `}
         >
           <Search className="w-4 h-4 text-white/50" />
@@ -917,25 +1038,39 @@ const isBlvdTheme = today <= blvdEnd;
 
               {/* Name */}
 
-              <h2
-                className={`
-                  text-3xl
-                  md:text-4xl
-                  font-black
-                  mb-4
-                  ${
-                    selectedLevel.difficulty === "SuperDemon"
-                      ? "text-fuchsia-300"
-                      : selectedLevel.difficulty === "demon"
-                      ? "text-red-300"
-                      : selectedLevel.difficulty === "Hard Level"
-                      ? "text-orange-300"
-                      : "text-yellow-300"
-                  }
-                `}
-              >
-                {selectedLevel.name}
-              </h2>
+             <h2
+  className={`
+    text-3xl
+    md:text-4xl
+    mb-4
+    ${
+      isHalloweenTheme
+        ? `${eater.className} text-orange-400`
+        : "font-black"
+    }
+    ${
+      !isHalloweenTheme
+        ? selectedLevel.difficulty === "SuperDemon"
+          ? "text-fuchsia-300"
+          : selectedLevel.difficulty === "demon"
+          ? "text-red-300"
+          : selectedLevel.difficulty === "Hard Level"
+          ? "text-orange-300"
+          : "text-yellow-300"
+        : ""
+    }
+  `}
+  style={
+    isHalloweenTheme
+      ? {
+          textShadow:
+            "0 0 8px rgba(249,115,22,0.7), 0 0 20px rgba(168,85,247,0.5)",
+        }
+      : undefined
+  }
+>
+  {selectedLevel.name}
+</h2>
 
               {/* Difficulty */}
 

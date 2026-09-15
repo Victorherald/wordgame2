@@ -7,10 +7,17 @@ import { motion, AnimatePresence } from "framer-motion";
 import {BookOpen,  Info,Trophy,Gamepad2, Users, MessageCircle, Settings} from "lucide-react";
   import '../app/animations/interface.css';
   import { BoulevardBackground } from "../app/components/button/boulevardHouses";
+ import { HalloweenButton } from "../app/components/button/HalloweenButton";
 
 import { NeonButton } from "../app/components/button/neonButton";
 
 import { Lobster } from "next/font/google";
+import { Eater } from "next/font/google";
+
+const eater = Eater({
+  subsets: ["latin"],
+  weight: "400",
+});
 
 const lobster = Lobster({
   subsets: ["latin"],
@@ -45,8 +52,17 @@ useEffect(() => {
   setMusicVolume,
 } = useAudio();
 
-  // World Cup theme ends after July 20, 2026
+// Halloween ends  after Oct 31
 const today = new Date();
+
+const halloweenStart = new Date("2026-10-01T00:00:00");
+const halloweenEnd = new Date("2026-11-01T00:00:00");
+
+const HalloweenTheme =
+  today >= halloweenStart && today < halloweenEnd;
+
+  // World Cup theme ends after July 20, 2026
+
 
 const worldCupEnd = new Date("2026-07-20T23:59:59");
 const blvdEnd = new Date("2026-09-30T23:59:59");
@@ -55,6 +71,7 @@ const isWorldCupTheme = today <= worldCupEnd;
 
 const BlvdTheme =
   !isWorldCupTheme &&
+  !HalloweenTheme &&
   today <= blvdEnd;
 
   useEffect(() => {
@@ -71,16 +88,131 @@ const BlvdTheme =
 
   return (
   <div
-  className={`relative min-h-screen overflow-hidden ${
-   isWorldCupTheme
-      ? "soccer-pitch-bg"
-      : BlvdTheme
-      ? "bg-[#030306]"
-      : "bg-black"
-  }`}
+className={`relative min-h-screen overflow-hidden ${
+  isWorldCupTheme
+    ? "soccer-pitch-bg"
+    : HalloweenTheme
+    ? "bg-[#08030b]"
+    : BlvdTheme
+    ? "bg-[#030306]"
+    : "bg-black"
+}`}
 >
 
   {BlvdTheme && <BoulevardBackground />}
+
+  {HalloweenTheme && (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+
+    {/* Purple Halloween glow */}
+    <div
+      className="
+        absolute
+        -top-40
+        -left-40
+        w-[500px]
+        h-[500px]
+        rounded-full
+        bg-purple-900/25
+        blur-[140px]
+      "
+    />
+
+    {/* Orange Halloween glow */}
+    <div
+      className="
+        absolute
+        -bottom-40
+        -right-40
+        w-[500px]
+        h-[500px]
+        rounded-full
+        bg-orange-600/20
+        blur-[140px]
+      "
+    />
+
+    {/* Center moon-like glow */}
+    <div
+      className="
+        absolute
+        top-[8%]
+        left-1/2
+        -translate-x-1/2
+        w-[280px]
+        h-[280px]
+        rounded-full
+        bg-orange-400/10
+        blur-[90px]
+      "
+    />
+
+    {/* Halloween ambient line */}
+    <div
+      className="
+        absolute
+        left-0
+        right-0
+        bottom-[18%]
+        h-[2px]
+        bg-gradient-to-r
+        from-transparent
+        via-orange-500/25
+        to-transparent
+        blur-[3px]
+      "
+    />
+
+  </div>
+)}
+
+
+{HalloweenTheme && (
+  <>
+    <motion.div
+      className="absolute top-[12%] left-[8%] text-5xl pointer-events-none select-none"
+      animate={{
+        y: [0, -10, 0],
+        rotate: [-5, 5, -5],
+      }}
+      transition={{
+        duration: 4,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      🎃
+    </motion.div>
+
+    <motion.div
+      className="absolute top-[18%] right-[9%] text-4xl pointer-events-none select-none"
+      animate={{
+        y: [0, 12, 0],
+        rotate: [5, -5, 5],
+      }}
+      transition={{
+        duration: 5,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      👻
+    </motion.div>
+
+    <motion.div
+      className="absolute bottom-[20%] left-[12%] text-3xl pointer-events-none select-none"
+      animate={{
+        opacity: [0.4, 1, 0.4],
+      }}
+      transition={{
+        duration: 2.5,
+        repeat: Infinity,
+      }}
+    >
+      🕸️
+    </motion.div>
+  </>
+)}
 
 {BlvdTheme && (
   <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -199,13 +331,81 @@ const BlvdTheme =
       <div className="relative z-20 flex flex-col items-center justify-center min-h-screen p-6">
         
         {/* Title with Soccer Theme */}
-    <motion.div
+  <motion.div
   initial={{ scale: 0.8, opacity: 0 }}
   animate={{ scale: 1, opacity: 1 }}
   transition={{ duration: 0.6 }}
   className="relative text-center mb-8"
 >
- {BlvdTheme ? (
+  {HalloweenTheme ? (
+  /* HALLOWEEN TITLE */
+  <div className="mb-4 relative">
+
+    <motion.h1
+      className={`${eater.className} text-5xl md:text-6xl font-normal tracking-wide`}
+      animate={{
+        textShadow: [
+          "0 0 5px rgba(249,115,22,0.5), 0 0 12px rgba(168,85,247,0.3)",
+          "0 0 12px rgba(249,115,22,0.9), 0 0 28px rgba(168,85,247,0.7)",
+          "0 0 5px rgba(249,115,22,0.5), 0 0 12px rgba(168,85,247,0.3)",
+        ],
+      }}
+      transition={{
+        duration: 2.5,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      <span className="text-orange-400">Word</span>
+      <span className="text-purple-400">igon</span>
+    </motion.h1>
+
+    {/* Witchy Halloween label */}
+    <motion.div
+      initial={{ opacity: 0, x: 10, y: 5 }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.3 }}
+      className={`
+        ${eater.className}
+        absolute
+        right-[-28px]
+        top-[-28px]
+        rotate-[-8deg]
+        text-2xl
+        md:text-3xl
+        text-red-400
+        pointer-events-none
+        select-none
+        whitespace-nowrap
+      `}
+      style={{
+        textShadow: `
+          0 0 5px rgb(255, 34, 0),
+          0 0 12px rgba(176, 2, 239, 0.7),
+          0 0 24px rgb(253, 0, 0)
+        `,
+      }}
+    >
+      Halloween
+    </motion.div>
+
+    <p
+      className={`
+        ${eater.className}
+        mt-5
+        text-orange-300/70
+        text-sm
+        tracking-[0.25em]
+        uppercase
+      `}
+    >
+      The Ultimate Word Puzzle Game
+    </p>
+
+  </div>
+
+) : BlvdTheme ? (
+ 
   /* BOULEVARD SIGN */
   <div className="mb-4">
 
@@ -334,68 +534,105 @@ const BlvdTheme =
           transition={{ delay: 0.4 }}
           className="flex flex-col md:flex-row gap-6 items-center"
         >
+  {HalloweenTheme ? (
+    <>
+      <HalloweenButton onClick={() => openPopup("help")}>
+          <div className={` ${eater.className} flex items-center justify-center gap-2`}>
+        <BookOpen className="w-5 h-5" />
+        <span>How to Play</span>
+       </div> 
+      </HalloweenButton>
 
+      <HalloweenButton onClick={() => openPopup("options")}>
+        <div className={` ${eater.className} flex items-center justify-center gap-2`}>
+        <Settings className="w-5 h-5" />
+        <span>Options</span>
+        </div>
+      </HalloweenButton>
+    
+      <HalloweenButton
+        onClick={() => router.push("/levels")}
+        featured
+      >
+        <div className={` ${eater.className} flex items-center justify-center gap-2`}>
+        <Gamepad2 className="w-5 h-5" />
+        <span>Play Game</span>
+         </div>
+      </HalloweenButton>
 
-       <NeonButton
-  onClick={() => openPopup("help")}
-  color="purple"
-  seasonal={BlvdTheme}
->
-  <div className="flex items-center justify-center gap-2">
-    <BookOpen className="w-5 h-5" />
-    <span>How to Play</span>
-  </div>
-</NeonButton>
+      <HalloweenButton onClick={() => openPopup("about")}>
+        <div className={` ${eater.className} flex items-center justify-center gap-2`}>
+        <Info className="w-5 h-5" />
+        <span>About</span>
+        </div>
+      </HalloweenButton>
 
-
-
-
-
-<NeonButton
-  onClick={() => openPopup("options")}
-  color="green"
-  seasonal={BlvdTheme}
->
-  <div className="flex items-center justify-center gap-2">
-    <Settings className="w-5 h-5" />
-    <span>Options</span>
-  </div>
-</NeonButton>
-
-  <NeonButton
-  onClick={() => router.push("/levels")}
-  color="yellow"
-  seasonal={BlvdTheme}
-  featured
->
-  <div className="flex items-center justify-center gap-2">
-    <Gamepad2 className="w-5 h-5" />
-    <span>Play Game</span>
-  </div>
-</NeonButton>
+      <HalloweenButton onClick={() => openPopup("community")}>
+        <div className={`${eater.className} flex items-center justify-center gap-2`}>
+        <Settings className="w-5 h-5" />
+        <span>Community</span>
+        </div>
+      </HalloweenButton>
+    </>
+  ) : (
+    <>
+      <NeonButton
+        onClick={() => openPopup("help")}
+        color="purple"
+        seasonal={BlvdTheme}
+      >
+        <div className="flex items-center justify-center gap-2">
+          <BookOpen className="w-5 h-5" />
+          <span>How to Play</span>
+        </div>
+      </NeonButton>
 
       <NeonButton
-  onClick={() => openPopup("about")}
-  color="purple"
-  seasonal={BlvdTheme}
->
-  <div className="flex items-center justify-center gap-2">
-    <Info className="w-5 h-5" />
-    <span>About</span>
-  </div>
-</NeonButton>
- 
+        onClick={() => openPopup("options")}
+        color="green"
+        seasonal={BlvdTheme}
+      >
+        <div className="flex items-center justify-center gap-2">
+          <Settings className="w-5 h-5" />
+          <span>Options</span>
+        </div>
+      </NeonButton>
 
-<NeonButton
-  onClick={() => openPopup("community")}
-  color="green"
-  seasonal={BlvdTheme}
->
-  <div className="flex items-center justify-center gap-2">
-    <Settings className="w-5 h-5" />
-    <span>Community</span>
-  </div>
-</NeonButton>
+      <NeonButton
+        onClick={() => router.push("/levels")}
+        color="yellow"
+        seasonal={BlvdTheme}
+        featured
+      >
+        <div className="flex items-center justify-center gap-2">
+          <Gamepad2 className="w-5 h-5" />
+          <span>Play Game</span>
+        </div>
+      </NeonButton>
+
+      <NeonButton
+        onClick={() => openPopup("about")}
+        color="purple"
+        seasonal={BlvdTheme}
+      >
+        <div className="flex items-center justify-center gap-2">
+          <Info className="w-5 h-5" />
+          <span>About</span>
+        </div>
+      </NeonButton>
+
+      <NeonButton
+        onClick={() => openPopup("community")}
+        color="green"
+        seasonal={BlvdTheme}
+      >
+        <div className="flex items-center justify-center gap-2">
+          <Settings className="w-5 h-5" />
+          <span>Community</span>
+        </div>
+      </NeonButton>
+    </>
+  )}
         </motion.div>
 
         {/* Footer */}
