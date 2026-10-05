@@ -101,7 +101,7 @@ export const levels: LevelData[] = [
       ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
       ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "fluorescent", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
       ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
