@@ -1,5 +1,5 @@
 "use client";
-
+import "../animations/interface.css";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { LetterBoard } from "../components/GameBoard";
@@ -37,11 +37,17 @@ export default function PlayPage() {
     if (savedProgress) setLevels(savedProgress);
   }, []);
 
-   // World Cup theme ends after July 20, 2026
+  // Seasonal themes
 const today = new Date();
+
 const worldCupEnd = new Date("2026-07-20T23:59:59");
+const halloweenStart = new Date("2026-10-01T00:00:00");
+const halloweenEnd = new Date("2026-11-01T00:00:00");
 
 const isWorldCupTheme = today <= worldCupEnd;
+
+const isHalloweenTheme =
+  today >= halloweenStart && today < halloweenEnd;
 
 
   useEffect(() => {
@@ -101,9 +107,43 @@ const isWorldCupTheme = today <= worldCupEnd;
 
   if (loading) {
     return (
-        <main  className={` min-h-screen  flex items-center justify-center px-6 overflow-hidden ${
-    isWorldCupTheme ? "soccer-pitch-bg" : "bg-black"
-  }`}>
+      <main
+  className={`min-h-screen flex items-center justify-center px-6 overflow-hidden ${
+    isHalloweenTheme
+      ? "halloween-bg"
+      : isWorldCupTheme
+      ? "soccer-pitch-bg"
+      : "bg-black"
+  }`}
+>
+
+{isHalloweenTheme && (
+  <>
+    <img
+      src="/halloween/bats.png"
+      alt=""
+      className="absolute top-0 left-0 w-40 opacity-80 pointer-events-none"
+    />
+
+    <img
+      src="/halloween/spider-web.png"
+      alt=""
+      className="absolute top-0 right-0 w-40 opacity-70 pointer-events-none"
+    />
+
+    <img
+      src="/halloween/pumpkin.png"
+      alt=""
+      className="absolute bottom-4 left-4 w-32 opacity-90 pointer-events-none"
+    />
+
+    <img
+      src="/halloween/ghost.png"
+      alt=""
+      className="absolute bottom-8 right-6 w-28 opacity-80 pointer-events-none"
+    />
+  </>
+)}
     
         <motion.div
           initial={{ opacity: 0 }}
@@ -139,9 +179,19 @@ const isWorldCupTheme = today <= worldCupEnd;
                 ease: "linear",
               },
             }}
-            className="mx-auto mb-8 w-24 h-24 rounded-lg bg-gradient-to-b from-[#F8E9BB] via-[#F1D99A] to-[#DFC06A] border-2 border-[#B58B39] shadow-2xl flex items-center justify-center"
+           className={`mx-auto mb-8 w-24 h-24 rounded-lg border-2 shadow-2xl flex items-center justify-center ${
+  isHalloweenTheme
+    ? "bg-gradient-to-b from-orange-400 via-orange-600 to-purple-900 border-orange-400 shadow-[0_0_30px_rgba(255,100,0,0.5)]"
+    : "bg-gradient-to-b from-[#F8E9BB] via-[#F1D99A] to-[#DFC06A] border-[#B58B39]"
+}`}
           >
-            <span className="text-5xl font-black text-black">W</span>
+           <span
+  className={`text-5xl font-black ${
+    isHalloweenTheme ? "text-purple-950" : "text-black"
+  }`}
+>
+  W
+</span>
           </motion.div>
 
           {/* Title */}
@@ -161,7 +211,11 @@ const isWorldCupTheme = today <= worldCupEnd;
               stiffness: 220,
               damping: 10,
             }}
-            className="text-4xl font-extrabold text-purple-300"
+          className={`text-4xl font-extrabold ${
+  isHalloweenTheme
+    ? "text-orange-400 drop-shadow-[0_0_12px_rgba(255,100,0,0.7)]"
+    : "text-purple-300"
+}`}
           >
             Loading Level
           </motion.h1>
@@ -232,11 +286,19 @@ const isWorldCupTheme = today <= worldCupEnd;
             transition={{
               delay: 0.35,
             }}
-            className="mt-8 rounded-xl border border-yellow-400/40 bg-black/30 backdrop-blur-md p-6"
+           className={`mt-8 rounded-xl backdrop-blur-md p-6 ${
+  isHalloweenTheme
+    ? "border border-orange-500/40 bg-purple-950/30"
+    : "border border-yellow-400/40 bg-black/30"
+}`}
           >
-            <h2 className="text-lg font-bold text-yellow-300 mb-3">
-              Gameplay Tip
-            </h2>
+         <h2
+  className={`text-lg font-bold mb-3 ${
+    isHalloweenTheme ? "text-orange-400" : "text-yellow-300"
+  }`}
+>
+  Gameplay Tip
+</h2>
 
             <motion.p
               key={tip}

@@ -39,6 +39,10 @@ type Tile = {
    isLineBlaster?: boolean;
   blastDirection?: LineBlasterDirection;
 
+  bulbGlow?: number; // 0 → 3
+  trackerWordLength?: number;
+  isTrackerActive?: boolean;
+
   //fridge
   isFridge?: boolean;
   isSpiral?: boolean;
@@ -53,6 +57,8 @@ fridgeChargeMax?: number;
 spreadLevel?: number;
 dullTurns2?: number;
 fridgeMaxHp?: number;
+  isTracker?: boolean;
+  trackerLength?: number;
 fridgeTurnSkip?: boolean;
   isCleansed?: boolean;
 isSpreading?: boolean;
@@ -105,6 +111,7 @@ isRipe?: boolean;        // true if glowing, usable in words
 boneTurns?: number;    
 isStationary?: boolean;  // true if it cannot move (unripe)
 isLightBulb?: boolean;
+
 bulbType?: "normal" | "fluorescent";
 bulbCharge?: number;
 isBulbOn?: boolean;
@@ -115,11 +122,11 @@ isChamberOpening?: boolean;
 isDraining?: boolean;
 };
 
-type Position = { row: number; col: number };
+type Position = { row: number; col: number ; wasFrozen?: boolean };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow"  | "chamber" | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | "boulder002" | "spiral" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
+  layout?: ("normal"| "lineBlasterRow"| "fluorescent"  | "chamber" | "tracker" | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | "boulder002" | "spiral" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
     waterHeight?: number;
   type: 'score' | 'spreadInk' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet' | 'chamberDrain';
@@ -165,6 +172,7 @@ const specialTileSettings = {
   allowWarpedTiles: true,
   allowVelvets: true,
   allowBooks: true,
+  allowTrackerTiles: true,
   allowSpirals: true,
   allowInfectTiles: true,
   allowPresetTiles: true,
@@ -622,7 +630,7 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
       if (specialTileSettings.allowPresetTiles) {
         if (presetType === "fire" && specialTileSettings.allowFireTiles) {
           rowTiles.push({
-            ...generateRandomTile(),
+            ...generateRandomTile(level?.allowHardLetters ?? true),
             isFire: true,
             presets: false,
           });
@@ -643,6 +651,15 @@ else if (presetType === "chamber") {
     ...generateRandomTile(level?.allowHardLetters ?? true),
     isChamber: true,
     presets: true,
+  });
+}
+
+else if (presetType === "tracker" && specialTileSettings.allowTrackerTiles) {
+  rowTiles.push({
+    ...generateRandomTile(level?.allowHardLetters ?? true),
+    isTracker: true,
+    presets: true,
+    trackerWordLength: 4,
   });
 }
 
@@ -853,6 +870,16 @@ else if (presetType === "ltrD") {
             ...generateRandomTile(level?.allowHardLetters ?? true),
             isLightBulb: true,
             isBulbOn: false,
+            presets: true,
+          });
+        }
+          else if (presetType === "fluorescent" && specialTileSettings.allowBulbTiles) {
+          rowTiles.push({
+            ...generateRandomTile(level?.allowHardLetters ?? true),
+            isLightBulb: true,
+            isBulbOn: false,
+             bulbType: "fluorescent",
+             bulbGlow: 0,
             presets: true,
           });
         }
@@ -1936,7 +1963,7 @@ let usedBulbThisMatch = false;
 if (!wordsIncludesInfected){
 selected.forEach(({ row, col }) => {
   const tile = updatedGrid[row][col];
-  if (!tile?.isLightBulb) return;
+  if (!tile?.isLightBulb && tile.bulbType === "fluorescent") return;
 
   usedBulbThisMatch = true;
 
@@ -2253,6 +2280,8 @@ const uniqueDestroyed = Array.from(
 const iceResult = applyIceDamage(updatedGrid, selected);
 updatedGrid = iceResult.grid;
 
+const brokenIce = iceResult.brokenIce;
+
 let inkResult = {newGround: ground, spreadCount: 0};
 if (selected.some(({row, col}) => 
 ground[row][col]?.type === "ink")){
@@ -2322,19 +2351,17 @@ else if (objective.type === "lightsUp") {
     updatedObjMet += uniqueDestroyed ? +1 : -1;
   });
 }
-}
-// Break the ice
-else if (objective.type === "defrost") {
-  if (wordsIncludesInfected) return; // ❌ no credit
 
-  const iceBroken = uniqueDestroyed.filter(({ row, col }) => {
-    const tile = grid[row][col];
-    if (!tile) return false;
-    return objective.tileType === "ice" && tile.isFrozen && tile.spawnIce ;
-  }).length;
 
-  updatedObjMet += iceBroken;
+
+
+
+}else if (objective.type === "defrost") {
+  if (wordsIncludesInfected) return;
+
+  updatedObjMet += brokenIce;
 }
+
 
 
 
@@ -3658,12 +3685,18 @@ const exclamated = tile?.isExclamator
     ? 'tile-bone-ripe'
     : 'tile-bone-unripe'
   : '';
-   const bulb = tile?.bulbType === "fluorescent"
-   ? tile.bulbCharge === 0
-   ? "bulb-dim" : tile.bulbCharge === 1 
-   ? "bulb-fading" : "bulb-bright" : tile?.isLightBulb 
-   ? tile.isBulbOn ? "bulb bulb-on" : "bulb bulb-off" : "";
-
+ const bulb =
+  tile?.bulbType === "fluorescent"
+    ? tile.bulbGlow === 0
+      ? "bulb-dim"
+      : tile.bulbGlow === 1
+        ? "bulb-fading"
+        : "bulb-bright"
+    : tile?.isLightBulb
+      ? tile.isBulbOn
+        ? "bulb bulb-on"
+        : "bulb bulb-off"
+      : "";
       if (tile?.isRemoved) {
       return (
         <div

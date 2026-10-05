@@ -31,7 +31,7 @@ export default function Home() {
  const { playMusic } = useAudio();
 
 useEffect(() => {
-    playMusic("/audio/Wordigonmenu (1).mp3");
+    playMusic("/audio/wordigonHalloween.mp3");
 }, []);
 
   

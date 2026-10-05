@@ -12,6 +12,14 @@
     inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
+.halloween-bg {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 102, 0, 0.12), transparent 30%),
+    radial-gradient(circle at 80% 30%, rgba(128, 0, 255, 0.12), transparent 30%),
+    radial-gradient(circle at 50% 100%, rgba(255, 60, 0, 0.08), transparent 40%),
+    #08030d;
+}
+
 .neon-sign {
   display: flex;
   justify-content: center;

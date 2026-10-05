@@ -464,6 +464,50 @@ transform:scale(1) rotate(360deg);
   pointer-events: none;
 }
 
+/* Fluorescent bulb - first stage */
+.bulb-dim {
+  background: rgba(255, 255, 255, 0.04);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 0 6px rgba(255, 255, 255, 0.15);
+}
+
+/* Fluorescent bulb - second stage */
+.bulb-fading {
+  background: radial-gradient(circle at center,
+    rgba(255, 220, 150, 0.45) 0%,
+    rgba(255, 180, 80, 0.25) 45%,
+    rgba(255, 140, 40, 0.12) 100%
+  );
+
+  border: 2px solid rgba(255, 190, 100, 0.6);
+
+  box-shadow:
+    0 0 8px rgba(255, 170, 70, 0.45),
+    0 0 16px rgba(255, 140, 40, 0.25),
+    inset 0 0 6px rgba(255, 255, 255, 0.25);
+}
+
+/* Fluorescent bulb - fully charged */
+.bulb-bright {
+  background: radial-gradient(circle at center,
+    #fff4c2 0%,
+    #ffd166 35%,
+    #ff9f1c 70%,
+    #ff7a00 100%
+  );
+
+  border: 2px solid #ffd27a;
+
+  box-shadow:
+    0 0 10px #ffb84d,
+    0 0 20px #ff9f1c,
+    0 0 30px #ff7a00,
+    inset 0 0 8px rgba(255, 255, 255, 0.6);
+
+  animation: bulbPulse 1.4s infinite ease-in-out;
+}
+
 
 .bulb {
   width: 100%;

@@ -2,7 +2,7 @@
 
 
 
-export type TileType = "normal" | "ltrN" | "chamber" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD"  | "boulder" | "dull02" | "spiral" | "boulder002" | "boulder003" |"locked" | "lineBlasterRow" | "lineBlasterColumn" | "fire" | "velvet" | "cursed" | "warped" | "removed" | "mystery" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge" | "bookOpen" | "bookClosed";
+export type TileType = "normal" | "ltrN" | "fluorescent" | "chamber" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD"  | "boulder" | "dull02" | "spiral" | "boulder002" | "boulder003" |"locked" | "lineBlasterRow" | "lineBlasterColumn" | "fire" | "velvet" | "cursed" | "warped" | "removed" | "mystery" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge" | "bookOpen" | "bookClosed";
 
 export type Difficulty = "Hard Level" | "demon" | "SuperDemon";
 
@@ -20,7 +20,7 @@ type Objective = {
   bossMaxHp?: number | undefined;
   bossColor?: string;
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'chamber' | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD"  | 'boulder002' | 'boulder003' | "spiral" | 'boulder' | 'exclamator' | 'warped' | "dull" | "locked" | "velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery" | "chamber";
+  tileType?: 'cursed' | 'fire' | 'fluorescent' | 'chamber' | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD"  | 'boulder002' | 'boulder003' | "spiral" | 'boulder' | 'exclamator' | 'warped' | "dull" | "locked" | "velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery" | "chamber";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse' | 'ink')[][];
 };
@@ -101,7 +101,7 @@ export const levels: LevelData[] = [
       ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
       ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-      ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+      ["normal", "normal", "normal", "fluorescent", "normal", "normal", "normal", "normal"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
       ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
       ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
