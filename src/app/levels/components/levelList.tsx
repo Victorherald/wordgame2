@@ -554,7 +554,7 @@ if (isHalloweenTheme) {
   }`}
 >
   {isHalloweenTheme
-    ? "Choose your challenge... if you dare"
+    ? "Choose your challenge... if you dare!"
     : "Choose your challenge"}
 </p>
 

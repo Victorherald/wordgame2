@@ -1963,9 +1963,39 @@ let usedBulbThisMatch = false;
 if (!wordsIncludesInfected){
 selected.forEach(({ row, col }) => {
   const tile = updatedGrid[row][col];
-  if (!tile?.isLightBulb && tile.bulbType === "fluorescent") return;
+  if (!tile?.isLightBulb) return;
 
   usedBulbThisMatch = true;
+
+    // Fluorescent bulb
+   if (tile.bulbType === "fluorescent") {
+  const glow = tile.bulbGlow ?? 0;
+
+  if (glow === 0) {
+    // First match
+    updatedGrid[row][col] = {
+      ...tile,
+      bulbGlow: 1,
+      isBulbOn: false,
+    };
+  } else if (glow === 1) {
+    // Second match
+    updatedGrid[row][col] = {
+      ...tile,
+      bulbGlow: 2,
+      isBulbOn: true,
+    };
+  } else if (glow >= 2) {
+    // Change letter
+    updatedGrid[row][col] = {
+      ...tile,
+      letter: getNewWarpedLetter(tile.letter),
+      isBulbOn: true,
+    };
+  }
+
+  return;
+}
 
 
   const wasOn = tile.isBulbOn;
@@ -1999,28 +2029,7 @@ const allBulbsAreLit = allBulbsLit(updatedGrid);
 // CLEAR bulbs ONLY if:
 // 1. all bulbs are ON
 // 2. a bulb was used in the matched word
-if (usedBulbThisMatch && allBulbsAreLit) {
-  let bulbsCleared = 0;
 
-  for (let r = 0; r < updatedGrid.length; r++) {
-    for (let c = 0; c < updatedGrid[r].length; c++) {
-      const t = updatedGrid[r][c];
-      if (t?.isLightBulb) {
-       updatedGrid[r][c] = generateRandomTile(level?.allowHardLetters ?? true);
- // remove bulb
-        bulbsCleared++;
-      }
-    }
-  }
-
-  // objective updates
-  if (objective?.type === 'destroy' && objective.tileType === 'bulb') {
-    setObjMet((prev) => prev + bulbsCleared);
-  }
-
- 
-
-}
 
 //random gem generator  
 
@@ -2337,26 +2346,59 @@ else if (objective.type === "score") {
 
 }
 
-// Lights up mode
-else if (objective.type === "lightsUp") {
-  if (!wordsIncludesInfected){
-  const bulbsOn =
-  uniqueDestroyed.forEach(({ row, col }) => {
-    const tile = grid[row][col];
-    if (!tile?.isLightBulb) return;
+if (objective?.type === "lightsUp" && !wordsIncludesInfected) {
+  // 1. Count bulbs that were switched on
+  selected.forEach(({ row, col }) => {
+    const previousTile = grid[row][col];
+    const currentTile = updatedGrid[row][col];
 
-    const wasOn = tile.isBulbOn;
-    const isNowOn = !wasOn;
+    if (!previousTile?.isLightBulb || !currentTile?.isLightBulb) {
+      return;
+    }
 
-    updatedObjMet += uniqueDestroyed ? +1 : -1;
+    if (currentTile.bulbType === "fluorescent") {
+      if (
+        previousTile.bulbType === "fluorescent" &&
+        (previousTile.bulbGlow ?? 0) < 2 &&
+        currentTile.bulbGlow === 2
+      ) {
+        updatedObjMet += 1;
+      }
+
+      return;
+    }
+
+    const wasOn = previousTile.isBulbOn ?? false;
+    const isNowOn = currentTile.isBulbOn ?? false;
+
+    if (!wasOn && isNowOn) {
+      updatedObjMet += 1;
+    } else if (wasOn && !isNowOn) {
+      updatedObjMet = Math.max(0, updatedObjMet - 1);
+    }
   });
+
+  // 2. Check whether all bulbs are lit
+  const allBulbsAreLit = allBulbsLit(updatedGrid);
+
+  // 3. Clear bulbs AFTER counting
+  if (usedBulbThisMatch && allBulbsAreLit) {
+    for (let r = 0; r < updatedGrid.length; r++) {
+      for (let c = 0; c < updatedGrid[r].length; c++) {
+        const tile = updatedGrid[r][c];
+
+        if (tile?.isLightBulb) {
+          updatedGrid[r][c] = generateRandomTile(
+            level?.allowHardLetters ?? true
+          );
+        }
+      }
+    }
+  }
 }
 
 
-
-
-
-}else if (objective.type === "defrost") {
+else if (objective.type === "defrost") {
   if (wordsIncludesInfected) return;
 
   updatedObjMet += brokenIce;
@@ -3147,23 +3189,27 @@ const handleScramble = () => {
     >
       {objective
         ? `${
-            objective.type === "words"
-              ? "Words"
-              : objective.type === "lightsUp"
-              ? "Lights"
-              : objective.type === "defrost"
-              ? "Ice"
-               : objective.type === "chamberDrain"
-              ? "Chamber Level"
-              : objective.type === "spreadInk" 
-              ? "Ink" 
-              : objective.type === "score"
-              ? "Score"
-              : objective.type === "collectVelvet"
-              ? "Velvets"
-              : `Destroy ${objective.tileType}`
-          }: ${objMet}/${objective.objGoal}`
-        : "No objective"}
+        objective.type === "words"
+          ? `${objective.minLength}-letter words found`
+          : objective.type === "score"
+          ? "Score"
+          : objective.type === "lightsUp"
+          ? "Lights turned on"
+          : objective.type === "spreadInk"
+          ? "Ink Spread"
+          : objective.type === "collectVelvet"
+          ? "Velvets Squashed"
+          : objective.type === "chamberDrain"
+          ? "Chamber Level"
+          : objective.type === "defrost"
+          ? "Ice cleared"
+          : `Interact with ${objective.objGoal} ${objective.tileType} tiles`
+      }: ${
+        objective.type === "chamberDrain"
+          ? waterHeight
+          : objMet
+      }/${objective.objGoal}`
+    :  "No objective"}
     </div>
   )}
 
@@ -3286,7 +3332,7 @@ const handleScramble = () => {
           : objective.type === "collectVelvet"
           ? "Velvets Squashed"
           : objective.type === "chamberDrain"
-          ? "Water Remaining"
+          ? "Chamber Level"
           : objective.type === "defrost"
           ? "Ice cleared"
           : `Interact with ${objective.objGoal} ${objective.tileType} tiles`
