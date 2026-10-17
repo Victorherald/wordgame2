@@ -92,14 +92,14 @@ export function baseLevels(): LevelData[] {
       locked: true,
       allowHardLetters: false,
       board: [
-        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
-        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
-        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
       ],
      
     },

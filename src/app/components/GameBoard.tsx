@@ -2345,7 +2345,6 @@ else if (objective.type === "score") {
   }
 
 }
-
 if (objective?.type === "lightsUp" && !wordsIncludesInfected) {
   // 1. Count bulbs that were switched on
   selected.forEach(({ row, col }) => {
@@ -2377,21 +2376,21 @@ if (objective?.type === "lightsUp" && !wordsIncludesInfected) {
       updatedObjMet = Math.max(0, updatedObjMet - 1);
     }
   });
+}
 
-  // 2. Check whether all bulbs are lit
-  const allBulbsAreLit = allBulbsLit(updatedGrid);
+// 2. Check ALL levels, not just lightsUp levels
+const allBulbsAreLit = allBulbsLit(updatedGrid);
 
-  // 3. Clear bulbs AFTER counting
-  if (usedBulbThisMatch && allBulbsAreLit) {
-    for (let r = 0; r < updatedGrid.length; r++) {
-      for (let c = 0; c < updatedGrid[r].length; c++) {
-        const tile = updatedGrid[r][c];
+// 3. Clear bulbs AFTER they've been counted
+if (usedBulbThisMatch && allBulbsAreLit) {
+  for (let r = 0; r < updatedGrid.length; r++) {
+    for (let c = 0; c < updatedGrid[r].length; c++) {
+      const tile = updatedGrid[r][c];
 
-        if (tile?.isLightBulb) {
-          updatedGrid[r][c] = generateRandomTile(
-            level?.allowHardLetters ?? true
-          );
-        }
+      if (tile?.isLightBulb) {
+        updatedGrid[r][c] = generateRandomTile(
+          level?.allowHardLetters ?? true
+        );
       }
     }
   }
@@ -3203,7 +3202,7 @@ const handleScramble = () => {
           ? "Chamber Level"
           : objective.type === "defrost"
           ? "Ice cleared"
-          : `Interact with ${objective.objGoal} ${objective.tileType} tiles`
+          : `Interact with ${objective.tileType} tiles`
       }: ${
         objective.type === "chamberDrain"
           ? waterHeight
@@ -3335,7 +3334,7 @@ const handleScramble = () => {
           ? "Chamber Level"
           : objective.type === "defrost"
           ? "Ice cleared"
-          : `Interact with ${objective.objGoal} ${objective.tileType} tiles`
+          : `Interact with ${objective.tileType} tiles`
       }: ${
         objective.type === "chamberDrain"
           ? waterHeight
