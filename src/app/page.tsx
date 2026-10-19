@@ -10,9 +10,17 @@ import {BookOpen,  Info,Trophy,Gamepad2, Users, MessageCircle, Settings} from "l
  import { HalloweenButton } from "../app/components/button/HalloweenButton";
 
 import { NeonButton } from "../app/components/button/neonButton";
+import { ChristmasButton } from "../app/components/button/christmasButton";
+
 
 import { Lobster } from "next/font/google";
 import { Eater } from "next/font/google";
+import { Mountains_of_Christmas } from "next/font/google";
+
+const christmasFont = Mountains_of_Christmas({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
 
 const eater = Eater({
   subsets: ["latin"],
@@ -30,9 +38,7 @@ const lobster = Lobster({
 export default function Home() {
  const { playMusic } = useAudio();
 
-useEffect(() => {
-    playMusic("/audio/wordigonHalloween.mp3");
-}, []);
+
 
   
 
@@ -61,6 +67,16 @@ const halloweenEnd = new Date("2026-11-01T00:00:00");
 const HalloweenTheme =
   today >= halloweenStart && today < halloweenEnd;
 
+
+
+  // Christmas starts on 1st and ends on the 30th 
+
+  const christmasStart = new Date("2026-12-01T00:00:00");
+const christmasEnd = new Date("2026-12-31T00:00:00");
+
+const ChristmasTheme =
+  today >= christmasStart && today < christmasEnd;
+
   // World Cup theme ends after July 20, 2026
 
 
@@ -68,6 +84,17 @@ const worldCupEnd = new Date("2026-07-20T23:59:59");
 const blvdEnd = new Date("2026-09-30T23:59:59");
 
 const isWorldCupTheme = today <= worldCupEnd;
+
+
+useEffect(() => {
+  if (HalloweenTheme) {
+    playMusic("/audio/wordigonHalloween.mp3");
+  } else if (ChristmasTheme) {
+    playMusic("/audio/wordigonChristmas.mp3");
+  } else {
+    playMusic("/audio/wordigonmenu.mp3");
+  }
+}, [HalloweenTheme, ChristmasTheme, playMusic]);
 
 const BlvdTheme =
   !isWorldCupTheme &&
@@ -93,6 +120,8 @@ className={`relative min-h-screen overflow-hidden ${
     ? "soccer-pitch-bg"
     : HalloweenTheme
     ? "bg-[#08030b]"
+    : ChristmasTheme
+    ? "bg-[#07140d]"
     : BlvdTheme
     ? "bg-[#030306]"
     : "bg-black"
@@ -100,6 +129,73 @@ className={`relative min-h-screen overflow-hidden ${
 >
 
   {BlvdTheme && <BoulevardBackground />}
+
+  {ChristmasTheme && (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+
+    {/* Red Christmas glow */}
+    <div
+      className="
+        absolute
+        -top-40
+        -left-40
+        w-[500px]
+        h-[500px]
+        rounded-full
+        bg-red-700/15
+        blur-[140px]
+      "
+    />
+
+    {/* Green Christmas glow */}
+    <div
+      className="
+        absolute
+        -bottom-40
+        -right-40
+        w-[500px]
+        h-[500px]
+        rounded-full
+        bg-green-700/20
+        blur-[140px]
+      "
+    />
+
+    {/* Cold snowy glow */}
+    <div
+      className="
+        absolute
+        top-[5%]
+        left-1/2
+        -translate-x-1/2
+        w-[400px]
+        h-[400px]
+        rounded-full
+        bg-white/10
+        blur-[120px]
+      "
+    />
+
+    {/* Snowy horizon */}
+    <div
+      className="
+        absolute
+        left-0
+        right-0
+        bottom-[15%]
+        h-[3px]
+        bg-gradient-to-r
+        from-transparent
+        via-white/20
+        to-transparent
+        blur-[3px]
+      "
+    />
+
+  </div>
+)}
+
+
 
   {HalloweenTheme && (
   <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -246,6 +342,81 @@ className={`relative min-h-screen overflow-hidden ${
     />
 
   
+
+  </div>
+)}
+
+{/* Christmas Snowy Background */}
+{ChristmasTheme && (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+
+    {/* ❄️ Falling snow */}
+    {Array.from({ length: 60 }).map((_, i) => (
+      <motion.div
+        key={`snow-${i}`}
+        className="absolute text-white select-none"
+        style={{
+          left: `${(i * 37) % 100}%`,
+          top: `-${(i * 17) % 30}%`,
+          fontSize: `${8 + (i % 12)}px`,
+          opacity: 0.4 + (i % 5) * 0.1,
+        }}
+        animate={{
+          y: ["0vh", "115vh"],
+          x: [0, (i % 2 === 0 ? 1 : -1) * (20 + (i % 40))],
+          rotate: [0, 360],
+        }}
+        transition={{
+          duration: 7 + (i % 9),
+          repeat: Infinity,
+          delay: (i % 12) * 0.7,
+          ease: "linear",
+        }}
+      >
+        ❄
+      </motion.div>
+    ))}
+
+    {/* 🧦 Hanging stockings */}
+    <div className="absolute top-0 left-0 right-0 flex justify-around px-8">
+
+      <motion.div
+        className="text-5xl origin-top"
+        animate={{ rotate: [-3, 3, -3] }}
+        transition={{
+          duration: 3,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        🧦
+      </motion.div>
+
+      <motion.div
+        className="text-5xl origin-top"
+        animate={{ rotate: [3, -3, 3] }}
+        transition={{
+          duration: 3.5,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        🧦
+      </motion.div>
+
+      <motion.div
+        className="text-5xl origin-top"
+        animate={{ rotate: [-2, 2, -2] }}
+        transition={{
+          duration: 2.7,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        🧦
+      </motion.div>
+
+    </div>
 
   </div>
 )}
@@ -398,6 +569,50 @@ className={`relative min-h-screen overflow-hidden ${
         tracking-[0.25em]
         uppercase
       `}
+    >
+      The Ultimate Word Puzzle Game
+    </p>
+
+  </div>
+
+) : ChristmasTheme ? (
+
+  <div className="mb-4 relative">
+
+    <motion.h1
+      className={`${christmasFont.className} text-6xl md:text-7xl font-bold tracking-wide`}
+      animate={{
+        textShadow: [
+          "0 0 5px rgba(255,255,255,0.5), 0 0 15px rgba(220,38,38,0.25)",
+          "0 0 12px rgba(255,255,255,0.9), 0 0 30px rgba(34,197,94,0.45)",
+          "0 0 5px rgba(255,255,255,0.5), 0 0 15px rgba(220,38,38,0.25)",
+        ],
+      }}
+      transition={{
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      <span className="text-red-500">Word</span>
+      <span className="text-green-500">igon</span>
+    </motion.h1>
+
+    <motion.div
+      className={`${christmasFont.className} absolute right-[-25px] top-[-28px] rotate-[-8deg] text-3xl text-white`}
+      animate={{
+        y: [0, -3, 0],
+      }}
+      transition={{
+        duration: 2,
+        repeat: Infinity,
+      }}
+    >
+      Christmas
+    </motion.div>
+
+    <p
+      className={`${christmasFont.className} mt-5 text-white/70 text-lg tracking-[0.2em]`}
     >
       The Ultimate Word Puzzle Game
     </p>
@@ -574,7 +789,49 @@ className={`relative min-h-screen overflow-hidden ${
         </div>
       </HalloweenButton>
     </>
-  ) : (
+  )  : ChristmasTheme ? (
+
+  <>
+    <ChristmasButton onClick={() => openPopup("help")}>
+      <div className={`${christmasFont.className} flex items-center justify-center gap-2`}>
+        <BookOpen className="w-5 h-5" />
+        <span>How to Play</span>
+      </div>
+    </ChristmasButton>
+
+    <ChristmasButton onClick={() => openPopup("options")}>
+      <div className={`${christmasFont.className} flex items-center justify-center gap-2`}>
+        <Settings className="w-5 h-5" />
+        <span>Options</span>
+      </div>
+    </ChristmasButton>
+
+    <ChristmasButton
+      onClick={() => router.push("/levels")}
+      featured
+    >
+      <div className={`${christmasFont.className} flex items-center justify-center gap-2`}>
+        <Gamepad2 className="w-5 h-5" />
+        <span>Play Game</span>
+      </div>
+    </ChristmasButton>
+
+    <ChristmasButton onClick={() => openPopup("about")}>
+      <div className={`${christmasFont.className} flex items-center justify-center gap-2`}>
+        <Info className="w-5 h-5" />
+        <span>About</span>
+      </div>
+    </ChristmasButton>
+
+    <ChristmasButton onClick={() => openPopup("community")}>
+      <div className={`${christmasFont.className} flex items-center justify-center gap-2`}>
+        <Users className="w-5 h-5" />
+        <span>Community</span>
+      </div>
+    </ChristmasButton>
+  </>
+
+) : (
     <>
       <NeonButton
         onClick={() => openPopup("help")}

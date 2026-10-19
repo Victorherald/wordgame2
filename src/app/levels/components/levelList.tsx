@@ -23,6 +23,13 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import { Eater } from "next/font/google";
 
+import { Mountains_of_Christmas } from "next/font/google";
+
+const christmasFont = Mountains_of_Christmas({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
 const eater = Eater({
   subsets: ["latin"],
   weight: "400",
@@ -101,6 +108,13 @@ const blvdEnd = new Date("2026-01-30T23:59:59");
 
 const halloweenStart = new Date("2026-10-01T00:00:00");
 const halloweenEnd = new Date("2026-11-01T00:00:00");
+
+const christmasStart = new Date("2026-12-01T00:00:00");
+const christmasEnd = new Date("2026-12-31T00:00:00");
+
+const isChristmasTheme =
+  today >= christmasStart &&
+  today < christmasEnd;
 
 const isWorldCupTheme = today <= worldCupEnd;
 
@@ -270,11 +284,24 @@ const isHalloweenTheme =
     }
   };
 
+ 
+
   // --------------------------------------------------
   // Popup styling
   // --------------------------------------------------
 
   const getPopupStyle = (difficulty?: string) => {
+
+    if (isChristmasTheme) {
+  return `
+    bg-gradient-to-br
+    from-[#102c20]
+    via-[#0a2118]
+    to-[#07150f]
+    border-[#d9b85b]
+    shadow-[0_0_45px_rgba(22,163,74,0.2)]
+  `;
+}
 
 if (isHalloweenTheme) {
   switch (difficulty) {
@@ -496,8 +523,10 @@ if (isHalloweenTheme) {
 
 
     <main
-    className={`relative min-h-screen overflow-hidden text-white ${
-  isWorldCupTheme
+  className={`relative min-h-screen overflow-hidden text-white ${
+  isChristmasTheme
+    ? "bg-[#061a13]"
+    : isWorldCupTheme
     ? "soccer-pitch-bg"
     : isHalloweenTheme
     ? "bg-[#09040d]"
@@ -506,6 +535,54 @@ if (isHalloweenTheme) {
     : "bg-black"
 }`}
     >
+  {isChristmasTheme && (
+  <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
+    {Array.from({ length: 55 }, (_, i) => {
+      const left = (i * 47.3 + (i % 9) * 13.7) % 100;
+      const size = 5 + ((i * 7) % 12);
+      const duration = 7 + ((i * 11) % 9);
+
+      return (
+        <motion.span
+          key={i}
+          className="absolute text-white select-none"
+          style={{
+            left: `${left}%`,
+            top: "-30px",
+            fontSize: `${size}px`,
+            opacity: 0.35 + ((i * 17) % 60) / 100,
+          }}
+          animate={{
+            y: ["0vh", "110vh"],
+            x: [0, 20, -15, 25, 0],
+            rotate: [0, 180, 360],
+          }}
+          transition={{
+            y: {
+              duration,
+              repeat: Infinity,
+              ease: "linear",
+              delay: -((i * 3) % duration),
+            },
+            x: {
+              duration: 4 + (i % 4),
+              repeat: Infinity,
+              ease: "easeInOut",
+              repeatType: "mirror",
+            },
+            rotate: {
+              duration: 8 + (i % 5),
+              repeat: Infinity,
+              ease: "linear",
+            },
+          }}
+        >
+          ❄
+        </motion.span>
+      );
+    })}
+  </div>
+)}
 
       {isHalloweenTheme && (
   <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -525,23 +602,43 @@ if (isHalloweenTheme) {
       {/* Header */}
       {/* ------------------------------------------------ */}
 
+      
+
+      {isChristmasTheme && (
+  <motion.div
+    initial={{ opacity: 0, scale: 0.8 }}
+    animate={{ opacity: 1, scale: 1 }}
+    className="text-center text-2xl mb-2"
+  >
+    🎄 ❄️ 🎁
+  </motion.div>
+)}
+
       <div className="relative z-20 px-4 pt-6 pb-4">
       <motion.h1
   initial={{ opacity: 0, y: -15 }}
   animate={{ opacity: 1, y: 0 }}
-  className={`text-center text-3xl md:text-4xl ${
-    isHalloweenTheme
-      ? `${eater.className} text-orange-400`
-      : "font-black"
-  }`}
-  style={
-    isHalloweenTheme
-      ? {
-          textShadow:
-            "0 0 8px rgba(249,115,22,0.7), 0 0 22px rgba(168,85,247,0.45)",
-        }
-      : undefined
-  }
+ className={`text-center text-3xl md:text-4xl ${
+  isChristmasTheme
+    ? `${christmasFont.className} text-green-400`
+    : isHalloweenTheme
+    ? `${eater.className} text-orange-400`
+    : "font-black"
+}`}
+ style={
+  isChristmasTheme
+    ? {
+        color: "#ff7777",
+        textShadow:
+          "0 0 8px rgba(220,38,38,0.45), 0 0 22px rgba(22,163,74,0.3)",
+      }
+    : isHalloweenTheme
+    ? {
+        textShadow:
+          "0 0 8px rgba(249,115,22,0.7), 0 0 22px rgba(168,85,247,0.45)",
+      }
+    : undefined
+}
 >
  Select Level
 </motion.h1>
@@ -550,12 +647,16 @@ if (isHalloweenTheme) {
   className={`text-center text-sm mt-2 ${
     isHalloweenTheme
       ? `${eater.className} text-purple-300/70`
+      : isChristmasTheme
+      ? `${christmasFont.className} text-green-400`
       : "text-white/50"
   }`}
 >
-  {isHalloweenTheme
-    ? "Choose your challenge... if you dare!"
-    : "Choose your challenge"}
+ {isChristmasTheme
+  ? "❄ Choose your festive challenge! ❄"
+  : isHalloweenTheme
+  ? "Choose your challenge... if you dare!"
+  : "Choose your challenge"}
 </p>
 
       
@@ -607,6 +708,16 @@ if (isHalloweenTheme) {
         hover:border-green-400
         hover:shadow-[0_0_18px_rgba(34,197,94,0.4)]
       `
+      : isChristmasTheme
+? `
+  bg-[#123b29]
+  text-red-200
+  border
+  border-[#d9b85b]/70
+  shadow-[0_0_12px_rgba(22,163,74,0.2)]
+  hover:bg-[#195337]
+  hover:border-red-300
+`
       : `
         bg-gray-900
         text-white
@@ -1038,18 +1149,21 @@ if (isHalloweenTheme) {
 
               {/* Name */}
 
-             <h2
+         
+<h2
   className={`
     text-3xl
     md:text-4xl
     mb-4
     ${
-      isHalloweenTheme
+      isChristmasTheme
+        ? "text-red-300"
+        : `${christmasFont.className} text-green-400`
         ? `${eater.className} text-orange-400`
         : "font-black"
     }
     ${
-      !isHalloweenTheme
+      !isChristmasTheme && !isHalloweenTheme
         ? selectedLevel.difficulty === "SuperDemon"
           ? "text-fuchsia-300"
           : selectedLevel.difficulty === "demon"
@@ -1061,7 +1175,13 @@ if (isHalloweenTheme) {
     }
   `}
   style={
-    isHalloweenTheme
+    isChristmasTheme
+      ? {
+          fontFamily: "'Mountains of Christmas', cursive",
+          textShadow:
+            "0 0 8px rgba(220,38,38,0.7), 0 0 18px rgba(22,163,74,0.6)",
+        }
+      : isHalloweenTheme
       ? {
           textShadow:
             "0 0 8px rgba(249,115,22,0.7), 0 0 20px rgba(168,85,247,0.5)",
