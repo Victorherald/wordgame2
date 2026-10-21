@@ -12,6 +12,44 @@
     inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
+
+/* Thanksgiving menu theme */
+.thanksgiving-theme {
+  background-color: #35251F;
+  color: #F8EBD4;
+}
+
+/* Main menu buttons */
+.thanksgiving-theme .menu-button {
+  background: linear-gradient(135deg, #D8733F, #B84B25);
+  color: #FFF4DF;
+  border: 1px solid #E8B44F;
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+/* Hover effect */
+.thanksgiving-theme .menu-button:hover {
+  background: linear-gradient(135deg, #E8B44F, #C65D2E);
+  color: #35251F;
+  box-shadow: 0 0 18px rgba(232, 180, 79, 0.3);
+  transform: translateY(-2px);
+}
+
+/* Secondary menu buttons */
+.thanksgiving-theme .secondary-button {
+  background: rgba(104, 119, 71, 0.2);
+  color: #F8EBD4;
+  border: 1px solid #687747;
+}
+
+/* Menu title */
+.thanksgiving-theme .menu-title {
+  color: #E8B44F;
+  text-shadow: 0 2px 12px rgba(232, 180, 79, 0.25);
+}
+
+
 .halloween-bg {
   background:
     radial-gradient(circle at 20% 20%, rgba(255, 102, 0, 0.12), transparent 30%),

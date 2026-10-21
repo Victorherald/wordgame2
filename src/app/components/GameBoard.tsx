@@ -406,7 +406,10 @@ useEffect(() => {
 
   
 
-function generateRandomTile(includeHardLetters = true): Tile {
+function generateRandomTile(
+  includeHardLetters = true,
+  currentLevel = level
+): Tile {
 
   function shouldSpawnVelvet(): boolean {
   if (specialTileSettings.allowVelvetTiles) return false;
@@ -432,66 +435,74 @@ const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)]
   const pLocked = 0.02;
   const pBone = 0.02;
   const pBulb = 0.03;
-  const pMystery = 0.05;
+  const pMystery = 1.05;
+const shouldBeMystery =
+  currentLevel?.shouldMysterySpawn === true &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < pMystery;
 
-  const shouldBeMystery =
-    
-    specialTileSettings.allowRandomSpecialTiles &&
-    Math.random() < pFire;
-  
-  
+const shouldBeFire =
+  level?.shouldFireSpawn === true &&
+  specialTileSettings.allowFireTiles &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < pFire;
 
-  const shouldBeFire =
-    specialTileSettings.allowFireTiles &&
-    specialTileSettings.allowRandomSpecialTiles &&
-    Math.random() < pFire;
+const shouldBeBulb =
+  level?.shouldBulbSpawn === true &&
+  specialTileSettings.allowBulbTiles &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < pBulb;
 
-    const shouldBeBulb = 
-    specialTileSettings.allowBulbTiles &&
-    specialTileSettings.allowRandomSpecialTiles &&
-    Math.random() < pBulb;
+const shouldBeBook =
+  level?.shouldBookSpawn === true &&
+  specialTileSettings.allowBooks &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < pBulb;
 
-    const shouldBeBook =
-    specialTileSettings.allowBooks &&
-    specialTileSettings.allowRandomSpecialTiles &&
-    Math.random() < pBulb;
-
-  const shouldBeBone = 
+const shouldBeBone =
+  level?.shouldBoneSpawn === true &&
   specialTileSettings.allowBoneTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pBone;
 
-  const shouldBeInfected = 
+const shouldBeInfected =
+  level?.shouldInfectedSpawn === true &&
   specialTileSettings.allowInfectTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < 0.7;
 
-   const shouldBeVelvet = 
+const shouldBeVelvet =
+  level?.shouldVelvetSpawn === true &&
   specialTileSettings.allowVelvets &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < 0.7;
 
-  const shouldBeWarped =
-    specialTileSettings.allowWarpedTiles &&
-    specialTileSettings.allowRandomSpecialTiles &&
-    Math.random() < pWarp;
+const shouldBeWarped =
+  level?.shouldWarpedSpawn === true &&
+  specialTileSettings.allowWarpedTiles &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < pWarp;
 
-  const shouldBeCursed =
-    specialTileSettings.allowCursedTiles &&
-    specialTileSettings.allowRandomSpecialTiles &&
-    Math.random() < pCursed;
+const shouldBeCursed =
+  level?.shouldCursedSpawn === true &&
+  specialTileSettings.allowCursedTiles &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < pCursed;
 
-   const shouldBeDull =
+const shouldBeDull =
+  level?.shouldDullSpawn === true &&
   specialTileSettings.allowDullTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pDull;
 
 const shouldBeLocked =
+  level?.shouldLockedSpawn === true &&
   specialTileSettings.allowLockedTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pLocked;
 
-  const shouldBeExclamated =
+const shouldBeExclamated =
+  level?.shouldExclamatorSpawn === true &&
   specialTileSettings.allowExclamators &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pLocked;

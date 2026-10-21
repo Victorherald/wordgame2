@@ -5,10 +5,11 @@ import { useAudio } from "./components/AudioProvider";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {BookOpen,  Info,Trophy,Gamepad2, Users, MessageCircle, Settings} from "lucide-react";
+import { ThanksgivingButton } from "../app/components/button/thanksgivingButton";
   import '../app/animations/interface.css';
   import { BoulevardBackground } from "../app/components/button/boulevardHouses";
  import { HalloweenButton } from "../app/components/button/HalloweenButton";
-
+import { AutumnLeaves } from "../app/components/button/movingLeaves"; 
 import { NeonButton } from "../app/components/button/neonButton";
 import { ChristmasButton } from "../app/components/button/christmasButton";
 
@@ -16,6 +17,16 @@ import { ChristmasButton } from "../app/components/button/christmasButton";
 import { Lobster } from "next/font/google";
 import { Eater } from "next/font/google";
 import { Mountains_of_Christmas } from "next/font/google";
+// Optional nice autumn font (add this with your other fonts)
+import { Creepster } from "next/font/google"; // or use "Lobster" / "Eater" if you prefer
+
+// Better option – a warm serif feel:
+import { Cinzel } from "next/font/google";
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
 
 const christmasFont = Mountains_of_Christmas({
   subsets: ["latin"],
@@ -77,6 +88,14 @@ const christmasEnd = new Date("2026-12-31T00:00:00");
 const ChristmasTheme =
   today >= christmasStart && today < christmasEnd;
 
+
+  // Thanksgiving – whole of November
+const thanksgivingStart = new Date("2026-11-01T00:00:00");
+const thanksgivingEnd = new Date("2026-12-01T00:00:00");
+
+const ThanksgivingTheme =
+  today >= thanksgivingStart && today < thanksgivingEnd;
+
   // World Cup theme ends after July 20, 2026
 
 
@@ -85,16 +104,17 @@ const blvdEnd = new Date("2026-09-30T23:59:59");
 
 const isWorldCupTheme = today <= worldCupEnd;
 
-
 useEffect(() => {
   if (HalloweenTheme) {
     playMusic("/audio/wordigonHalloween.mp3");
+  } else if (ThanksgivingTheme) {
+    playMusic("/audio/wordigonThanksgiving.mp3"); // ← create this file or reuse an autumn track
   } else if (ChristmasTheme) {
     playMusic("/audio/wordigonChristmas.mp3");
   } else {
     playMusic("/audio/wordigonmenu.mp3");
   }
-}, [HalloweenTheme, ChristmasTheme, playMusic]);
+}, [HalloweenTheme, ThanksgivingTheme, ChristmasTheme, playMusic]);
 
 const BlvdTheme =
   !isWorldCupTheme &&
@@ -120,6 +140,8 @@ className={`relative min-h-screen overflow-hidden ${
     ? "soccer-pitch-bg"
     : HalloweenTheme
     ? "bg-[#08030b]"
+    : ThanksgivingTheme
+    ? "bg-[#1a0f08]"          // deep warm brown/black
     : ChristmasTheme
     ? "bg-[#07140d]"
     : BlvdTheme
@@ -127,6 +149,74 @@ className={`relative min-h-screen overflow-hidden ${
     : "bg-black"
 }`}
 >
+
+  {ThanksgivingTheme && (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    {/* Warm orange glow */}
+    <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-orange-700/20 blur-[140px]" />
+    
+    {/* Amber / gold glow */}
+    <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-amber-600/20 blur-[140px]" />
+    
+    {/* Soft red harvest glow */}
+    <div className="absolute top-[10%] right-[15%] w-[300px] h-[300px] rounded-full bg-red-800/15 blur-[100px]" />
+
+    {/* Horizontal harvest line */}
+    <div className="absolute left-0 right-0 bottom-[16%] h-[2px] bg-gradient-to-r from-transparent via-amber-500/30 to-transparent blur-[3px]" />
+  </div>
+)}
+
+{ThanksgivingTheme && (
+  <>
+    {/* Warm glows (keep these) */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-orange-700/20 blur-[140px]" />
+      <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-amber-600/20 blur-[140px]" />
+      <div className="absolute top-[10%] right-[15%] w-[300px] h-[300px] rounded-full bg-red-800/15 blur-[100px]" />
+      <div className="absolute left-0 right-0 bottom-[16%] h-[2px] bg-gradient-to-r from-transparent via-amber-500/30 to-transparent blur-[3px]" />
+    </div>
+
+   {/* More leaves + stronger rightward wind */}
+<AutumnLeaves count={50} driftStrength={1.6} />
+  </>
+)}
+
+{/* Floating Thanksgiving elements */}
+{ThanksgivingTheme && (
+  <>
+    <motion.div
+      className="absolute top-[11%] left-[7%] text-5xl pointer-events-none select-none"
+      animate={{ y: [0, -12, 0], rotate: [-6, 6, -6] }}
+      transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+    >
+      🦃
+    </motion.div>
+
+    <motion.div
+      className="absolute top-[16%] right-[8%] text-4xl pointer-events-none select-none"
+      animate={{ y: [0, 10, 0], rotate: [5, -5, 5] }}
+      transition={{ duration: 5.2, repeat: Infinity, ease: "easeInOut" }}
+    >
+      🍂
+    </motion.div>
+
+    <motion.div
+      className="absolute bottom-[22%] left-[10%] text-4xl pointer-events-none select-none"
+      animate={{ opacity: [0.5, 1, 0.5], y: [0, -8, 0] }}
+      transition={{ duration: 3.2, repeat: Infinity }}
+    >
+      🌽
+    </motion.div>
+
+    <motion.div
+      className="absolute top-[28%] left-[75%] text-3xl pointer-events-none select-none"
+      animate={{ rotate: [0, 15, -15, 0] }}
+      transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+    >
+      🍁
+    </motion.div>
+  </>
+)}
 
   {BlvdTheme && <BoulevardBackground />}
 
@@ -239,7 +329,7 @@ className={`relative min-h-screen overflow-hidden ${
         h-[280px]
         rounded-full
         bg-orange-400/10
-        blur-[90px]
+ 8       blur-[90px]
       "
     />
 
@@ -338,7 +428,7 @@ className={`relative min-h-screen overflow-hidden ${
         rounded-full
         bg-green-500/10
         blur-[120px]
-      "
+8      "
     />
 
   
@@ -575,51 +665,49 @@ className={`relative min-h-screen overflow-hidden ${
 
   </div>
 
-) : ChristmasTheme ? (
-
+) : ThanksgivingTheme ? (
+  /* THANKSGIVING TITLE */
   <div className="mb-4 relative">
-
     <motion.h1
-      className={`${christmasFont.className} text-6xl md:text-7xl font-bold tracking-wide`}
+      className={`${cinzel.className} text-5xl md:text-6xl font-bold tracking-wide`}
       animate={{
         textShadow: [
-          "0 0 5px rgba(255,255,255,0.5), 0 0 15px rgba(220,38,38,0.25)",
-          "0 0 12px rgba(255,255,255,0.9), 0 0 30px rgba(34,197,94,0.45)",
-          "0 0 5px rgba(255,255,255,0.5), 0 0 15px rgba(220,38,38,0.25)",
+          "0 0 6px rgba(251,146,60,0.5), 0 0 14px rgba(180,83,9,0.35)",
+          "0 0 14px rgba(251,146,60,0.9), 0 0 32px rgba(220,38,38,0.5)",
+          "0 0 6px rgba(251,146,60,0.5), 0 0 14px rgba(180,83,9,0.35)",
         ],
       }}
-      transition={{
-        duration: 3,
-        repeat: Infinity,
-        ease: "easeInOut",
-      }}
+      transition={{ duration: 2.8, repeat: Infinity, ease: "easeInOut" }}
     >
-      <span className="text-red-500">Word</span>
-      <span className="text-green-500">igon</span>
+      <span className="text-amber-400">Word</span>
+      <span className="text-orange-500">igon</span>
     </motion.h1>
 
     <motion.div
-      className={`${christmasFont.className} absolute right-[-25px] top-[-28px] rotate-[-8deg] text-3xl text-white`}
-      animate={{
-        y: [0, -3, 0],
-      }}
-      transition={{
-        duration: 2,
-        repeat: Infinity,
+      initial={{ opacity: 0, x: 10, y: 5 }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
+      transition={{ duration: 0.8, delay: 0.3 }}
+      className={`
+        ${cinzel.className}
+        absolute right-[-30px] top-[-26px]
+        rotate-[-8deg] text-2xl md:text-3xl
+        text-red-400 pointer-events-none select-none whitespace-nowrap
+      `}
+      style={{
+        textShadow: `
+          0 0 6px rgb(234, 88, 12),
+          0 0 14px rgba(180, 83, 9, 0.7),
+          0 0 24px rgb(153, 27, 27)
+        `,
       }}
     >
-      Christmas
+      Thanksgiving
     </motion.div>
 
-    <p
-      className={`${christmasFont.className} mt-5 text-white/70 text-lg tracking-[0.2em]`}
-    >
+    <p className={`${cinzel.className} mt-5 text-amber-200/70 text-sm tracking-[0.25em] uppercase`}>
       The Ultimate Word Puzzle Game
     </p>
-
-  </div>
-
-) : BlvdTheme ? (
+  </div> ) : BlvdTheme ? (
  
   /* BOULEVARD SIGN */
   <div className="mb-4">
@@ -789,6 +877,46 @@ className={`relative min-h-screen overflow-hidden ${
         </div>
       </HalloweenButton>
     </>
+    ) : ThanksgivingTheme ? (
+  <>
+    <ThanksgivingButton onClick={() => openPopup("help")}>
+      <div className={`${cinzel.className} flex items-center justify-center gap-2`}>
+        <BookOpen className="w-5 h-5" />
+        <span>How to Play</span>
+      </div>
+    </ThanksgivingButton>
+
+    <ThanksgivingButton onClick={() => openPopup("options")}>
+      <div className={`${cinzel.className} flex items-center justify-center gap-2`}>
+        <Settings className="w-5 h-5" />
+        <span>Options</span>
+      </div>
+    </ThanksgivingButton>
+
+    <ThanksgivingButton
+      onClick={() => router.push("/levels")}
+      featured
+    >
+      <div className={`${cinzel.className} flex items-center justify-center gap-2`}>
+        <Gamepad2 className="w-5 h-5" />
+        <span>Play Game</span>
+      </div>
+    </ThanksgivingButton>
+
+    <ThanksgivingButton onClick={() => openPopup("about")}>
+      <div className={`${cinzel.className} flex items-center justify-center gap-2`}>
+        <Info className="w-5 h-5" />
+        <span>About</span>
+      </div>
+    </ThanksgivingButton>
+
+    <ThanksgivingButton onClick={() => openPopup("community")}>
+      <div className={`${cinzel.className} flex items-center justify-center gap-2`}>
+        <Users className="w-5 h-5" />
+        <span>Community</span>
+      </div>
+    </ThanksgivingButton>
+  </>
   )  : ChristmasTheme ? (
 
   <>
