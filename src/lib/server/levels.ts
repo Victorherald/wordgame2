@@ -8144,7 +8144,7 @@ export const levels: LevelData[] = [
    {
     id: 336,
      name: "Level 336",
-     objective: { type: 'spreadInk' , objGoal: 66 },
+     objective: { type: 'spreadInk' , objGoal: 60 },
      moves: 55,
       boulderHP: 2,
       fridgeCharge:0,
@@ -14395,9 +14395,9 @@ export const levels: LevelData[] = [
   id: 491,
   name: "Level 491",
 
-  objective: { type: 'lightsUp' , objGoal: 8, tileType: 'bulb' },
+  objective: { type: 'destroy' , objGoal: 14, tileType: 'warped' },
 
-  timeLimit: 20,
+  timeLimit: 60,
    difficulty: "demon",
   waterHeight: 4,
 
@@ -14619,7 +14619,7 @@ export const levels: LevelData[] = [
 
   objective: { type: 'score' , objGoal: 10000},
 
-  timeLimit: 25,
+  timeLimit: 105,
   
   waterHeight: 12,
 
@@ -14661,7 +14661,7 @@ export const levels: LevelData[] = [
 
   objective: { type: 'destroy' , objGoal: 15, tileType: 'bone'},
 
-  timeLimit: 20,
+  timeLimit: 120,
   
   waterHeight: 12,
 
