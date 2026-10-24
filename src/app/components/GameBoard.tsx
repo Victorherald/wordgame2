@@ -181,10 +181,10 @@ const specialTileSettings = {
   allowCursedTiles: true,
   allowFridges: true,
   allowDullTiles: true,
-  allowRandomSpecialTiles: false,
+  allowRandomSpecialTiles: true,
    allowLockedTiles: true,
    allowBoneTiles: true,
-   allowIceTiles: true,
+   allowIceTiles: false,
    allowBulbTiles: true,
   allowRandomLockedTiles: false, 
   lockedTurns: 4,
@@ -408,7 +408,8 @@ useEffect(() => {
 
 function generateRandomTile(
   includeHardLetters = true,
-  currentLevel = level
+  currentLevel?: LevelData, 
+  allowSpecialSpawn = true
 ): Tile {
 
   function shouldSpawnVelvet(): boolean {
@@ -431,84 +432,93 @@ const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)]
   const pFire = 0.02;
   const pWarp = 0.02;
   const pCursed = 0.03;
-  const pDull = 0.02;
+  const pDull = 0.05;
   const pLocked = 0.02;
   const pBone = 0.02;
   const pBulb = 0.03;
   const pMystery = 1.05;
 const shouldBeMystery =
+  allowSpecialSpawn &&
   currentLevel?.shouldMysterySpawn === true &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pMystery;
 
 const shouldBeFire =
-  level?.shouldFireSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldFireSpawn === true &&
   specialTileSettings.allowFireTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pFire;
 
 const shouldBeBulb =
-  level?.shouldBulbSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldBulbSpawn === true &&
   specialTileSettings.allowBulbTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pBulb;
 
 const shouldBeBook =
-  level?.shouldBookSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldBookSpawn === true &&
   specialTileSettings.allowBooks &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pBulb;
 
 const shouldBeBone =
-  level?.shouldBoneSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldBoneSpawn === true &&
   specialTileSettings.allowBoneTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pBone;
 
 const shouldBeInfected =
-  level?.shouldInfectedSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldInfectedSpawn === true &&
   specialTileSettings.allowInfectTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < 0.7;
 
 const shouldBeVelvet =
-  level?.shouldVelvetSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldVelvetSpawn === true &&
   specialTileSettings.allowVelvets &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < 0.7;
 
 const shouldBeWarped =
-  level?.shouldWarpedSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldWarpedSpawn === true &&
   specialTileSettings.allowWarpedTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pWarp;
 
 const shouldBeCursed =
-  level?.shouldCursedSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldCursedSpawn === true &&
   specialTileSettings.allowCursedTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pCursed;
 
 const shouldBeDull =
-  level?.shouldDullSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldDullSpawn === true &&
   specialTileSettings.allowDullTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pDull;
 
 const shouldBeLocked =
-  level?.shouldLockedSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldLockedSpawn === true &&
   specialTileSettings.allowLockedTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pLocked;
 
 const shouldBeExclamated =
-  level?.shouldExclamatorSpawn === true &&
+  allowSpecialSpawn &&
+  currentLevel?.shouldExclamatorSpawn === true &&
   specialTileSettings.allowExclamators &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pLocked;
-
-  const shouldBeIced = specialTileSettings.allowIceTiles
-  && specialTileSettings.allowRandomSpecialTiles ;
 
 
 if (shouldBeBone) {
@@ -546,9 +556,7 @@ if (shouldBeLocked) {
   return { letter, isLocked: true, lockTurns: specialTileSettings.lockedTurns, rarity };
 }
 
-if (shouldBeIced) {
-  return { letter, isFrozen: true, iceHealth: 1, rarity ,  isStationary: true};
-}
+
 
 if (shouldBeInfected){
   return {letter, isInfected: true , rarity: 'none'};
@@ -586,7 +594,7 @@ if (shouldBeVelvet) {
     return { letter, isCursed: true, curseTurns: specialTileSettings.cursedTurns, rarity: 'bronze' };
   }
   if (shouldBeDull) {
-    return { letter, isDull: true, dullTurns: specialTileSettings.dullTurns ?? 3, rarity: 'none' };
+    return { letter, isDull: true, dullTurns: level?.dullTurns ?? 3, rarity: 'none' };
   }
 
 
@@ -3212,7 +3220,7 @@ const handleScramble = () => {
           : objective.type === "chamberDrain"
           ? "Chamber Level"
           : objective.type === "defrost"
-          ? "Ice cleared"
+          ? "Ice melted"
           : `Interact with ${objective.tileType} tiles`
       }: ${
         objective.type === "chamberDrain"
@@ -3344,7 +3352,7 @@ const handleScramble = () => {
           : objective.type === "chamberDrain"
           ? "Chamber Level"
           : objective.type === "defrost"
-          ? "Ice cleared"
+          ? "Ice melted"
           : `Interact with ${objective.tileType} tiles`
       }: ${
         objective.type === "chamberDrain"
@@ -4338,7 +4346,7 @@ const exclamated = tile?.isExclamator
             {objective.type === "lightsUp" && `Turn on all the lights!`}
              {objective.type === "chamberDrain" && `Drain the water off the chamber!`}
             {objective.type === "collectVelvet" && `Crush the velvets!`}
-            {objective.type === "defrost" && "Clear all the ice!"}
+            {objective.type === "defrost" && "Melt all the ice!"}
             {objective.type === "boss" && "Defeat the boss!"}
             {objective.type === "spreadInk" && "Spread the Ink!"}
           </p>

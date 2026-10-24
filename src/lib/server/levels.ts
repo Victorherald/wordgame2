@@ -17376,4 +17376,605 @@ export const levels: LevelData[] = [
 
   
 },
+
+
+{
+  id: 555,
+  name: "Level 555",
+
+  objective: { type: 'lightsUp' , objGoal:6, tileType: "bulb"},
+
+  moves: 48,
+
+  waterHeight: 8,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 41,
+  lockTurns: 13,
+  dullTurns: 30,
+  cursedTurns: 32,
+  boneRipeTurns: 5,
+  boneTurns: 8,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "fridge", "normal", "normal", "normal", "normal", "fridge", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["ice", "ice", "normal", "normal", "normal", "normal", "ice", "ice"],
+        ["bulb", "ice", "ice", "ice", "ice", "ice", "ice", "fluorescent"],
+        ["ice", "normal", "removed", "ice", "ice", "removed", "normal", "ice"],
+        ["ice", "removed", "removed", "ice", "ice", "removed", "removed", "ice"],
+        ["fluorescent", "removed", "removed", "bulb", "bulb", "removed", "removed", "bulb"]
+  ],
+    groundLayout: [
+     
+  ],
+
+  
+},
+
+
+{
+  id: 556,
+  name: "Level 556",
+
+  objective: { type: 'destroy' , objGoal:2, tileType: "exclamator"},
+
+  moves: 48,
+
+  waterHeight: 8,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 41,
+  lockTurns: 13,
+  dullTurns: 30,
+  cursedTurns: 32,
+  boneRipeTurns: 5,
+  boneTurns: 8,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "boulder", "boulder", "boulder", "boulder", "boulder", "boulder", "normal"],
+        ["normal", "boulder", "exclamator", "boulder", "normal", "normal", "boulder", "normal"],
+        ["normal", "boulder", "boulder", "boulder", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "boulder", "boulder", "boulder", "normal"],
+        ["normal", "boulder", "normal", "normal", "boulder", "exclamator", "boulder", "normal"],
+        ["normal", "boulder", "boulder", "boulder", "boulder", "boulder", "boulder", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+  ],
+    groundLayout: [
+     
+  ],
+
+  
+},
+
+
+{
+  id: 557,
+  name: "Level 557",
+
+  objective: { type: 'destroy' , objGoal:30, tileType: "bone"},
+
+  moves: 35,
+
+  waterHeight: 8,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 41,
+  lockTurns: 13,
+  dullTurns: 30,
+  cursedTurns: 32,
+  boneRipeTurns: 9,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["removed", "normal", "normal", "normal", "normal", "normal", "boulder", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["normal", "normal", "normal", "normal", "normal", "boulder", "removed", "bone"],
+        ["normal", "normal", "boulder", "removed", "normal", "removed", "bone", "bone"],
+        ["normal", "normal", "removed", "bone", "removed", "bone", "bone", "bone"],
+        ["boulder", "removed", "bone", "bone", "bone", "bone", "bone", "normal"],
+        ["removed", "bone", "bone", "bone", "bone", "bone", "bone", "removed"],
+        ["removed", "bone", "bone", "bone", "bone", "bone", "bone", "removed"]
+  ],
+    groundLayout: [
+     
+  ],
+
+  
+},
+
+
+{
+  id: 558,
+  name: "Level 558",
+
+  objective: { type: 'spreadInk' , objGoal:50},
+
+  moves: 35,
+
+  waterHeight: 8,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 41,
+  lockTurns: 13,
+  dullTurns: 30,
+  cursedTurns: 32,
+  boneRipeTurns: 9,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["boulder", "removed", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["boulder", "boulder", "removed", "normal", "normal", "normal", "removed", "lineBlasterRow"],
+        ["boulder", "boulder", "boulder", "normal", "normal", "removed", "lineBlasterRow", "bookClosed"],
+        ["boulder", "boulder", "removed", "normal", "normal", "lineBlasterRow", "bookClosed", "bookClosed"],
+        ["boulder", "removed", "normal", "normal", "normal", "removed", "lineBlasterRow", "bookClosed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "removed", "lineBlasterRow"],
+        ["exclamator", "bulb", "exclamator", "fluorescent", "exclamator", "bulb", "exclamator", "removed"]
+  ],
+    groundLayout: [
+       ['none', 'none', 'none', 'none', 'ink', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ],
+
+  
+},
+
+
+{
+  id: 559,
+  name: "Level 559",
+
+  objective: { type: 'destroy' , objGoal:20, tileType: "warped"},
+
+  moves: 40,
+
+  waterHeight: 8,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 30,
+  cursedTurns: 32,
+  boneRipeTurns: 9,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["warped", "warped", "normal", "normal", "normal", "normal", "warped", "warped"],
+        ["warped", "warped", "normal", "normal", "normal", "normal", "warped", "warped"],
+        ["removed", "normal", "infected", "normal", "normal", "infected", "normal", "removed"],
+        ["removed", "normal", "normal", "infected", "infected", "normal", "normal", "removed"],
+        ["removed", "normal", "normal", "infected", "infected", "normal", "normal", "removed"],
+        ["removed", "normal", "infected", "normal", "normal", "infected", "normal", "removed"],
+        ["warped", "warped", "normal", "normal", "normal", "normal", "warped", "warped"],
+        ["warped", "warped", "removed", "normal", "removed", "removed", "warped", "warped"]
+  ],
+    groundLayout: [
+       ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ],
+
+  
+},
+
+
+{
+  id: 560,
+  name: "Level 560",
+
+  objective: { type: 'collectVelvet' , objGoal:7, tileType: "velvet"},
+
+  moves: 20,
+
+  waterHeight: 8,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 30,
+  cursedTurns: 32,
+  boneRipeTurns: 9,
+  shouldDullSpawn: true,
+  boneTurns: 6,
+  allowHardLetters: true,
+  locked: true,
+
+  board: [ 
+        ["normal", "velvet", "normal", "normal", "normal", "normal", "velvet", "normal"],
+        ["normal", "velvet", "normal", "normal", "normal", "normal", "velvet", "normal"],
+        ["normal", "normal", "velvet", "normal", "normal", "velvet", "normal", "normal"],
+        ["normal", "normal", "normal", "velvet", "velvet", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "velvet", "velvet", "normal", "normal", "normal"],
+        ["normal", "normal", "velvet", "normal", "normal", "velvet", "normal", "normal"],
+        ["normal", "velvet", "normal", "normal", "normal", "normal", "velvet", "normal"],
+        ["normal", "velvet", "normal", "normal", "normal", "normal", "velvet", "normal"]
+  ],
+    groundLayout: [
+
+  ],
+
+  
+},
+
+
+{
+  id: 561,
+  name: "Level 561",
+
+  objective: { type: 'lightsUp' , objGoal:2, tileType: "bulb"},
+
+  moves: 35,
+
+  waterHeight: 8,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 30,
+  cursedTurns: 32,
+  boneRipeTurns: 9,
+  shouldDullSpawn: true,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["removed", "spiral", "spiral", "spiral", "removed", "spiral", "spiral", "spiral"],
+        ["removed", "spiral", "bulb", "spiral", "removed", "spiral", "fluorescent", "spiral"],
+        ["removed", "spiral", "spiral", "spiral", "removed", "spiral", "spiral", "spiral"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["removed", "spiral", "normal", "normal", "normal", "normal", "normal", "spiral"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "spiral", "normal", "spiral", "normal", "spiral", "normal", "spiral"]  
+  ],
+    groundLayout: [
+
+  ],
+
+  
+},
+
+
+
+{
+  id: 562,
+  name: "Level 562",
+
+  objective: { type: 'chamberDrain' , objGoal:3},
+
+  moves: 40,
+
+  waterHeight: 3,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 30,
+  cursedTurns: 32,
+  boneRipeTurns: 9,
+  shouldFireSpawn: true,
+  boneTurns: 6,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["normal", "exclamator", "normal", "normal", "normal", "exclamator", "normal", "removed"],
+        ["normal", "removed", "normal", "removed", "normal", "removed", "normal", "removed"],
+        ["normal", "exclamator", "fluorescent", "fluorescent", "fluorescent", "exclamator", "normal", "removed"],
+        ["fluorescent", "removed", "fluorescent", "chamber", "fluorescent", "removed", "normal", "normal"],
+        ["fluorescent", "exclamator", "fluorescent", "fluorescent", "fluorescent", "exclamator", "normal", "normal"],
+        ["fluorescent", "removed", "normal", "removed", "normal", "removed", "normal", "normal"],
+        ["chamber", "exclamator", "normal", "normal", "normal", "exclamator", "fluorescent", "fluorescent"],
+        ["removed", "removed", "removed", "normal", "normal", "normal", "fluorescent", "chamber"]
+  ],
+    groundLayout: [
+
+  ],
+
+  
+},
+
+
+{
+  id: 563,
+  name: "Level 563",
+
+  objective: { type: 'destroy' , objGoal:40, tileType: "bone"},
+
+  moves: 40,
+
+  waterHeight: 3,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 30,
+  cursedTurns: 32,
+  boneRipeTurns: 7,
+  shouldFireSpawn: false,
+  boneTurns: 4,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["removed", "normal", "bone", "bone", "bone", "bone", "normal", "normal"],
+        ["removed", "normal", "removed", "removed", "bone", "bone", "normal", "removed"],
+        ["removed", "normal", "removed", "removed", "normal", "bone", "normal", "removed"],
+        ["removed", "normal", "normal", "normal", "bone", "bone", "normal", "removed"],
+        ["removed", "normal", "bone", "bone", "normal", "normal", "normal", "removed"],
+        ["removed", "normal", "bone", "normal", "removed", "removed", "normal", "removed"],
+        ["removed", "normal", "bone", "bone", "removed", "removed", "normal", "removed"],
+        ["normal", "normal", "bone", "bone", "bone", "bone", "normal", "removed"]
+  ],
+    groundLayout: [
+
+  ],
+
+  
+},
+
+
+{
+  id: 564,
+  name: "Level 564",
+
+  objective: { type: 'score' , objGoal:18000},
+
+  moves: 40,
+
+  waterHeight: 3,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 7,
+  shouldFireSpawn: false,
+  boneTurns: 4,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["removed", "removed", "removed", "mystery", "normal", "mystery", "normal", "removed"],
+        ["removed", "removed", "removed", "normal", "normal", "normal", "removed", "removed"],
+        ["mystery", "dull", "normal", "mystery", "normal", "removed", "removed", "removed"],
+        ["dull", "dull", "dull", "dull", "normal", "mystery", "normal", "normal"],
+        ["mystery", "dull", "mystery", "dull", "dull", "dull", "dull", "mystery"],
+        ["removed", "removed", "dull", "dull", "dull", "dull", "dull", "removed"],
+        ["removed", "removed", "dull", "dull", "dull", "dull", "removed", "removed"],
+        ["removed", "removed", "mystery", "dull", "mystery", "removed", "removed", "removed"]
+  ],
+    groundLayout: [
+
+  ],
+
+  
+},
+
+
+
+{
+  id: 565,
+  name: "Level 565",
+
+  objective: { type: 'defrost' , objGoal:28, tileType: "ice"},
+
+  moves: 45,
+
+  waterHeight: 3,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 7,
+  shouldFireSpawn: false,
+  boneTurns: 4,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["normal", "ice", "normal", "normal", "ice", "normal", "normal", "ice"],
+        ["normal", "normal", "ice", "normal", "ice", "normal", "ice", "normal"],
+        ["normal", "normal", "normal", "ice", "ice", "ice", "normal", "normal"],
+        ["ice", "ice", "ice", "ice", "ice", "ice", "ice", "ice"],
+        ["normal", "normal", "normal", "ice", "ice", "ice", "normal", "normal"],
+        ["normal", "normal", "ice", "normal", "ice", "normal", "ice", "normal"],
+        ["normal", "ice", "normal", "normal", "ice", "normal", "normal", "ice"],
+        ["ice", "normal", "normal", "normal", "ice", "normal", "normal", "normal"]
+  ],
+    groundLayout: [
+
+  ],
+
+  
+},
+
+
+{
+  id: 566,
+  name: "Level 566",
+
+  objective: { type: 'chamberDrain' , objGoal:12},
+
+  moves: 40,
+
+  waterHeight: 12,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 7,
+  shouldFireSpawn: false,
+  boneTurns: 4,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+          
+  ["removed", "removed", "removed", "removed", "removed", "normal", "normal", "removed"],
+  ["removed", "spiral", "spiral", "removed", "normal", "chamber", "chamber", "normal"],
+  ["spiral", "chamber", "chamber", "spiral", "normal", "chamber", "chamber", "normal"],
+  ["spiral", "chamber", "chamber", "spiral", "removed", "normal", "normal", "removed"],
+  ["removed", "spiral", "spiral", "removed", "exclamator", "exclamator", "removed", "removed"],
+  ["removed", "removed", "removed", "boulder", "chamber", "chamber", "boulder", "removed"],
+  ["removed", "removed", "removed", "boulder", "chamber", "chamber", "boulder", "removed"],
+  ["removed", "removed", "removed", "removed", "boulder", "boulder", "removed", "removed"]
+
+  ],
+    groundLayout: [
+
+  ],
+
+  
+},
+
+
+{
+  id: 567,
+  name: "Level 567",
+
+  objective: { type: 'score' , objGoal:11000},
+
+  timeLimit: 400,
+  difficulty: "Hard Level",
+  waterHeight: 12,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 7,
+  shouldFireSpawn: false,
+  boneTurns: 4,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+          
+      
+        ["cursed", "cursed", "cursed", "normal", "normal", "normal", "normal", "normal"],
+        ["cursed", "cursed", "normal", "normal", "normal", "normal", "normal", "cursed"],
+        ["cursed", "normal", "cursed", "normal", "normal", "normal", "cursed", "normal"],
+        ["normal", "normal", "normal", "cursed", "cursed", "cursed", "normal", "normal"],
+        ["normal", "normal", "normal", "cursed", "cursed", "cursed", "normal", "cursed"],
+        ["normal", "normal", "normal", "cursed", "cursed", "cursed", "normal", "cursed"],
+        ["normal", "normal", "cursed", "normal", "normal", "normal", "cursed", "normal"],
+        ["normal", "cursed", "normal", "normal", "cursed", "cursed", "normal", "cursed"]
+
+  ],
+    groundLayout: [
+
+  ],
+
+  
+},
 ];
