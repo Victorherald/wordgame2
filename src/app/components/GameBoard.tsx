@@ -68,6 +68,7 @@ shakeTick?: number;
   isMysteryRevealing?: boolean;
   gem?: GemColor;
   isFire?: boolean;
+  isTNT?: boolean;
   iceHealth?: number;
   isExclamator?: boolean;
   isVelvet?: boolean;
@@ -126,7 +127,7 @@ type Position = { row: number; col: number ; wasFrozen?: boolean };
 
 type LetterBoardProps = {
   level?: LevelData;
-  layout?: ("normal"| "lineBlasterRow"| "fluorescent"  | "chamber" | "tracker" | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | "boulder002" | "spiral" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
+  layout?: ("normal"| "lineBlasterRow"| "fluorescent"  | "chamber" | "tracker"| "TNT" | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | "boulder002" | "spiral" | "boulder003" | "dull02" | "boulder" | "lineBlasterColumn" | "exclamator" |"velvet" | "locked" | "cursed" | "warped" | "fire" | "removed" | "dull" | "bone" | "bulb" | "ice" | "infected" | "fridge" | "bookOpen"| "bookClosed" | "mystery")[][];
   objective?: {
     waterHeight?: number;
   type: 'score' | 'spreadInk' | 'words' | 'boss' | 'destroy' | 'lightsUp' | 'defrost' | 'alphabet' | 'collectVelvet' | 'chamberDrain';
@@ -137,7 +138,7 @@ type LetterBoardProps = {
    bossMaxHp?: number;
    bossColor?: string;
   
-  tileType?: 'cursed' | "fluorescent" | 'boulder002' | "chamber"  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
+  tileType?: 'cursed' | "fluorescent" | 'boulder002' | "TNT"  | "chamber"  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse' | 'ink')[][];
 };
@@ -166,6 +167,7 @@ const specialTileSettings = {
   allowRandomFireTiles: false,
   allowRandomCursedTiles: false,
   allowRandomWarpedTiles: false,
+  allowTNTTiles: true,
   allowRandomBulbTiles: false,
   allowRandomInfectTiles: false,
   allowExclamators: true,
@@ -181,14 +183,15 @@ const specialTileSettings = {
   allowCursedTiles: true,
   allowFridges: true,
   allowDullTiles: true,
-  allowRandomSpecialTiles: true,
+  allowRandomSpecialTiles: false,
    allowLockedTiles: true,
    allowBoneTiles: true,
-   allowIceTiles: false,
+   allowIceTiles: true,
    allowBulbTiles: true,
   allowRandomLockedTiles: false, 
   lockedTurns: 4,
  shouldDullSpawn: false,
+ 
    cursedTurns: 5 ,
   warpedTurns: 6,
   fireTurns: 5,
@@ -240,6 +243,9 @@ const [timeLeft, setTimeLeft] = useState<number | null>(null);
 const [bossHp, setBossHp] = useState(objective?.bossHp ?? 100);
 const [bossMaxHp] = useState(objective?.bossMaxHp ?? 100);
 const [bossColor, setBossColor] = useState<string>(objective?.bossColor ?? "red");
+const [shockwaveTiles, setShockwaveTiles] = useState<
+  { row: number; col: number; dx: number; dy: number }[]
+>([]);
 
 
 
@@ -408,8 +414,7 @@ useEffect(() => {
 
 function generateRandomTile(
   includeHardLetters = true,
-  currentLevel?: LevelData, 
-  allowSpecialSpawn = true
+  currentLevel = level
 ): Tile {
 
   function shouldSpawnVelvet(): boolean {
@@ -432,93 +437,93 @@ const letter = allowedLetters[Math.floor(Math.random() * allowedLetters.length)]
   const pFire = 0.02;
   const pWarp = 0.02;
   const pCursed = 0.03;
-  const pDull = 0.05;
+  const pDull = 0.02;
+  const pTNT = 0.02;
   const pLocked = 0.02;
   const pBone = 0.02;
   const pBulb = 0.03;
   const pMystery = 1.05;
 const shouldBeMystery =
-  allowSpecialSpawn &&
   currentLevel?.shouldMysterySpawn === true &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pMystery;
 
 const shouldBeFire =
-  allowSpecialSpawn &&
-  currentLevel?.shouldFireSpawn === true &&
+  level?.shouldFireSpawn === true &&
   specialTileSettings.allowFireTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pFire;
 
+const shouldBeTNT =
+  level?.shouldTNTSpawn === true &&
+  specialTileSettings.allowTNTTiles &&
+  specialTileSettings.allowRandomSpecialTiles &&
+  Math.random() < pFire;
+
+ 
+
 const shouldBeBulb =
-  allowSpecialSpawn &&
-  currentLevel?.shouldBulbSpawn === true &&
+  level?.shouldBulbSpawn === true &&
   specialTileSettings.allowBulbTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pBulb;
 
 const shouldBeBook =
-  allowSpecialSpawn &&
-  currentLevel?.shouldBookSpawn === true &&
+  level?.shouldBookSpawn === true &&
   specialTileSettings.allowBooks &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pBulb;
 
 const shouldBeBone =
-  allowSpecialSpawn &&
-  currentLevel?.shouldBoneSpawn === true &&
+  level?.shouldBoneSpawn === true &&
   specialTileSettings.allowBoneTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pBone;
 
 const shouldBeInfected =
-  allowSpecialSpawn &&
-  currentLevel?.shouldInfectedSpawn === true &&
+  level?.shouldInfectedSpawn === true &&
   specialTileSettings.allowInfectTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < 0.7;
 
 const shouldBeVelvet =
-  allowSpecialSpawn &&
-  currentLevel?.shouldVelvetSpawn === true &&
+  level?.shouldVelvetSpawn === true &&
   specialTileSettings.allowVelvets &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < 0.7;
 
 const shouldBeWarped =
-  allowSpecialSpawn &&
-  currentLevel?.shouldWarpedSpawn === true &&
+  level?.shouldWarpedSpawn === true &&
   specialTileSettings.allowWarpedTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pWarp;
 
 const shouldBeCursed =
-  allowSpecialSpawn &&
-  currentLevel?.shouldCursedSpawn === true &&
+  level?.shouldCursedSpawn === true &&
   specialTileSettings.allowCursedTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pCursed;
 
 const shouldBeDull =
-  allowSpecialSpawn &&
-  currentLevel?.shouldDullSpawn === true &&
+  level?.shouldDullSpawn === true &&
   specialTileSettings.allowDullTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pDull;
 
 const shouldBeLocked =
-  allowSpecialSpawn &&
-  currentLevel?.shouldLockedSpawn === true &&
+  level?.shouldLockedSpawn === true &&
   specialTileSettings.allowLockedTiles &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pLocked;
 
 const shouldBeExclamated =
-  allowSpecialSpawn &&
-  currentLevel?.shouldExclamatorSpawn === true &&
+  level?.shouldExclamatorSpawn === true &&
   specialTileSettings.allowExclamators &&
   specialTileSettings.allowRandomSpecialTiles &&
   Math.random() < pLocked;
+
+  const shouldBeIced = specialTileSettings.allowIceTiles
+  && specialTileSettings.allowRandomSpecialTiles ;
 
 
 if (shouldBeBone) {
@@ -556,7 +561,9 @@ if (shouldBeLocked) {
   return { letter, isLocked: true, lockTurns: specialTileSettings.lockedTurns, rarity };
 }
 
-
+if (shouldBeIced) {
+  return { letter, isFrozen: true, iceHealth: 1, rarity ,  isStationary: true};
+}
 
 if (shouldBeInfected){
   return {letter, isInfected: true , rarity: 'none'};
@@ -594,7 +601,7 @@ if (shouldBeVelvet) {
     return { letter, isCursed: true, curseTurns: specialTileSettings.cursedTurns, rarity: 'bronze' };
   }
   if (shouldBeDull) {
-    return { letter, isDull: true, dullTurns: level?.dullTurns ?? 3, rarity: 'none' };
+    return { letter, isDull: true, dullTurns: specialTileSettings.dullTurns ?? 3, rarity: 'none' };
   }
 
 
@@ -656,6 +663,16 @@ const initializeBoard = ( rows: number, cols: number): Tile[][] => {
       
             
         } 
+
+        else if (
+  presetType === "TNT" &&
+  specialTileSettings.allowTNTTiles
+) {
+  rowTiles.push({
+    ...generateRandomTile(level?.allowHardLetters ?? true),
+    isTNT: true,
+  });
+}
 
         else if (presetType === "ltrN") {
   rowTiles.push({
@@ -1650,54 +1667,75 @@ const handleSubmit = () => {
 
     //TNT explosion
 
-    function explodeTNT(grid: Tile[][], r: number, c: number) {
-      const newGrid = grid.map(row => row.map(t => (t ? { ...t } : t)));
-    
-      for (let dr = -1; dr <= 1; dr++) {
-        for (let dc = -1; dc <= 1; dc++) {
-          const nr = r + dr;
-          const nc = c + dc;
-    
-          const tile = newGrid[nr]?.[nc];
-          if (!tile) continue;
-    
-          // optional: protect blockers
-          if (tile.isFridge || tile.isLocked) continue;
-    
-          newGrid[nr][nc] = null as any; // 💥 destroy
-        }
-      }
-    
-      return newGrid;
-    }
+    console.log("Matched tiles:", selected);
+console.log(
+  "TNT tiles:",
+  selected.filter(({ row, col }) => grid[row]?.[col]?.isTNT)
+);
 
-    function getShockwaveTiles(grid: Tile[][], r: number, c: number) {
-      const affected: { row: number; col: number; dx: number; dy: number }[] = [];
-    
-      for (let dr = -2; dr <= 2; dr++) {
-        for (let dc = -2; dc <= 2; dc++) {
-          const dist = Math.max(Math.abs(dr), Math.abs(dc));
-    
-          // only ring OUTSIDE 3x3
-          if (dist !== 2) continue;
-    
-          const nr = r + dr;
-          const nc = c + dc;
-    
-          if (!grid[nr]?.[nc]) continue;
-    
-          // direction AWAY from center
-          affected.push({
-            row: nr,
-            col: nc,
-            dx: dc,
-            dy: dr,
-          });
-        }
-      }
-    
-      return affected;
+   function explodeTNT(
+  grid: Tile[][],
+  r: number,
+  c: number
+): Tile[][] {
+  const newGrid = grid.map((row) =>
+    row.map((tile) => (tile ? { ...tile } : tile))
+  );
+
+  for (let dr = -1; dr <= 1; dr++) {
+    for (let dc = -1; dc <= 1; dc++) {
+      const nr = r + dr;
+      const nc = c + dc;
+
+      const tile = newGrid[nr]?.[nc];
+
+      if (!tile) continue;
+
+      // Protect blockers
+      if (tile.isFridge || tile.isLocked) continue;
+
+      newGrid[nr][nc] = null as any;
     }
+  }
+
+  return newGrid;
+}
+
+   function getTNTShockwaveTiles(
+  grid: Tile[][],
+  row: number,
+  col: number
+) {
+  const affected: {
+    row: number;
+    col: number;
+    dx: number;
+    dy: number;
+  }[] = [];
+
+  for (let dr = -2; dr <= 2; dr++) {
+    for (let dc = -2; dc <= 2; dc++) {
+      if (dr === 0 && dc === 0) continue;
+
+      const r = row + dr;
+      const c = col + dc;
+
+      if (!grid[r]?.[c]) continue;
+
+      // Direction away from the TNT
+      const length = Math.sqrt(dr * dr + dc * dc);
+
+      affected.push({
+        row: r,
+        col: c,
+        dx: dc / length,
+        dy: dr / length,
+      });
+    }
+  }
+
+  return affected;
+}
 
 function activateChambers(
   matchedTiles: Position[]
@@ -1907,7 +1945,56 @@ function applyLineBlasts(
 
 
 
+function applyTNTBlasts(
+  grid: Tile[][],
+  tnts: { row: number; col: number }[]
+): { grid: Tile[][]; destroyed: Position[] } {
 
+  const destroyed: Position[] = [];
+
+  const newGrid = grid.map(row =>
+    row.map(tile => (tile ? { ...tile } : tile))
+  );
+
+  for (const { row, col } of tnts) {
+    const tnt = newGrid[row]?.[col];
+
+    if (!tnt?.isTNT) continue;
+
+    // Explode the surrounding 3x3 area
+    for (let dr = -1; dr <= 1; dr++) {
+      for (let dc = -1; dc <= 1; dc++) {
+        const r = row + dr;
+        const c = col + dc;
+
+        const target = newGrid[r]?.[c];
+
+        if (!target || target.isRemoved) continue;
+
+        // Preserve protected tiles
+        if (target.isFridge || target.isLocked) continue;
+
+        // Handle bulbs like your line blaster
+        if (target.isLightBulb) {
+          newGrid[r][c] = {
+            ...target,
+            isBulbOn: !target.isBulbOn,
+          };
+          continue;
+        }
+
+        // Record the destroyed tile
+        if (!destroyed.some(pos => pos.row === r && pos.col === c)) {
+          destroyed.push({ row: r, col: c });
+        }
+
+        newGrid[r][c] = null as any;
+      }
+    }
+  }
+
+  return { grid: newGrid, destroyed };
+}
 
 
 
@@ -2152,6 +2239,7 @@ function NegativeTile(tile: Tile) {
     tile.isCursed ||
     tile.isWarped ||
     tile.isFire ||
+    tile.isTNT ||
     tile.isVelvet ||
     tile.isBook ||
     tile.isDull ||
@@ -2167,12 +2255,44 @@ function NegativeTile(tile: Tile) {
 // Detect line blasters BEFORE deletion
 const lineBlastersUsed = getLineBlastersUsed(updatedGrid, selected);
 
+  const tntsUsed = selected.filter(({ row, col }) =>
+    updatedGrid[row]?.[col]?.isTNT
+  );
+
+   // Apply TNT explosions
+ // Apply TNT explosions
+if (tntsUsed.length > 0) {
+  const shockwaves = tntsUsed.flatMap(({ row, col }) =>
+    getTNTShockwaveTiles(updatedGrid, row, col)
+  );
+
+  setShockwaveTiles(shockwaves);
+
+  console.log("TNT shockwaves:", shockwaves);
+
+  const tntResult = applyTNTBlasts(updatedGrid, tntsUsed);
+
+  updatedGrid = tntResult.grid;
+  destroyedThisMove.push(...tntResult.destroyed);
+
+
+
+  setScore(prev => prev + tntsUsed.length * 600);
+
+  setTimeout(() => {
+    setShockwaveTiles([]);
+  }, 400);
+}
+
 // Apply their effects
 if (lineBlastersUsed.length > 0) {
   const blastResult = applyLineBlasts(updatedGrid, lineBlastersUsed);
 
   updatedGrid = blastResult.grid;
   destroyedThisMove.push(...blastResult.destroyed);
+
+    // Award 600 points per TNT explosion
+  setScore(prev => prev + (tntsUsed.length * 600));
 }
 
 
@@ -2281,7 +2401,7 @@ else if (objective?.type === "lightsUp")
   label = "Lights turned on";
   else if (objective?.type === "spreadInk") label = "Ink Spread";
 else if (objective?.type === "defrost")
-  label = "Ice cleared";
+  label = "ice melted";
     
 if (objective) {
   let updatedObjMet = objMet;
@@ -3220,7 +3340,7 @@ const handleScramble = () => {
           : objective.type === "chamberDrain"
           ? "Chamber Level"
           : objective.type === "defrost"
-          ? "Ice melted"
+          ? "ice melted"
           : `Interact with ${objective.tileType} tiles`
       }: ${
         objective.type === "chamberDrain"
@@ -3352,7 +3472,7 @@ const handleScramble = () => {
           : objective.type === "chamberDrain"
           ? "Chamber Level"
           : objective.type === "defrost"
-          ? "Ice melted"
+          ? "ice melted"
           : `Interact with ${objective.tileType} tiles`
       }: ${
         objective.type === "chamberDrain"
@@ -3692,6 +3812,18 @@ const handleScramble = () => {
       const fire = tile?.isFire
         ? 'animate-fire-tile bg-orange-700 text-white shadow-lg shadow-orange-500/30 fire-particles'
         : '';
+
+        // TNT shockwave animation
+const shockwave = shockwaveTiles.find(
+  p => p.row === r && p.col === c
+);
+
+const shockwaveClass = shockwave ? "tnt-shockwave" : "";
+        
+        
+        const tnt = tile?.isTNT
+  ? "tnt-tile"
+  : "";
         const plague = tile?.isInfected 
         ?  'tile infected' : '';
       const cursed = tile?.isCursed
@@ -3968,24 +4100,104 @@ const exclamated = tile?.isExclamator
     <CleanseRain />
   </>
 )}
-
 {tile?.isLineBlaster && tile.blastDirection === "row" && (
   <>
-    <ChevronLeft
+    {/* ⚡ Left electric blast */}
+    <motion.div
       className="
-        absolute left-[2px] top-1/2 -translate-y-1/2
-        w-5 h-5 sm:w-4 sm:h-4
-        text-orange-600
-        z-20
+        absolute left-0 top-1/2 -translate-y-1/2
+        w-7 h-3
+        z-20 pointer-events-none
       "
-    />
-    <ChevronRight
+      animate={{
+        opacity: [0.6, 1, 0.7, 1, 0.6],
+        scaleX: [0.9, 1.15, 0.95, 1.1, 0.9],
+      }}
+      transition={{
+        duration: 0.45,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      <div
+        className="
+          absolute inset-y-0 right-0
+          w-6
+          bg-cyan-300
+          blur-[2px]
+          rounded-full
+        "
+      />
+
+      <div
+        className="
+          absolute inset-y-[3px] right-0
+          w-6
+          bg-white
+          blur-[1px]
+          rounded-full
+        "
+      />
+    </motion.div>
+
+    {/* ⚡ Right electric blast */}
+    <motion.div
       className="
-        absolute right-[2px] top-1/2 -translate-y-1/2
-        w-5 h-5 sm:w-4 sm:h-4
-        text-orange-600
-        z-20
+        absolute right-0 top-1/2 -translate-y-1/2
+        w-7 h-3
+        z-20 pointer-events-none
       "
+      animate={{
+        opacity: [0.6, 1, 0.7, 1, 0.6],
+        scaleX: [0.9, 1.15, 0.95, 1.1, 0.9],
+      }}
+      transition={{
+        duration: 0.45,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      <div
+        className="
+          absolute inset-y-0 left-0
+          w-6
+          bg-cyan-300
+          blur-[2px]
+          rounded-full
+        "
+      />
+
+      <div
+        className="
+          absolute inset-y-[3px] left-0
+          w-6
+          bg-white
+          blur-[1px]
+          rounded-full
+        "
+      />
+    </motion.div>
+
+    {/* ⚡ Electric core */}
+    <motion.div
+      className="
+        absolute left-1/2 top-1/2
+        -translate-x-1/2 -translate-y-1/2
+        w-8 h-1
+        bg-white
+        rounded-full
+        shadow-[0_0_5px_#fff,0_0_10px_#22d3ee,0_0_18px_#06b6d4]
+        z-20 pointer-events-none
+      "
+      animate={{
+        scaleX: [0.7, 1.3, 0.8, 1.2, 0.7],
+        opacity: [0.7, 1, 0.8, 1, 0.7],
+      }}
+      transition={{
+        duration: 0.35,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
     />
   </>
 )}
@@ -4019,21 +4231,67 @@ const exclamated = tile?.isExclamator
 {/* line blaster tile rendering */}
 {tile?.isLineBlaster && tile.blastDirection === "col" && (
   <>
-    <ChevronUp
+    {/* ⚡ Upward electric blast */}
+    <motion.div
       className="
-        absolute top-[2px] left-1/2 -translate-x-1/2
-        w-3 h-3 sm:w-4 sm:h-4
-        text-orange-600
-        z-20
+        absolute top-0 left-1/2 -translate-x-1/2
+        w-3 h-7
+        z-20 pointer-events-none
       "
-    />
-    <ChevronDown
+      animate={{
+        opacity: [0.6, 1, 0.7, 1, 0.6],
+        scaleY: [0.9, 1.15, 0.95, 1.1, 0.9],
+      }}
+      transition={{
+        duration: 0.45,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      <div className="absolute inset-x-0 bottom-0 h-6 bg-cyan-300 blur-[2px] rounded-full" />
+      <div className="absolute inset-x-[3px] bottom-0 h-6 bg-white blur-[1px] rounded-full" />
+    </motion.div>
+
+    {/* ⚡ Downward electric blast */}
+    <motion.div
       className="
-        absolute bottom-[2px] left-1/2 -translate-x-1/2
-        w-3 h-3 sm:w-4 sm:h-4
-        text-orange-600
-        z-20
+        absolute bottom-0 left-1/2 -translate-x-1/2
+        w-3 h-7
+        z-20 pointer-events-none
       "
+      animate={{
+        opacity: [0.6, 1, 0.7, 1, 0.6],
+        scaleY: [0.9, 1.15, 0.95, 1.1, 0.9],
+      }}
+      transition={{
+        duration: 0.45,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
+    >
+      <div className="absolute inset-x-0 top-0 h-6 bg-cyan-300 blur-[2px] rounded-full" />
+      <div className="absolute inset-x-[3px] top-0 h-6 bg-white blur-[1px] rounded-full" />
+    </motion.div>
+
+    {/* ⚡ Bright vertical energy core */}
+    <motion.div
+      className="
+        absolute top-1/2 left-1/2
+        -translate-x-1/2 -translate-y-1/2
+        w-1 h-8
+        bg-white rounded-full
+        shadow-[0_0_5px_#fff,0_0_10px_#22d3ee,0_0_18px_#06b6d4]
+        z-20 pointer-events-none
+      "
+      animate={{
+        scaleY: [0.7, 1.3, 0.8, 1.2, 0.7],
+        opacity: [0.7, 1, 0.8, 1, 0.7],
+      }}
+      transition={{
+        duration: 0.35,
+        repeat: Infinity,
+        ease: "easeInOut",
+      }}
     />
   </>
 )}
@@ -4073,6 +4331,14 @@ const exclamated = tile?.isExclamator
 
   <div
           key={`${r}-${c}`}
+           style={
+    shockwave
+      ? ({
+          "--shockwave-x": `${shockwave.dx * 8}px`,
+          "--shockwave-y": `${shockwave.dy * 8}px`,
+        } as React.CSSProperties)
+      : undefined
+  }
           onClick={() => handleTileClick(r, c)}
           onContextMenu={(e) => {
             e.preventDefault();
@@ -4098,6 +4364,8 @@ const exclamated = tile?.isExclamator
   ${tile?.isBurnt ? "bg-brown-400 opacity-80 w-8 h-8 rounded-[6px]" : ""}
   ${locked}
   ${fire}
+  ${tnt}
+  ${shockwaveClass}
   ${cursed}
   ${warped}
   ${dull}
@@ -4346,7 +4614,7 @@ const exclamated = tile?.isExclamator
             {objective.type === "lightsUp" && `Turn on all the lights!`}
              {objective.type === "chamberDrain" && `Drain the water off the chamber!`}
             {objective.type === "collectVelvet" && `Crush the velvets!`}
-            {objective.type === "defrost" && "Melt all the ice!"}
+            {objective.type === "defrost" && "Clear all the ice!"}
             {objective.type === "boss" && "Defeat the boss!"}
             {objective.type === "spreadInk" && "Spread the Ink!"}
           </p>

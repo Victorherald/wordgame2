@@ -2,7 +2,7 @@
 
 
 
-export type TileType = "normal" | "ltrN" | "fluorescent" | "chamber" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD"  | "boulder" | "dull02" | "spiral" | "boulder002" | "boulder003" |"locked" | "lineBlasterRow" | "lineBlasterColumn" | "fire" | "velvet" | "cursed" | "warped" | "removed" | "mystery" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge" | "bookOpen" | "bookClosed";
+export type TileType = "normal" | "ltrN" | "fluorescent" | "chamber"  | "TNT" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD"  | "boulder" | "dull02" | "spiral" | "boulder002" | "boulder003" |"locked" | "lineBlasterRow" | "lineBlasterColumn" | "fire" | "velvet" | "cursed" | "warped" | "removed" | "mystery" | "infected" | "dull" | "exclamator" | "bone" | "bulb" | "ice" | "fridge" | "bookOpen" | "bookClosed";
 
 export type Difficulty = "Hard Level" | "demon" | "SuperDemon";
 
@@ -20,7 +20,7 @@ type Objective = {
   bossMaxHp?: number | undefined;
   bossColor?: string;
   objGoal: number;
-  tileType?: 'cursed' | 'fire' | 'fluorescent' | 'chamber' | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD"  | 'boulder002' | 'boulder003' | "spiral" | 'boulder' | 'exclamator' | 'warped' | "dull" | "locked" | "velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery" | "chamber";
+  tileType?: 'cursed' | 'fire'  | "TNT" | 'fluorescent' | 'chamber' | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD"  | 'boulder002' | 'boulder003' | "spiral" | 'boulder' | 'exclamator' | 'warped' | "dull" | "locked" | "velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery" | "chamber";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse' | 'ink')[][];
 };
@@ -43,6 +43,7 @@ fridgeMaxHP?: number;
   shouldLockedSpawn?: boolean;
   shouldInfectedSpawn?: boolean;
   shouldVelvetSpawn?: boolean;
+  shouldTNTSpawn?: boolean;
   shouldBoneSpawn?: boolean;
   shouldBookSpawn?: boolean;
   shouldBulbSpawn?: boolean;
@@ -52,6 +53,7 @@ fridgeMaxHP?: number;
   shouldWarpedSpawn?: boolean;
   shouldCursedSpawn?: boolean;
   shouldFireSpawn?: boolean;
+  shouldIceSpawn?: boolean;
   waterHeight?: number;
   cursedTurns?: number;
   shouldLockSpawn?: boolean;
@@ -17973,6 +17975,200 @@ export const levels: LevelData[] = [
   ],
     groundLayout: [
 
+  ],
+
+  
+},
+
+
+{
+  id: 568,
+  name: "Level 568",
+
+  objective: { type: 'destroy' , objGoal:9 , tileType: "flippers"},
+
+  moves: 45,
+
+  waterHeight: 12,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 7,
+  shouldFireSpawn: false,
+  boneTurns: 4,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+          
+        ["removed", "normal", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "removed", "normal", "normal", "normal", "normal", "removed", "removed"],
+        ["bookClosed", "removed", "removed", "normal", "normal", "normal", "normal", "normal"],
+        ["boulder", "bookOpen", "boulder", "normal", "normal", "normal", "normal", "normal"],
+        ["bookClosed", "exclamator", "boulder", "normal", "normal", "normal", "normal", "normal"],
+        ["boulder", "normal", "boulder", "boulder", "boulder", "removed", "removed", "normal"],
+        ["removed", "removed", "bookOpen", "bookClosed", "bookOpen", "boulder", "removed", "removed"],
+        ["removed", "removed", "boulder", "bookOpen", "bookClosed", "bookOpen", "boulder", "removed"]
+
+  ],
+    groundLayout: [
+
+  ],
+
+  
+},
+
+
+
+
+{
+  id: 569,
+  name: "Level 569",
+
+  objective: { type: 'destroy' , objGoal:4 , tileType: "ice"},
+
+  moves: 45,
+
+  waterHeight: 12,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 7,
+  shouldFireSpawn: false,
+  boneTurns: 4,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["removed", "removed", "removed", "normal", "normal", "removed", "removed", "removed"],
+        ["ice", "exclamator", "normal", "normal", "normal", "normal", "infected", "ice"],
+        ["removed", "exclamator", "normal", "normal", "normal", "normal", "infected", "removed"],
+        ["removed", "exclamator", "removed", "normal", "normal", "removed", "infected", "removed"],
+        ["removed", "infected", "removed", "normal", "normal", "removed", "exclamator", "removed"],
+        ["removed", "infected", "removed", "normal", "normal", "removed", "exclamator", "removed"],
+        ["ice", "infected", "removed", "normal", "normal", "removed", "exclamator", "ice"],
+        ["removed", "removed", "removed", "normal", "normal", "removed", "removed", "removed"]
+
+  ],
+    groundLayout: [
+
+  ],
+
+  
+},
+
+
+{
+  id: 570,
+  name: "Level 570",
+
+  objective: { type: 'spreadInk' , objGoal:45},
+
+  moves: 45,
+
+  waterHeight: 12,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 7,
+  shouldFireSpawn: false,
+  boneTurns: 4,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["removed", "lineBlasterColumn", "lineBlasterColumn", "lineBlasterColumn", "lineBlasterColumn", "lineBlasterColumn", "lineBlasterColumn", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["boulder", "normal", "normal", "normal", "normal", "normal", "normal", "boulder"],
+        ["boulder", "boulder", "normal", "normal", "normal", "normal", "boulder", "boulder"],
+        ["boulder", "boulder", "boulder", "normal", "normal", "boulder", "boulder", "boulder"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["boulder", "boulder", "boulder", "boulder", "boulder", "boulder", "boulder", "boulder"],
+        ["boulder", "boulder", "boulder", "boulder", "boulder", "boulder", "boulder", "boulder"]
+
+  ],
+    groundLayout: [
+      ['none', 'ink', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+      ['ink', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ],
+
+  
+},
+
+
+{
+  id: 571,
+  name: "Level 571",
+
+  objective: { type: 'destroy' , objGoal:30, tileType: "dull"},
+
+  moves: 45,
+
+  waterHeight: 12,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 7,
+  shouldFireSpawn: false,
+  boneTurns: 4,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["normal", "normal", "normal", "normal", "normal", "dull", "dull", "dull"],
+        ["normal", "dull", "dull", "dull", "normal", "dull", "TNT", "dull"],
+        ["normal", "dull", "dull", "normal", "normal", "dull", "dull", "dull"],
+        ["normal", "dull", "normal", "normal", "normal", "normal", "dull", "normal"],
+        ["normal", "dull", "normal", "normal", "normal", "normal", "dull", "normal"],
+        ["dull", "dull", "dull", "normal", "normal", "dull", "dull", "normal"],
+        ["dull", "TNT", "dull", "normal", "dull", "dull", "dull", "normal"],
+        ["dull", "dull", "dull", "normal", "normal", "normal", "normal", "normal"]  
+
+  ],
+    groundLayout: [
+   
   ],
 
   

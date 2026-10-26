@@ -127,7 +127,7 @@
           ? `Velvets Squashed`
 
           : objective.type === 'defrost'
-          ? 'Ice cleared'
+          ? 'ice melted'
           : `Destroy ${currentObjective.tileType} tiles`
         }: ${objMet}/${objective.objGoal}`
 

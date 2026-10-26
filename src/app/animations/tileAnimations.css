@@ -475,6 +475,104 @@ transform:scale(1) rotate(360deg);
   color: white;
 }
 
+/* TNT: dark bomb-metal tile */
+.tnt-tile {
+  position: relative;
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 50% 30%,
+      rgba(248, 113, 113, 0.2),
+      transparent 55%
+    ),
+    linear-gradient(
+      145deg,
+      #38343b 0%,
+      #1c1921 48%,
+      #09090d 100%
+    );
+
+  border: 2px solid #b93832;
+  border-radius: 8px;
+
+  box-shadow:
+    inset 0 2px 4px rgba(255, 255, 255, 0.12),
+    inset 0 -5px 8px rgba(0, 0, 0, 0.7),
+    0 0 7px rgba(239, 68, 68, 0.3);
+
+  color: #fff1e8;
+  text-shadow: 0 0 5px rgba(251, 146, 60, 0.65);
+
+  animation: tnt-tile-pulse 2s ease-in-out infinite;
+}
+
+@keyframes tnt-tile-pulse {
+  0%, 100% {
+    border-color: #8f2929;
+    box-shadow:
+      inset 0 2px 4px rgba(255, 255, 255, 0.08),
+      inset 0 -5px 8px rgba(0, 0, 0, 0.7),
+      0 0 4px rgba(239, 68, 68, 0.2);
+  }
+
+  50% {
+    border-color: #fb6542;
+    box-shadow:
+      inset 0 2px 5px rgba(255, 255, 255, 0.14),
+      inset 0 -5px 8px rgba(0, 0, 0, 0.7),
+      0 0 11px rgba(239, 68, 68, 0.55);
+  }
+}
+
+.tnt-shockwave {
+  animation: tnt-shockwave 400ms ease-out both;
+  z-index: 20;
+}
+
+@keyframes tnt-shockwave {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+
+  30%, 55% {
+    transform: translate(
+      var(--shockwave-x, 0px),
+      var(--shockwave-y, 0px)
+    );
+  }
+}
+
+/* TNT shockwave: tiles push outward, then retract */
+.tnt-shockwave {
+  animation: tnt-shockwave 350ms ease-out;
+  z-index: 20;
+}
+
+@keyframes tnt-shockwave {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  35% {
+    transform: translate(
+      var(--shock-x),
+      var(--shock-y)
+    ) scale(0.92);
+  }
+
+  65% {
+    transform: translate(
+      calc(var(--shock-x) * 0.35),
+      calc(var(--shock-y) * 0.35)
+    ) scale(1.04);
+  }
+
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
 /* Fluorescent bulb - second stage */
 .bulb-fading {
   background: radial-gradient(circle at center,

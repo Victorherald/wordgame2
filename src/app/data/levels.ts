@@ -1,11 +1,11 @@
 // src/data/levelData.ts
 
-export type TileType = "normal" | "locked"| "fire" | "cursed" | "warped" | "removed" | "dull" | "bone";
+export type TileType = "normal" | "locked"| "fire" | "cursed"  | "TNT" | "warped" | "removed" | "dull" | "bone";
 
 export type Objective =
   | { type: 'score'; objGoal: number }
   | { type: 'words'; objGoal: number; minLength?: number }
-  | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | 'warped' | 'dull' | 'locked' | 'bone'};
+  | { type: 'destroy'; objGoal: number; tileType: 'cursed' | 'fire' | "TNT"  | 'warped' | 'dull' | 'locked' | 'bone'};
 
 export type Difficulty = "hard" | "demon" | "Superdemon";
   
@@ -21,6 +21,7 @@ export type LevelData = {
   shouldWarpedSpawn?: boolean;
   shouldCursedSpawn?: boolean;
   shouldFireSpawn?: boolean;
+  shouldTNTSpawn?: boolean;
   cursedTurns?: number;
   shouldLockSpawn?: boolean;
   shouldMysterySpawn?: boolean;
