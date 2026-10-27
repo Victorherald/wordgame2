@@ -474,75 +474,120 @@ transform:scale(1) rotate(360deg);
 
   color: white;
 }
-
-/* TNT: dark bomb-metal tile */
+/* Red / Green / Orange TNT tile */
 .tnt-tile {
   position: relative;
   overflow: hidden;
 
   background:
+    /* soft orange core glow */
     radial-gradient(
-      circle at 50% 30%,
-      rgba(248, 113, 113, 0.2),
+      circle at 50% 35%,
+      rgba(251, 146, 60, 0.35) 0%,
       transparent 55%
     ),
+    /* main body – deep red with green undertone */
     linear-gradient(
       145deg,
-      #38343b 0%,
-      #1c1921 48%,
-      #09090d 100%
+      #b91c1c 0%,
+      #7f1d1d 45%,
+      #14532d 100%
     );
 
-  border: 2px solid #b93832;
+  border: 2.5px solid #f97316; /* bright orange border */
   border-radius: 8px;
 
   box-shadow:
-    inset 0 2px 4px rgba(255, 255, 255, 0.12),
-    inset 0 -5px 8px rgba(0, 0, 0, 0.7),
-    0 0 7px rgba(239, 68, 68, 0.3);
+    inset 0 2px 5px rgba(255, 255, 255, 0.18),
+    inset 0 -5px 10px rgba(0, 0, 0, 0.45),
+    0 0 10px rgba(249, 115, 22, 0.45);
 
-  color: #fff1e8;
-  text-shadow: 0 0 5px rgba(251, 146, 60, 0.65);
+  color: #fff7ed;
+  text-shadow: 0 0 6px rgba(251, 146, 60, 0.8);
 
-  animation: tnt-tile-pulse 2s ease-in-out infinite;
+  animation: tnt-tile-pulse 1.9s ease-in-out infinite;
 }
 
+/* Optional green stripe / band for extra color */
+.tnt-tile::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 38%;
+  height: 24%;
+  background: linear-gradient(
+    to bottom,
+    #16a34a 0%,
+    #15803d 50%,
+    #166534 100%
+  );
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.35);
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+/* Soft orange pulse */
 @keyframes tnt-tile-pulse {
   0%, 100% {
-    border-color: #8f2929;
+    border-color: #ea580c;
     box-shadow:
-      inset 0 2px 4px rgba(255, 255, 255, 0.08),
-      inset 0 -5px 8px rgba(0, 0, 0, 0.7),
-      0 0 4px rgba(239, 68, 68, 0.2);
+      inset 0 2px 5px rgba(255, 255, 255, 0.12),
+      inset 0 -5px 10px rgba(0, 0, 0, 0.45),
+      0 0 6px rgba(249, 115, 22, 0.35);
   }
-
   50% {
-    border-color: #fb6542;
+    border-color: #fb923c;
     box-shadow:
-      inset 0 2px 5px rgba(255, 255, 255, 0.14),
-      inset 0 -5px 8px rgba(0, 0, 0, 0.7),
-      0 0 11px rgba(239, 68, 68, 0.55);
+      inset 0 2px 6px rgba(255, 255, 255, 0.22),
+      inset 0 -5px 10px rgba(0, 0, 0, 0.4),
+      0 0 16px rgba(251, 146, 60, 0.7);
+  }
+}
+/* TNT shockwave overlay */
+.tnt-shockwave {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  animation: tnt-shockwave-kick 380ms ease-out both;
+}
+
+.tnt-shockwave-ring {
+  position: absolute;
+  inset: -8px;
+  border: 3px solid rgba(251, 146, 60, 0.9);
+  border-radius: 8px;
+  box-shadow:
+    0 0 12px rgba(251, 146, 60, 0.7),
+    0 0 24px rgba(249, 115, 22, 0.4);
+  animation: shockwave-ring 420ms ease-out forwards;
+}
+
+@keyframes shockwave-ring {
+  0% {
+    transform: scale(0.8);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
   }
 }
 
-.tnt-shockwave {
-  animation: tnt-shockwave 400ms ease-out both;
-  z-index: 20;
-}
-
-@keyframes tnt-shockwave {
+@keyframes tnt-shockwave-kick {
   0%, 100% {
     transform: translate(0, 0);
   }
 
-  30%, 55% {
+  30% {
     transform: translate(
       var(--shockwave-x, 0px),
       var(--shockwave-y, 0px)
     );
   }
 }
-
 /* TNT shockwave: tiles push outward, then retract */
 .tnt-shockwave {
   animation: tnt-shockwave 350ms ease-out;

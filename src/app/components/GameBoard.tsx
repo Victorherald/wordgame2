@@ -138,7 +138,7 @@ type LetterBoardProps = {
    bossMaxHp?: number;
    bossColor?: string;
   
-  tileType?: 'cursed' | "fluorescent" | 'boulder002' | "TNT"  | "chamber"  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
+  tileType?: 'cursed' | "fluorescent" | 'boulder002' | "Bombtiles"  | "chamber"  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse' | 'ink')[][];
 };
@@ -1692,7 +1692,7 @@ console.log(
       if (!tile) continue;
 
       // Protect blockers
-      if (tile.isFridge || tile.isLocked) continue;
+      if (tile.isFridge || tile.isLocked || tile.isLightBulb )  continue;
 
       newGrid[nr][nc] = null as any;
     }
@@ -2266,7 +2266,11 @@ if (tntsUsed.length > 0) {
     getTNTShockwaveTiles(updatedGrid, row, col)
   );
 
+  console.log("Generated shockwaves:", shockwaves);
+
   setShockwaveTiles(shockwaves);
+
+
 
   console.log("TNT shockwaves:", shockwaves);
 
@@ -3818,7 +3822,8 @@ const shockwave = shockwaveTiles.find(
   p => p.row === r && p.col === c
 );
 
-const shockwaveClass = shockwave ? "tnt-shockwave" : "";
+
+
         
         
         const tnt = tile?.isTNT
@@ -4310,7 +4315,19 @@ const exclamated = tile?.isExclamator
       pointer-events-none
     "
   />
-)}   
+)}  
+
+{shockwave && (
+  <div
+    className="absolute inset-0 flex items-center justify-center z-50 pointer-events-none tnt-shockwave"
+    style={{
+      "--shockwave-x": `${shockwave.dx * 8}px`,
+      "--shockwave-y": `${shockwave.dy * 8}px`,
+    } as React.CSSProperties}
+  >
+    <div className="tnt-shockwave-ring" />
+  </div>
+)}
 
 {tile?.isSpiral && (
   <div
@@ -4323,6 +4340,9 @@ const exclamated = tile?.isExclamator
       ${tile.isSpiralLeaving ? "spiral-leaving" : ""}
       ${tile.isSpiralEntering ? "spiral-entering" : ""}
     `}
+
+
+    
   >
     <SpiralSVG />
   </div>
@@ -4365,7 +4385,7 @@ const exclamated = tile?.isExclamator
   ${locked}
   ${fire}
   ${tnt}
-  ${shockwaveClass}
+
   ${cursed}
   ${warped}
   ${dull}
