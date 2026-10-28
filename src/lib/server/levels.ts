@@ -8,7 +8,7 @@ export type Difficulty = "Hard Level" | "demon" | "SuperDemon";
 
  
 
-export type TutorialTypes = "Locked Tiles" | "Chamber Level"  | "Ethereal Tiles" | "Surprise Tile" | "Exclaimer" | "Purifiers" | "Burning Tiles" | "Poisoned Tile" | "Warped Tiles" | "Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" | "Flippers";
+export type TutorialTypes = "Locked Tiles" | "Chamber Level"  | "Ethereal Tiles" | "Surprise Tile" | "Exclaimer" | "Purifiers" | "Burning Tiles" | "Poisoned Tile" | "Warped Tiles" | "Cursed Tiles" | "Dull Tiles" | "Lightbulbs" | "Frozen Tiles" | "Flippers" | "Bombtiles(TNT)";
 
 
 type Objective = {
@@ -20,7 +20,7 @@ type Objective = {
   bossMaxHp?: number | undefined;
   bossColor?: string;
   objGoal: number;
-  tileType?: 'cursed' | 'fire'  | "TNT" | 'fluorescent' | 'chamber' | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD"  | 'boulder002' | 'boulder003' | "spiral" | 'boulder' | 'exclamator' | 'warped' | "dull" | "locked" | "velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery" | "chamber";
+  tileType?: 'cursed' | 'fire'  | "Bombtiles" | 'fluorescent' | 'chamber' | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD"  | 'boulder002' | 'boulder003' | "spiral" | 'boulder' | 'exclamator' | 'warped' | "dull" | "locked" | "velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery" | "chamber";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse' | 'ink')[][];
 };
@@ -18223,54 +18223,8 @@ export const levels: LevelData[] = [
 
 
 {
-  id: 572,
-  name: "Level 572",
-
-  objective: { type: 'score' , objGoal:5000},
-
-  moves: 35,
-
-  waterHeight: 12,
-
- 
-
-  boulderHP: 3,
-  
-  fridgeCharge: 0,
-  fridgeChargeMax: 5,
-  fridgeHP: 3,
-   warpTurns: 30,
-  lockTurns: 13,
-  dullTurns: 25,
-  cursedTurns: 32,
-  boneRipeTurns: 7,
-  shouldFireSpawn: false,
-  boneTurns: 4,
-  allowHardLetters: false,
-  locked: true,
-
-  board: [ 
-        ["TNT", "normal", "normal", "TNT", "boulder", "boulder", "boulder", "boulder"],
-        ["removed", "normal", "normal", "normal", "boulder", "TNT", "boulder", "removed"],
-        ["removed", "normal", "normal", "normal", "boulder", "boulder", "boulder", "removed"],
-        ["removed", "boulder", "boulder", "boulder", "normal", "normal", "normal", "removed"],
-        ["removed", "boulder", "TNT", "boulder", "normal", "normal", "normal", "removed"],
-        ["removed", "boulder", "boulder", "boulder", "normal", "normal", "normal", "removed"],
-        ["removed", "boulder", "normal", "normal", "normal", "normal", "normal", "removed"],
-        ["boulder", "boulder", "normal", "normal", "TNT", "normal", "normal", "TNT"]
-
-  ],
-    groundLayout: [
-   
-  ],
-
-  
-},
-
-
-{
-  id: 572,
-  name: "Level 572",
+  id: 573,
+  name: "Level 573",
 
   objective: { type: 'defrost' , objGoal:38, tileType: "ice"},
 
@@ -18316,8 +18270,8 @@ export const levels: LevelData[] = [
 
 
 {
-  id: 573,
-  name: "Level 573",
+  id: 574,
+  name: "Level 574",
 
   objective: { type: 'chamberDrain' , objGoal:4},
 
@@ -18363,8 +18317,8 @@ export const levels: LevelData[] = [
 
 
 {
-  id: 574,
-  name: "Level 574",
+  id: 575,
+  name: "Level 575",
 
   objective: { type: 'score' , objGoal:12000},
 
@@ -18410,8 +18364,8 @@ export const levels: LevelData[] = [
 
 
 {
-  id: 575,
-  name: "Level 575",
+  id: 576,
+  name: "Level 576",
 
   objective: { type: 'lightsUp' , objGoal:2, tileType: "bulb"},
 
@@ -18447,6 +18401,236 @@ export const levels: LevelData[] = [
                    ["bone", "bookClosed", "ice", "bone", "bone", "ice", "bookClosed", "bone"],
                    ["bulb", "bone", "bone", "bone", "bone", "bone", "bone", "bulb"]
 
+  ],
+    groundLayout: [
+   
+  ],
+
+  
+},
+
+
+
+
+{
+  id: 577,
+  name: "Level 577",
+
+  objective: { type: 'score' , objGoal:10000},
+
+  moves: 45,
+
+  waterHeight: 4,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 7,
+  shouldFireSpawn: false,
+  boneTurns: 4,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+    
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "ice", "normal", "normal", "normal", "normal", "ice", "normal"],
+        ["normal", "infected", "ice", "normal", "normal", "ice", "infected", "normal"],
+        ["normal", "infected", "infected", "ice", "ice", "infected", "infected", "normal"],
+        ["normal", "infected", "TNT", "infected", "infected", "TNT", "infected", "normal"],
+        ["normal", "infected", "infected", "infected", "infected", "infected", "infected", "normal"],
+        ["normal", "infected", "infected", "infected", "infected", "infected", "infected", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"]
+
+  ],
+    groundLayout: [
+   
+  ],
+
+  
+},
+
+
+{
+  id: 578,
+  name: "Level 578",
+
+  objective: { type: 'lightsUp' , objGoal:2, tileType: "bulb"},
+
+  moves: 35,
+
+  waterHeight: 4,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 3,
+  shouldFireSpawn: false,
+  boneTurns: 5,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+    
+        ["removed", "removed", "removed", "normal", "normal", "normal", "removed", "removed"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "removed"],
+        ["bone", "bone", "bone", "bone", "bone", "normal", "normal", "removed"],
+        ["bone", "bulb", "bone", "bulb", "bone", "normal", "normal", "removed"],
+        ["removed", "removed", "bone", "bone", "bone", "removed", "removed", "removed"]
+  ],
+    groundLayout: [
+   
+  ],
+
+  
+},
+
+
+{
+  id: 579,
+  name: "Level 579",
+
+  objective: { type: 'destroy' , objGoal:14, tileType: "Bombtiles"},
+
+  moves: 35,
+
+  waterHeight: 4,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 3,
+  shouldFireSpawn: false,
+  boneTurns: 5,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["TNT", "normal", "normal", "normal", "TNT", "normal", "normal", "TNT"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "TNT", "normal", "TNT", "normal", "TNT", "normal", "TNT"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["TNT", "normal", "TNT", "normal", "TNT", "normal", "TNT", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["TNT", "normal", "normal", "TNT", "normal", "normal", "normal", "TNT"]
+  ],
+    groundLayout: [
+   
+  ],
+
+  
+},
+
+
+{
+  id: 580,
+  name: "Level 580",
+
+  objective: { type: 'destroy' , objGoal:14, tileType: "Bombtiles"},
+
+  moves: 35,
+
+  waterHeight: 4,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 3,
+  shouldFireSpawn: false,
+  boneTurns: 5,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+             ["removed", "infected", "removed", "fluorescent", "removed", "infected", "removed", "normal"],
+             ["removed", "infected", "removed", "infected", "removed", "infected", "removed", "normal"],
+             ["removed", "infected", "infected", "infected", "infected", "infected", "removed", "normal"],
+             ["normal", "TNT", "normal", "normal", "normal", "normal", "normal", "normal"],
+             ["normal", "normal", "normal", "normal", "normal", "normal", "TNT", "normal"],
+             ["normal", "removed", "infected", "infected", "infected", "infected", "infected", "removed"],
+             ["normal", "removed", "infected", "removed", "infected", "removed", "infected", "removed"],
+             ["normal", "removed", "infected", "removed", "bulb", "removed", "infected", "removed"]
+  ],
+    groundLayout: [
+   
+  ],
+
+  
+},
+
+
+{
+  id: 581,
+  name: "Level 581",
+
+  objective: { type: 'destroy' , objGoal:3, tileType: "Bombtiles"},
+
+  moves: 40,
+
+  waterHeight: 4,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 25,
+  cursedTurns: 32,
+  boneRipeTurns: 3,
+  shouldFireSpawn: false,
+  boneTurns: 5,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["removed", "normal", "normal", "normal", "normal", "normal", "normal", "boulder"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "boulder", "bookClosed"],
+        ["removed", "normal", "normal", "normal", "normal", "boulder", "bookClosed", "TNT"],
+        ["removed", "normal", "normal", "normal", "normal", "normal", "boulder", "bookClosed"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "boulder"],
+        ["normal", "normal", "boulder", "normal", "normal", "normal", "boulder", "bookOpen"],
+        ["normal", "boulder", "bookClosed", "boulder", "normal", "boulder", "bookOpen", "exclamator"],
+        ["boulder", "bookClosed", "TNT", "bookClosed", "boulder", "bookOpen", "exclamator", "TNT"]
   ],
     groundLayout: [
    

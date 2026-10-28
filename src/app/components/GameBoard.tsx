@@ -138,7 +138,7 @@ type LetterBoardProps = {
    bossMaxHp?: number;
    bossColor?: string;
   
-  tileType?: 'cursed' | "fluorescent" | 'boulder002' | "Bombtiles"  | "chamber"  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery";
+  tileType?: 'cursed' | "fluorescent" | 'boulder002' | "Bombtiles"  | "chamber"  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery" | "Bombtiles";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse' | 'ink')[][];
 };
@@ -1740,6 +1740,7 @@ console.log(
 function activateChambers(
   matchedTiles: Position[]
 ) {
+
   // Find chamber tiles
   const chamberTiles = matchedTiles.filter(({ row, col }) => {
     return grid[row][col]?.isChamber;
@@ -2279,7 +2280,15 @@ if (tntsUsed.length > 0) {
   updatedGrid = tntResult.grid;
   destroyedThisMove.push(...tntResult.destroyed);
 
+const tntChambersDestroyed = tntResult.destroyed.filter(({ row, col }) => {
+  return updatedGrid[row]?.[col]?.isChamber;
+}).length;
 
+if (tntChambersDestroyed > 0) {
+  setWaterHeight(prev =>
+    Math.max(prev - tntChambersDestroyed, 0)
+  );
+}
 
   setScore(prev => prev + tntsUsed.length * 600);
 
@@ -2579,6 +2588,7 @@ else if (objective.type === "collectVelvet") {
 
     if (objective.tileType === 'fire') return t.isFire;
     if (objective.tileType === 'flippers') return t.isBook;
+     if (objective.tileType === 'Bombtiles') return t.isTNT;
     if (objective.tileType === 'boulder') return t.isBoulder;
     if (objective.tileType === 'boulder002') return t.isBoulder;
     if (objective.tileType === 'boulder003') return t.isBoulder;
