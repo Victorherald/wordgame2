@@ -26,8 +26,17 @@ export default function LevelSelect() {
   const worldCupEnd = new Date("2026-07-20T23:59:59");
   const isWorldCupTheme = today <= worldCupEnd;
 
+  const thanksgivingStart = new Date("2026-11-01T00:00:00");
+const thanksgivingEnd = new Date("2026-11-30T23:59:59");
+
+
   const levelsPerPage = 6;
   const totalPages = Math.ceil(levels.length / levelsPerPage);
+
+
+
+const isThanksgivingTheme =
+  today >= thanksgivingStart && today <= thanksgivingEnd;
 
   useEffect(() => {
     async function fetchLevels() {
@@ -68,16 +77,24 @@ export default function LevelSelect() {
   if (loading) {
     return (
       <main
-        className={`min-h-screen flex items-center justify-center text-white ${
-          isWorldCupTheme ? "soccer-pitch-bg" : "bg-black"
-        }`}
+       className={`min-h-screen flex items-center justify-center text-white ${
+  isThanksgivingTheme
+    ? "thanksgiving-bg"
+    : isWorldCupTheme
+    ? "soccer-pitch-bg"
+    : "bg-black"
+}`}
       >
         <motion.div
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
           className="text-lg font-bold text-white/80"
         >
-          {isWorldCupTheme ? "⚽ Loading levels..." : "Loading levels..."}
+         {isThanksgivingTheme
+  ? "🍂 Preparing the Thanksgiving feast..."
+  : isWorldCupTheme
+  ? "⚽ Loading levels..."
+  : "Loading levels..."}
         </motion.div>
       </main>
     );
@@ -98,17 +115,42 @@ export default function LevelSelect() {
 
   return (
     <main
-      className={`min-h-screen text-white flex flex-col items-center justify-center p-6 relative overflow-hidden ${
-        isWorldCupTheme ? "soccer-pitch-bg" : "bg-black"
-      }`}
+  className={`min-h-screen text-white flex flex-col items-center justify-center p-6 relative overflow-hidden ${
+  isThanksgivingTheme
+    ? "thanksgiving-bg"
+    : isWorldCupTheme
+    ? "soccer-pitch-bg"
+    : "bg-black"
+}`}
     >
       {/* World Cup background decoration */}
-      {isWorldCupTheme && (
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-20 right-20 w-40 h-40 rounded-full border-4 border-white/20 animate-pulse" />
-          <div className="absolute bottom-20 left-20 w-32 h-32 rounded-full border-4 border-white/20 animate-pulse" />
-        </div>
-      )}
+  {isThanksgivingTheme && (
+  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="absolute top-10 left-10 text-5xl opacity-70 animate-pulse">
+      🍂
+    </div>
+
+    <div className="absolute top-24 right-16 text-6xl opacity-80">
+      🍁
+    </div>
+
+    <div className="absolute bottom-20 left-16 text-5xl opacity-70">
+      🍂
+    </div>
+
+    <div className="absolute bottom-10 right-12 text-6xl opacity-80">
+      🦃
+    </div>
+
+    <div className="absolute top-1/2 left-6 text-4xl opacity-50">
+      🍁
+    </div>
+
+    <div className="absolute top-1/3 right-8 text-4xl opacity-50">
+      🍂
+    </div>
+  </div>
+)}
 
       {/* Header */}
       <motion.div
@@ -118,24 +160,34 @@ export default function LevelSelect() {
         className="relative z-10 text-center mb-8"
       >
         <h1 className="text-5xl md:text-6xl font-bold mb-2">
-          {isWorldCupTheme ? (
-            <>
-              ⚽{" "}
-              <span className="bg-gradient-to-r from-yellow-300 to-yellow-100 bg-clip-text text-transparent">
-                Select Your Level
-              </span>{" "}
-              ⚽
-            </>
-          ) : (
-            <span className="text-white">Select Your Level</span>
-          )}
+        {isThanksgivingTheme ? (
+  <>
+    🍂{" "}
+    <span className="bg-gradient-to-r from-orange-300 via-amber-200 to-yellow-300 bg-clip-text text-transparent">
+      Select Your Level
+    </span>{" "}
+    🦃
+  </>
+) : isWorldCupTheme ? (
+  <>
+    ⚽{" "}
+    <span className="bg-gradient-to-r from-yellow-300 to-yellow-100 bg-clip-text text-transparent">
+      Select Your Level
+    </span>{" "}
+    ⚽
+  </>
+) : (
+  <span className="text-white">Select Your Level</span>
+)}
         </h1>
 
-        <p className="text-lg text-white/70 font-semibold">
-          {isWorldCupTheme
-            ? "Choose a challenge and score big on the soccer pitch!"
-            : "Choose a challenge and begin your word puzzle adventure!"}
-        </p>
+    <p className="text-lg text-white/70 font-semibold">
+  {isThanksgivingTheme
+    ? "Gather around, give thanks, and solve your way through the feast!"
+    : isWorldCupTheme
+    ? "Choose a challenge and score big on the soccer pitch!"
+    : "Choose a challenge and begin your word puzzle adventure!"}
+</p>
       </motion.div>
 
       {/* Level List */}

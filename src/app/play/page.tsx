@@ -39,15 +39,20 @@ export default function PlayPage() {
 
   // Seasonal themes
 const today = new Date();
-
 const worldCupEnd = new Date("2026-07-20T23:59:59");
 const halloweenStart = new Date("2026-10-01T00:00:00");
 const halloweenEnd = new Date("2026-11-01T00:00:00");
+
+const thanksgivingStart = new Date("2026-11-01T00:00:00");
+const thanksgivingEnd = new Date("2026-12-01T00:00:00");
 
 const isWorldCupTheme = today <= worldCupEnd;
 
 const isHalloweenTheme =
   today >= halloweenStart && today < halloweenEnd;
+
+const isThanksgivingTheme =
+  today >= thanksgivingStart && today < thanksgivingEnd;
 
 
   useEffect(() => {
@@ -109,11 +114,13 @@ const isHalloweenTheme =
     return (
       <main
   className={`min-h-screen flex items-center justify-center px-6 overflow-hidden ${
-    isHalloweenTheme
-      ? "halloween-bg"
-      : isWorldCupTheme
-      ? "soccer-pitch-bg"
-      : "bg-black"
+   isThanksgivingTheme
+  ? "thanksgiving-bg"
+  : isHalloweenTheme
+  ? "halloween-bg"
+  : isWorldCupTheme
+  ? "soccer-pitch-bg"
+  : "bg-black"
   }`}
 >
 
@@ -179,15 +186,21 @@ const isHalloweenTheme =
                 ease: "linear",
               },
             }}
-           className={`mx-auto mb-8 w-24 h-24 rounded-lg border-2 shadow-2xl flex items-center justify-center ${
-  isHalloweenTheme
+        className={`mx-auto mb-8 w-24 h-24 rounded-lg border-2 shadow-2xl flex items-center justify-center ${
+  isThanksgivingTheme
+    ? "bg-gradient-to-b from-amber-300 via-orange-500 to-orange-800 border-orange-300 shadow-[0_0_30px_rgba(249,115,22,0.5)]"
+    : isHalloweenTheme
     ? "bg-gradient-to-b from-orange-400 via-orange-600 to-purple-900 border-orange-400 shadow-[0_0_30px_rgba(255,100,0,0.5)]"
     : "bg-gradient-to-b from-[#F8E9BB] via-[#F1D99A] to-[#DFC06A] border-[#B58B39]"
 }`}
           >
-           <span
+      <span
   className={`text-5xl font-black ${
-    isHalloweenTheme ? "text-purple-950" : "text-black"
+    isThanksgivingTheme
+      ? "text-amber-950"
+      : isHalloweenTheme
+      ? "text-purple-950"
+      : "text-black"
   }`}
 >
   W
@@ -211,8 +224,10 @@ const isHalloweenTheme =
               stiffness: 220,
               damping: 10,
             }}
-          className={`text-4xl font-extrabold ${
-  isHalloweenTheme
+       className={`text-4xl font-extrabold ${
+  isThanksgivingTheme
+    ? "text-orange-300 drop-shadow-[0_0_12px_rgba(249,115,22,0.7)]"
+    : isHalloweenTheme
     ? "text-orange-400 drop-shadow-[0_0_12px_rgba(255,100,0,0.7)]"
     : "text-purple-300"
 }`}
@@ -245,7 +260,11 @@ const isHalloweenTheme =
             {[0, 1, 2].map((i) => (
               <motion.div
                 key={i}
-                className="w-3 h-3 rounded-full bg-purple-300"
+               className={`w-3 h-3 rounded-full ${
+  isThanksgivingTheme
+    ? "bg-orange-400"
+    : "bg-purple-300"
+}`}
                 animate={{
                   y: [0, -10, 0],
                 }}
@@ -261,7 +280,11 @@ const isHalloweenTheme =
           {/* Animated Progress Bar */}
           <div className="mt-8 h-3 rounded-full bg-black/30 overflow-hidden">
             <motion.div
-              className="h-full bg-gradient-to-r from-purple-500 via-blue-300 to-pink-500"
+             className={`h-full ${
+  isThanksgivingTheme
+    ? "bg-gradient-to-r from-orange-700 via-amber-400 to-yellow-200"
+    : "bg-gradient-to-r from-purple-500 via-blue-300 to-pink-500"
+}`}
               animate={{
                 x: ["-100%", "100%"],
               }}
@@ -286,16 +309,22 @@ const isHalloweenTheme =
             transition={{
               delay: 0.35,
             }}
-           className={`mt-8 rounded-xl backdrop-blur-md p-6 ${
-  isHalloweenTheme
+        className={`mt-8 rounded-xl backdrop-blur-md p-6 ${
+  isThanksgivingTheme
+    ? "border border-orange-400/40 bg-amber-950/40"
+    : isHalloweenTheme
     ? "border border-orange-500/40 bg-purple-950/30"
     : "border border-yellow-400/40 bg-black/30"
 }`}
           >
          <h2
-  className={`text-lg font-bold mb-3 ${
-    isHalloweenTheme ? "text-orange-400" : "text-yellow-300"
-  }`}
+ className={`text-lg font-bold mb-3 ${
+  isThanksgivingTheme
+    ? "text-orange-300"
+    : isHalloweenTheme
+    ? "text-orange-400"
+    : "text-yellow-300"
+}`}
 >
   Gameplay Tip
 </h2>
