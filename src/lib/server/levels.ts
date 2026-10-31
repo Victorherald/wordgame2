@@ -18638,4 +18638,197 @@ export const levels: LevelData[] = [
 
   
 },
+
+
+{
+  id: 582,
+  name: "Level 582",
+
+  objective: { type: 'destroy' , objGoal:2, tileType: "dull"},
+
+  moves: 40,
+
+  waterHeight: 4,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 29,
+  cursedTurns: 32,
+  boneRipeTurns: 3,
+  shouldFireSpawn: false,
+  boneTurns: 5,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["normal", "lineBlasterCol", "normal", "removed", "normal", "normal", "lineBlasterCol", "normal"],
+        ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "removed", "normal", "removed", "removed", "removed"],
+        ["removed", "removed", "removed", "normal", "removed", "ice", "ice", "ice"],
+        ["ice", "ice", "ice", "ice", "removed", "ice", "ice", "ice"],
+        ["ice", "ice", "ice", "ice", "removed", "ice", "ice", "ice"],
+        ["dull", "ice", "ice", "ice", "removed", "ice", "ice", "dull"]
+  ],
+    groundLayout: [
+   
+  ],
+
+  
+},
+
+
+{
+  id: 582,
+  name: "Level 582",
+
+  objective: { type: 'destroy' , objGoal:12, tileType: "bone"},
+
+  moves: 45,
+
+  waterHeight: 4,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 29,
+  cursedTurns: 32,
+  boneRipeTurns: 4,
+  shouldFireSpawn: false,
+  boneTurns: 7,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["normal", "normal", "normal", "normal", "normal", "normal", "normal", "normal"],
+        ["removed", "removed", "removed", "removed", "removed", "removed", "removed", "removed"],
+        ["bone", "bone", "boulder", "normal", "normal", "boulder", "bone", "bone"],
+        ["bone", "bone", "boulder", "normal", "normal", "boulder", "bone", "bone"],
+        ["boulder", "boulder", "boulder", "normal", "normal", "boulder", "boulder", "boulder"],
+        ["normal", "fridge", "normal", "normal", "normal", "normal", "fridge", "normal"]
+  ],
+    groundLayout: [
+   
+  ],
+
+  
+},
+
+
+{
+  id: 583,
+  name: "Level 583",
+
+  objective: { type: 'lightsUp' , objGoal:22, tileType: "bulb"},
+
+  moves: 45,
+
+  waterHeight: 4,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 29,
+  cursedTurns: 32,
+  boneRipeTurns: 4,
+  shouldFireSpawn: false,
+  boneTurns: 7,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+        ["bulb", "normal", "normal", "normal", "normal", "normal", "normal", "bulb"],
+        ["bulb", "exclamator", "normal", "normal", "normal", "normal", "exclamator", "bulb"],
+        ["bulb", "exclamator", "normal", "normal", "normal", "normal", "exclamator", "bulb"],
+        ["bulb", "exclamator", "normal", "normal", "normal", "normal", "exclamator", "bulb"],
+        ["bulb", "exclamator", "normal", "normal", "normal", "normal", "exclamator", "bulb"],
+        ["bulb", "exclamator", "normal", "normal", "normal", "normal", "exclamator", "bulb"],
+        ["bulb", "exclamator", "exclamator", "exclamator", "exclamator", "exclamator", "exclamator", "bulb"],
+        ["bulb", "bulb", "bulb", "bulb", "bulb", "bulb", "bulb", "bulb"]
+  ],
+    groundLayout: [
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'cleanse', 'cleanse', 'none', 'none', 'cleanse', 'cleanse', 'none'],
+  ['none', 'cleanse', 'none', 'none', 'none', 'none', 'cleanse', 'none'],
+  ['none', 'cleanse', 'none', 'none', 'none', 'none', 'cleanse', 'none'],
+  ['none', 'cleanse', 'none', 'none', 'none', 'none', 'cleanse', 'none'],
+  ['none', 'cleanse', 'none', 'none', 'none', 'none', 'cleanse', 'none'],
+  ['none', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'cleanse', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ],
+
+  
+},
+
+{
+  id: 584,
+  name: "Level 584",
+
+  objective: { type: 'lightsUp' , objGoal:22, tileType: "bulb"},
+
+  moves: 45,
+
+  waterHeight: 4,
+
+ 
+
+  boulderHP: 3,
+  
+  fridgeCharge: 0,
+  fridgeChargeMax: 5,
+  fridgeHP: 3,
+   warpTurns: 30,
+  lockTurns: 13,
+  dullTurns: 29,
+  cursedTurns: 32,
+  boneRipeTurns: 4,
+  shouldFireSpawn: false,
+  boneTurns: 7,
+  allowHardLetters: false,
+  locked: true,
+
+  board: [ 
+           ["normal", "removed", "boulder", "normal", "normal", "lineBlasterRow", "removed", "normal"],
+           ["boulder", "removed", "lineBlasterRow", "normal", "normal", "boulder", "removed", "boulder"],
+           ["boulder", "removed", "boulder", "normal", "normal", "lineBlasterRow", "removed", "boulder"],
+           ["boulder", "removed", "lineBlasterRow", "normal", "normal", "boulder", "removed", "boulder"],
+           ["boulder", "removed", "boulder", "normal", "normal", "lineBlasterRow", "removed", "boulder"],
+           ["boulder", "removed", "lineBlasterRow", "normal", "boulder", "removed", "removed", "boulder"],
+           ["boulder", "removed", "removed", "removed", "boulder", "boulder", "boulder", "boulder"],
+           ["normal", "boulder", "boulder", "boulder", "boulder", "boulder", "boulder", "normal"]
+  ],
+    groundLayout: [
+  ['ink', 'none', 'none', 'none', 'none', 'none', 'none', 'ink'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'none'],
+  ['none', 'none', 'none', 'none', 'none', 'none', 'none', 'ink'],
+  ],
+
+  
+},
 ];

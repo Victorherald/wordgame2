@@ -25,6 +25,15 @@ import { Eater } from "next/font/google";
 
 import { Mountains_of_Christmas } from "next/font/google";
 
+import { Cinzel } from "next/font/google";
+import { AutumnLeaves } from "../../components/button/movingLeaves"; 
+import { FloatingBalloons } from "../../components/Thanksgiving/floatingBalloons"; 
+
+const cinzel = Cinzel({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+});
+
 const christmasFont = Mountains_of_Christmas({
   subsets: ["latin"],
   weight: ["400", "700"],
@@ -109,6 +118,11 @@ const blvdEnd = new Date("2026-01-30T23:59:59");
 const halloweenStart = new Date("2026-10-01T00:00:00");
 const halloweenEnd = new Date("2026-11-01T00:00:00");
 
+const thanksgivingStart = new Date("2026-11-01T00:00:00");
+const thanksgivingEnd = new Date("2026-12-01T00:00:00");
+
+
+
 const christmasStart = new Date("2026-12-01T00:00:00");
 const christmasEnd = new Date("2026-12-31T00:00:00");
 
@@ -121,6 +135,9 @@ const isWorldCupTheme = today <= worldCupEnd;
 const isBlvdTheme =
   !isWorldCupTheme &&
   today <= blvdEnd;
+
+  const isThanksgivingTheme =
+  today >= thanksgivingStart && today < thanksgivingEnd;
 
 const isHalloweenTheme =
   today >= halloweenStart &&
@@ -215,74 +232,99 @@ const isHalloweenTheme =
   // --------------------------------------------------
   // Circle styling
   // --------------------------------------------------
+const getCircleStyle = (lvl: LevelData) => {
+  if (lvl.locked) {
+    return `
+      bg-gray-800
+      border-gray-600
+      text-gray-500
+      shadow-none
+    `;
+  }
 
-  const getCircleStyle = (lvl: LevelData) => {
-    if (lvl.locked) {
-      return `
-        bg-gray-800
-        border-gray-600
-        text-gray-500
-        shadow-none
-      `;
-    }
-
+  // ---------- THANKSGIVING BALLOON STYLE ----------
+  if (isThanksgivingTheme) {
     switch (lvl.difficulty) {
       case "SuperDemon":
         return `
-          bg-gradient-to-br
-          from-black
-          via-fuchsia-950
-          to-purple-950
-          border-fuchsia-500
-          text-fuchsia-200
-          shadow-[0_0_25px_rgba(217,70,239,0.55)]
-          hover:shadow-[0_0_40px_rgba(217,70,239,0.8)]
-          hover:border-fuchsia-300
+          bg-gradient-to-br from-fuchsia-700 via-purple-800 to-fuchsia-950
+          border-fuchsia-300
+          text-white
+          shadow-[0_8px_25px_rgba(217,70,239,0.45),inset_0_-8px_20px_rgba(0,0,0,0.25)]
+          hover:shadow-[0_12px_35px_rgba(217,70,239,0.65),inset_0_-8px_20px_rgba(0,0,0,0.25)]
+          hover:border-fuchsia-200
+          relative overflow-hidden
         `;
-
       case "demon":
         return `
-          bg-gradient-to-br
-          from-red-950
-          via-orange-900
-          to-red-950
-          border-red-500
-          text-red-200
-          shadow-[0_0_20px_rgba(239,68,68,0.45)]
-          hover:shadow-[0_0_35px_rgba(239,68,68,0.7)]
-          hover:border-red-300
+          bg-gradient-to-br from-red-600 via-orange-700 to-red-900
+          border-orange-300
+          text-white
+          shadow-[0_8px_25px_rgba(239,68,68,0.4),inset_0_-8px_20px_rgba(0,0,0,0.25)]
+          hover:shadow-[0_12px_35px_rgba(239,68,68,0.6),inset_0_-8px_20px_rgba(0,0,0,0.25)]
+          hover:border-orange-200
+          relative overflow-hidden
         `;
-
       case "Hard Level":
         return `
-          bg-gradient-to-br
-          from-orange-950
-          to-orange-900
-          border-orange-500
-          text-orange-200
-          shadow-[0_0_15px_rgba(249,115,22,0.35)]
-          hover:shadow-[0_0_25px_rgba(249,115,22,0.55)]
-          hover:border-orange-300
+          bg-gradient-to-br from-orange-500 via-amber-600 to-orange-800
+          border-amber-300
+          text-white
+          shadow-[0_8px_22px_rgba(249,115,22,0.4),inset_0_-8px_20px_rgba(0,0,0,0.22)]
+          hover:shadow-[0_12px_32px_rgba(249,115,22,0.55),inset_0_-8px_20px_rgba(0,0,0,0.22)]
+          hover:border-amber-200
+          relative overflow-hidden
         `;
-
       default:
-        return isWorldCupTheme
-          ? `
-            soccer-level-circle
-            border-green-500/70
-            text-white
-          `
-          : `
-            bg-gradient-to-br
-            from-gray-900
-            to-gray-800
-            border-gray-600
-            text-yellow-300
-            hover:border-yellow-400
-            hover:shadow-[0_0_20px_rgba(250,204,21,0.25)]
-          `;
+        return `
+          bg-gradient-to-br from-amber-500 via-orange-600 to-amber-800
+          border-amber-200
+          text-white
+          shadow-[0_8px_22px_rgba(245,158,11,0.4),inset_0_-8px_20px_rgba(0,0,0,0.22)]
+          hover:shadow-[0_12px_32px_rgba(245,158,11,0.55),inset_0_-8px_20px_rgba(0,0,0,0.22)]
+          hover:border-amber-100
+          relative overflow-hidden
+        `;
     }
-  };
+  }
+
+  // ---------- Original styles for other themes ----------
+  switch (lvl.difficulty) {
+    case "SuperDemon":
+      return `
+        bg-gradient-to-br from-black via-fuchsia-950 to-purple-950
+        border-fuchsia-500 text-fuchsia-200
+        shadow-[0_0_25px_rgba(217,70,239,0.55)]
+        hover:shadow-[0_0_40px_rgba(217,70,239,0.8)]
+        hover:border-fuchsia-300
+      `;
+    case "demon":
+      return `
+        bg-gradient-to-br from-red-950 via-orange-900 to-red-950
+        border-red-500 text-red-200
+        shadow-[0_0_20px_rgba(239,68,68,0.45)]
+        hover:shadow-[0_0_35px_rgba(239,68,68,0.7)]
+        hover:border-red-300
+      `;
+    case "Hard Level":
+      return `
+        bg-gradient-to-br from-orange-950 to-orange-900
+        border-orange-500 text-orange-200
+        shadow-[0_0_15px_rgba(249,115,22,0.35)]
+        hover:shadow-[0_0_25px_rgba(249,115,22,0.55)]
+        hover:border-orange-300
+      `;
+    default:
+      return isWorldCupTheme
+        ? `soccer-level-circle border-green-500/70 text-white`
+        : `
+          bg-gradient-to-br from-gray-900 to-gray-800
+          border-gray-600 text-yellow-300
+          hover:border-yellow-400
+          hover:shadow-[0_0_20px_rgba(250,204,21,0.25)]
+        `;
+  }
+};
 
  
 
@@ -291,6 +333,8 @@ const isHalloweenTheme =
   // --------------------------------------------------
 
   const getPopupStyle = (difficulty?: string) => {
+
+
 
     if (isChristmasTheme) {
   return `
@@ -301,6 +345,35 @@ const isHalloweenTheme =
     border-[#d9b85b]
     shadow-[0_0_45px_rgba(22,163,74,0.2)]
   `;
+}
+
+if (isThanksgivingTheme) {
+  switch (difficulty) {
+    case "SuperDemon":
+      return `
+        bg-gradient-to-br from-[#1a0a14] via-purple-950/95 to-[#12080f]
+        border-fuchsia-400
+        shadow-[0_0_50px_rgba(217,70,239,0.35)]
+      `;
+    case "demon":
+      return `
+        bg-gradient-to-br from-[#1a0c08] via-red-950/95 to-orange-950/90
+        border-orange-400
+        shadow-[0_0_50px_rgba(249,115,22,0.35)]
+      `;
+    case "Hard Level":
+      return `
+        bg-gradient-to-br from-[#1a1008] to-orange-950/90
+        border-amber-400
+        shadow-[0_0_40px_rgba(245,158,11,0.3)]
+      `;
+    default:
+      return `
+        bg-gradient-to-br from-[#1a1208] via-[#1f160c] to-[#241808]
+        border-amber-500/70
+        shadow-[0_0_40px_rgba(245,158,11,0.25)]
+      `;
+  }
 }
 
 if (isHalloweenTheme) {
@@ -522,19 +595,21 @@ if (isHalloweenTheme) {
   return (
 
 
-    <main
+ <main
   className={`relative min-h-screen overflow-hidden text-white ${
-  isChristmasTheme
-    ? "bg-[#061a13]"
-    : isWorldCupTheme
-    ? "soccer-pitch-bg"
-    : isHalloweenTheme
-    ? "bg-[#09040d]"
-    : isBlvdTheme
-    ? "bg-black"
-    : "bg-black"
-}`}
-    >
+    isChristmasTheme
+      ? "bg-[#061a13]"
+      : isWorldCupTheme
+      ? "soccer-pitch-bg"
+      : isHalloweenTheme
+      ? "bg-[#09040d]"
+      : isThanksgivingTheme
+      ? "bg-[#1a0f08]"
+      : isBlvdTheme
+      ? "bg-black"
+      : "bg-black"
+  }`}
+>
   {isChristmasTheme && (
   <div className="absolute inset-0 z-10 overflow-hidden pointer-events-none">
     {Array.from({ length: 55 }, (_, i) => {
@@ -584,6 +659,23 @@ if (isHalloweenTheme) {
   </div>
 )}
 
+
+{isThanksgivingTheme && (
+  <>
+    {/* Warm glows */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-orange-700/20 blur-[140px]" />
+      <div className="absolute -bottom-40 -right-40 w-[500px] h-[500px] rounded-full bg-amber-600/20 blur-[140px]" />
+      <div className="absolute top-[15%] right-[10%] w-[280px] h-[280px] rounded-full bg-red-800/15 blur-[100px]" />
+      <div className="absolute left-0 right-0 bottom-[14%] h-[2px] bg-gradient-to-r from-transparent via-amber-500/30 to-transparent blur-[3px]" />
+    </div>
+
+    {/* Leaves + optional balloons */}
+    <AutumnLeaves count={40} driftStrength={1.4} />
+
+  </>
+)}
+
       {isHalloweenTheme && (
   <div className="absolute inset-0 pointer-events-none overflow-hidden">
     <div className="absolute -top-40 -left-40 w-[450px] h-[450px] rounded-full bg-purple-900/25 blur-[140px]" />
@@ -615,48 +707,58 @@ if (isHalloweenTheme) {
 )}
 
       <div className="relative z-20 px-4 pt-6 pb-4">
-      <motion.h1
+     <motion.h1
   initial={{ opacity: 0, y: -15 }}
   animate={{ opacity: 1, y: 0 }}
- className={`text-center text-3xl md:text-4xl ${
-  isChristmasTheme
-    ? `${christmasFont.className} text-green-400`
-    : isHalloweenTheme
-    ? `${eater.className} text-orange-400`
-    : "font-black"
-}`}
- style={
-  isChristmasTheme
-    ? {
-        color: "#ff7777",
-        textShadow:
-          "0 0 8px rgba(220,38,38,0.45), 0 0 22px rgba(22,163,74,0.3)",
-      }
-    : isHalloweenTheme
-    ? {
-        textShadow:
-          "0 0 8px rgba(249,115,22,0.7), 0 0 22px rgba(168,85,247,0.45)",
-      }
-    : undefined
-}
+  className={`text-center text-3xl md:text-4xl ${
+    isChristmasTheme
+      ? `${christmasFont.className}`
+      : isHalloweenTheme
+      ? `${eater.className} text-orange-400`
+      : isThanksgivingTheme
+      ? `${cinzel.className} text-amber-400`
+      : "font-black"
+  }`}
+  style={
+    isChristmasTheme
+      ? {
+          color: "#ff7777",
+          textShadow:
+            "0 0 8px rgba(220,38,38,0.45), 0 0 22px rgba(22,163,74,0.3)",
+        }
+      : isHalloweenTheme
+      ? {
+          textShadow:
+            "0 0 8px rgba(249,115,22,0.7), 0 0 22px rgba(168,85,247,0.45)",
+        }
+      : isThanksgivingTheme
+      ? {
+          textShadow:
+            "0 0 8px rgba(251,146,60,0.65), 0 0 20px rgba(180,83,9,0.4)",
+        }
+      : undefined
+  }
 >
- Select Level
+  Select Level
 </motion.h1>
-
 <p
   className={`text-center text-sm mt-2 ${
     isHalloweenTheme
       ? `${eater.className} text-purple-300/70`
+      : isThanksgivingTheme
+      ? `${cinzel.className} text-amber-200/70`
       : isChristmasTheme
       ? `${christmasFont.className} text-green-400`
       : "text-white/50"
   }`}
 >
- {isChristmasTheme
-  ? "❄ Choose your festive challenge! ❄"
-  : isHalloweenTheme
-  ? "Choose your challenge... if you dare!"
-  : "Choose your challenge"}
+  {isChristmasTheme
+    ? "❄ Choose your festive challenge! ❄"
+    : isHalloweenTheme
+    ? "Choose your challenge... if you dare!"
+    : isThanksgivingTheme
+    ? "🍂 Choose your harvest challenge! 🦃"
+    : "Choose your challenge"}
 </p>
 
       
@@ -666,7 +768,11 @@ if (isHalloweenTheme) {
       {/* Search */}
       {/* ------------------------------------------------ */}
 
+      
+
       <motion.button
+
+
   initial={{ opacity: 0, x: -15 }}
   animate={{ opacity: 1, x: 0 }}
   whileHover={{ scale: 1.04, x: -2 }}
@@ -685,6 +791,8 @@ if (isHalloweenTheme) {
   rounded-lg
   font-semibold
   transition-all
+
+  
 
   ${
     isHalloweenTheme
@@ -708,6 +816,16 @@ if (isHalloweenTheme) {
         hover:border-green-400
         hover:shadow-[0_0_18px_rgba(34,197,94,0.4)]
       `
+      : isThanksgivingTheme
+? `
+  ${cinzel.className}
+  bg-[#2a1a0f]
+  text-amber-200
+  border border-amber-500/60
+  shadow-[0_0_14px_rgba(245,158,11,0.25)]
+  hover:border-amber-400
+  hover:shadow-[0_0_22px_rgba(245,158,11,0.45)]
+`
       : isChristmasTheme
 ? `
   bg-[#123b29]
@@ -754,13 +872,11 @@ if (isHalloweenTheme) {
             px-3
             py-2
             backdrop-blur-md
-         ${
+    ${
   isHalloweenTheme
-    ? `
-      bg-[#1b0c16]/90
-      border-purple-500/50
-      shadow-[0_0_18px_rgba(168,85,247,0.15)]
-    `
+    ? `bg-[#1b0c16]/90 border-purple-500/50 shadow-[0_0_18px_rgba(168,85,247,0.15)]`
+    : isThanksgivingTheme
+    ? `bg-[#1f140c]/90 border-amber-500/50 shadow-[0_0_18px_rgba(245,158,11,0.15)]`
     : isWorldCupTheme
     ? "bg-green-950/70 border-green-700/50"
     : "bg-gray-950/90 border-gray-700"
@@ -841,6 +957,8 @@ if (isHalloweenTheme) {
         >
           {displayedLevels.map((lvl, idx) => (
             <motion.button
+
+            
               key={lvl.id}
               initial={{
                 opacity: 0,
@@ -875,31 +993,30 @@ if (isHalloweenTheme) {
                   setSelectedLevel(lvl);
                 }
               }}
-              className={`
-                relative
-                w-20
-                h-20
-                sm:w-24
-                sm:h-24
-                rounded-full
-                border-4
-                flex
-                items-center
-                justify-center
-                transition-all
-                ${getCircleStyle(lvl)}
-              `}
-            >
-              {/* Level number */}
+            className={`
+  relative
+  w-20 h-20 sm:w-24 sm:h-24
+  rounded-full
+  border-4
+  flex items-center justify-center
+  transition-all
+  ${getCircleStyle(lvl)}
+`}
+>
+  {/* Balloon shine */}
+  {isThanksgivingTheme && !lvl.locked && (
+    <div className="absolute top-[12%] left-[18%] w-[38%] h-[32%] rounded-full bg-white/35 blur-[2px] pointer-events-none" />
+  )}
 
-              {lvl.locked ? (
-                <Lock className="w-7 h-7" />
-              ) : (
-                <span className="text-2xl sm:text-3xl font-black">
-                  {lvl.id}
-                </span>
-              )}
-
+  {/* Level number / lock */}
+  {lvl.locked ? (
+    <Lock className="w-7 h-7 relative z-10" />
+  ) : (
+    <span className="text-2xl sm:text-3xl font-black relative z-10">
+      {lvl.id}
+    </span>
+  )}
+           
               {/* Difficulty indicator */}
 
               {!lvl.locked && lvl.difficulty === "demon" && (
@@ -1149,35 +1266,28 @@ if (isHalloweenTheme) {
 
               {/* Name */}
 
-         
-<h2
+ <h2
   className={`
-    text-3xl
-    md:text-4xl
-    mb-4
+    text-3xl md:text-4xl mb-4
     ${
       isChristmasTheme
-        ? "text-red-300"
-        : `${christmasFont.className} text-green-400`
+        ? `${christmasFont.className} text-red-300`
+        : isHalloweenTheme
         ? `${eater.className} text-orange-400`
-        : "font-black"
-    }
-    ${
-      !isChristmasTheme && !isHalloweenTheme
-        ? selectedLevel.difficulty === "SuperDemon"
-          ? "text-fuchsia-300"
-          : selectedLevel.difficulty === "demon"
-          ? "text-red-300"
-          : selectedLevel.difficulty === "Hard Level"
-          ? "text-orange-300"
-          : "text-yellow-300"
-        : ""
+        : isThanksgivingTheme
+        ? `${cinzel.className} text-amber-300`
+        : selectedLevel.difficulty === "SuperDemon"
+        ? "font-black text-fuchsia-300"
+        : selectedLevel.difficulty === "demon"
+        ? "font-black text-red-300"
+        : selectedLevel.difficulty === "Hard Level"
+        ? "font-black text-orange-300"
+        : "font-black text-yellow-300"
     }
   `}
   style={
     isChristmasTheme
       ? {
-          fontFamily: "'Mountains of Christmas', cursive",
           textShadow:
             "0 0 8px rgba(220,38,38,0.7), 0 0 18px rgba(22,163,74,0.6)",
         }
@@ -1185,6 +1295,11 @@ if (isHalloweenTheme) {
       ? {
           textShadow:
             "0 0 8px rgba(249,115,22,0.7), 0 0 20px rgba(168,85,247,0.5)",
+        }
+      : isThanksgivingTheme
+      ? {
+          textShadow:
+            "0 0 8px rgba(251,146,60,0.7), 0 0 18px rgba(180,83,9,0.5)",
         }
       : undefined
   }

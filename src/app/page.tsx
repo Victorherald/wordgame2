@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {BookOpen,  Info,Trophy,Gamepad2, Users, MessageCircle, Settings} from "lucide-react";
 import { ThanksgivingButton } from "../app/components/button/thanksgivingButton";
   import '../app/animations/interface.css';
+  import { FloatingBalloons } from "../app/components/Thanksgiving/floatingBalloons";
   import { BoulevardBackground } from "../app/components/button/boulevardHouses";
  import { HalloweenButton } from "../app/components/button/HalloweenButton";
 import { AutumnLeaves } from "../app/components/button/movingLeaves"; 
@@ -108,7 +109,7 @@ useEffect(() => {
   if (HalloweenTheme) {
     playMusic("/audio/wordigonHalloween.mp3");
   } else if (ThanksgivingTheme) {
-    playMusic("/audio/wordigonThanksgiving.mp3"); // ← create this file or reuse an autumn track
+    playMusic("/audio/wordigonThanksgiving.mp3"); 
   } else if (ChristmasTheme) {
     playMusic("/audio/wordigonChristmas.mp3");
   } else {
@@ -182,6 +183,20 @@ className={`relative min-h-screen overflow-hidden ${
 )}
 
 {/* Floating Thanksgiving elements */}
+
+{ThanksgivingTheme && (
+  <>
+    {/* ... your glows ... */}
+
+    <AutumnLeaves count={50} driftStrength={1.6} />
+
+    {/* Custom SVG balloons */}
+    <FloatingBalloons count={14} floatHeight={120} />
+  </>
+)}
+
+
+
 {ThanksgivingTheme && (
   <>
     <motion.div
