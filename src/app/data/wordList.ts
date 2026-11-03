@@ -982823,7 +982823,7 @@ export const wordList: string[] = [
   "1notloB",
   "Boltzman",
   "namztloB",
-  "Bomb",
+  "bomb",
   "bmoB",
   "Bomb1",
   "1bmoB",

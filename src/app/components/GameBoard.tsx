@@ -138,7 +138,7 @@ type LetterBoardProps = {
    bossMaxHp?: number;
    bossColor?: string;
   
-  tileType?: 'cursed' | "fluorescent" | 'boulder002' | "Bombtiles"  | "chamber"  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery" | "Bombtiles";
+  tileType?: 'cursed' | "fluorescent" | 'boulder002' | "bomb"  | "chamber"  | "ltrN" |"ltrO" | "ltrT" | "ltrF" | "ltrU" | "ltrD" | 'spiral' | 'boulder003' | 'boulder' | 'fridge' | 'fire' | 'exclamator' | 'warped' | "dull" | "locked" |"velvet" | "bone" | "bulb" | "ice" | "infected" | "flippers" | "mystery" | "bomb";
   minLength?: number;
   groundLayout?: ('none' | 'cleanse' | 'ink')[][];
 };
@@ -2588,7 +2588,7 @@ else if (objective.type === "collectVelvet") {
 
     if (objective.tileType === 'fire') return t.isFire;
     if (objective.tileType === 'flippers') return t.isBook;
-     if (objective.tileType === 'Bombtiles') return t.isTNT;
+     if (objective.tileType === 'bomb') return t.isTNT;
     if (objective.tileType === 'boulder') return t.isBoulder;
     if (objective.tileType === 'boulder002') return t.isBoulder;
     if (objective.tileType === 'boulder003') return t.isBoulder;
