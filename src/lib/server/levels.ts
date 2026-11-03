@@ -18668,7 +18668,7 @@ export const levels: LevelData[] = [
   locked: true,
 
   board: [ 
-        ["normal", "lineBlasterCol", "normal", "removed", "normal", "normal", "lineBlasterCol", "normal"],
+        ["normal", "lineBlasterColumn", "normal", "removed", "normal", "normal", "lineBlasterColumn", "normal"],
         ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "removed", "normal", "normal", "normal", "normal"],
         ["normal", "normal", "normal", "removed", "normal", "removed", "removed", "removed"],
